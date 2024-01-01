@@ -27,7 +27,7 @@ public class ItemDto {
 
     String image;
 
-    Integer createdBy;
+//    Integer createdBy;
 
-    Integer modifiedBy;
+//    Integer modifiedBy;
 }

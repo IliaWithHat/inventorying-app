@@ -28,30 +28,24 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "serial_number")
     private Long serialNumber;
 
-    @Column(name = "inventory_number")
     private Long inventoryNumber;
 
     private String name;
 
-    @Column(name = "stored_in")
     private String storedIn;
 
     private Integer quantity;
 
-    @Column(name = "is_owned_by_employee")
     private Boolean isOwnedByEmployee;
 
-    @Column(name = "additional_info")
     @JdbcTypeCode(value = SqlTypes.JSON)
     private Map<String, Object> additionalInfo;
 
     private String image;
 
     @CreatedDate
-    @Column(name = "created_at")
     private Instant createdAt;
 
     @CreatedBy
@@ -60,7 +54,6 @@ public class Item {
     private User createdBy;
 
     @LastModifiedDate
-    @Column(name = "modified_at")
     private Instant modifiedAt;
 
     @LastModifiedBy
