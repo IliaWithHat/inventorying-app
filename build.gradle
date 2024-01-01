@@ -29,6 +29,7 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 //	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 //	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
+	implementation 'org.json:json:20231013'
 
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'

@@ -40,6 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         if (!userService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

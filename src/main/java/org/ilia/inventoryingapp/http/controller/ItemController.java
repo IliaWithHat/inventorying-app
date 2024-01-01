@@ -40,6 +40,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

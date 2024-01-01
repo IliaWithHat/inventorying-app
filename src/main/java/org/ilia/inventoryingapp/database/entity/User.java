@@ -1,12 +1,11 @@
 package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
+@ToString(exclude = "admin")
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,20 +30,6 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User admin;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

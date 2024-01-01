@@ -9,8 +9,8 @@ CREATE TABLE item
     is_owned_by_employee BOOLEAN     NOT NULL,
     additional_info      JSONB,
     image                VARCHAR(128),
-    created_at           TIMESTAMP,
-    created_by           INTEGER REFERENCES users
+    created_at           TIMESTAMP   NOT NULL,
+    created_by           INTEGER     NOT NULL REFERENCES users
 );
 
 CREATE TABLE users
