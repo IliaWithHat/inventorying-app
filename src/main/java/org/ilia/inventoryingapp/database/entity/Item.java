@@ -14,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -45,39 +46,9 @@ public class Item {
 
     private String image;
 
-    @CreatedDate
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    @CreatedBy
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
-
-    @LastModifiedDate
-    private Instant modifiedAt;
-
-    @LastModifiedBy
-    @ManyToOne
-    @JoinColumn(name = "modified_by")
-    private User modifiedBy;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

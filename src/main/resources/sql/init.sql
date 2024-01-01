@@ -10,9 +10,7 @@ CREATE TABLE item
     additional_info      JSONB,
     image                VARCHAR(128),
     created_at           TIMESTAMP,
-    created_by           INTEGER REFERENCES users,
-    modified_at          TIMESTAMP,
-    modified_by          INTEGER REFERENCES users
+    created_by           INTEGER REFERENCES users
 );
 
 CREATE TABLE users

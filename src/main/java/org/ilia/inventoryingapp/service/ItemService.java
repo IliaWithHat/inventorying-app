@@ -8,6 +8,8 @@ import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +35,7 @@ public class ItemService {
     @Transactional
     public ItemDto create(ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
+        item.setCreatedAt(LocalDateTime.now());
         Item savedItem = itemRepository.save(item);
         return itemMapper.toItemDto(savedItem);
     }

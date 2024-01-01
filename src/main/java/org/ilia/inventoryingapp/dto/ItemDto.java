@@ -3,6 +3,8 @@ package org.ilia.inventoryingapp.dto;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Value
@@ -27,7 +29,7 @@ public class ItemDto {
 
     String image;
 
-//    Integer createdBy;
+    LocalDateTime createdAt;
 
-//    Integer modifiedBy;
+    Integer createdBy;
 }
