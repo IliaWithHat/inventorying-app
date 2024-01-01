@@ -1,5 +1,6 @@
 package org.ilia.inventoryingapp.database.entity;
 
+import io.swagger.v3.core.util.Json;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -45,7 +47,7 @@ public class Item {
 
     @Column(name = "additional_info")
     @JdbcTypeCode(value = SqlTypes.JSON)
-    private String additionalInfo;
+    private Map<String, Object> additionalInfo;
 
     private String image;
 
@@ -54,9 +56,8 @@ public class Item {
     private Instant createdAt;
 
     @CreatedBy
-    @Column(name = "created_by")
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "created_by")
     private User createdBy;
 
     @LastModifiedDate
@@ -64,9 +65,8 @@ public class Item {
     private Instant modifiedAt;
 
     @LastModifiedBy
-    @Column(name = "modified_by")
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "modified_by")
     private User modifiedBy;
 }
 

@@ -3,6 +3,8 @@ package org.ilia.inventoryingapp.dto;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.Map;
+
 @Value
 @Builder
 public class ItemDto {
@@ -21,7 +23,7 @@ public class ItemDto {
 
     Boolean isOwnedByEmployee;
 
-    String additionalInfo;
+    Map<String, Object> additionalInfo;
 
     String image;
 
