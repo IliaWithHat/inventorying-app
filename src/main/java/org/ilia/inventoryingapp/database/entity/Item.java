@@ -1,6 +1,5 @@
 package org.ilia.inventoryingapp.database.entity;
 
-import io.swagger.v3.core.util.Json;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
