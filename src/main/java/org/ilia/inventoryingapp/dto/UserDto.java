@@ -13,23 +13,24 @@ public class UserDto {
 
     Integer id;
 
-    @Email
+    @NotBlank(message = "Enter email")
+    @Email(message = "Enter correct email")
     @UniqueEmail
     String email;
 
-    @NotBlank
+    @NotBlank(message = "Enter password")
     String password;
 
-    @NotBlank
+    @NotBlank(message = "Enter first name")
     String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Enter middle name")
     String middleName;
 
-    @NotBlank
+    @NotBlank(message = "Enter last name")
     String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Enter phone")
     String phone;
 
     Role role;

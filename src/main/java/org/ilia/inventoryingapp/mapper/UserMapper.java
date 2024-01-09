@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

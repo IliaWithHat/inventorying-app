@@ -1,7 +1,6 @@
 package org.ilia.inventoryingapp.service;
 
 import lombok.RequiredArgsConstructor;
-import org.ilia.inventoryingapp.database.entity.Role;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.UserDto;
@@ -38,7 +37,6 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDto create(UserDto userDto) {
         User user = userMapper.toUser(userDto);
-        user.setRole(Role.ADMIN);
         User savedUser = userRepository.save(user);
         return userMapper.toUserDto(savedUser);
     }

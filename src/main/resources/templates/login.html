@@ -3,40 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <script defer src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 </head>
 <body>
-  <form th:action="@{/login}" method="post">
-      <div style="color: red" th:if="${param.error}">
-          Bad credentials
-      </div>
-      <table>
-          <tr>
-              <td>
-                  <span>Email:</span>
-              </td>
-              <td>
-                  <label for="email">
-                      <input id="email" type="text" name="email">
-                  </label>
-              </td>
-          </tr>
-          <tr>
-              <td>
-                  <span>Password:</span>
-              </td>
-              <td>
-                  <label for="password">
-                      <input id="password" type="password" name="password">
-                  </label>
-              </td>
-          </tr>
-      </table>
-      <br/>
-      <button type="submit">Login</button>
-  </form>
-  <br/>
-  <form action="/registration">
-      <button type="submit">Registration</button>
-  </form>
+<div class="login-page">
+    <div class="form">
+        <form class="login-form" th:action="@{/login}" method="post">
+            <div style="color: red" th:if="${param.error}">
+                Bad credentials
+            </div>
+            <br/>
+            <label for="email">
+                <input id="email" type="text" name="email" placeholder="Email">
+            </label>
+            <label for="password">
+                <input id="password" type="password" name="password" placeholder="Password">
+            </label>
+            <button type="submit">login</button>
+            <p class="message">Not registered? <a th:href="@{/registration}">Create an account</a></p>
+        </form>
+    </div>
+</div>
 </body>
 </html>
