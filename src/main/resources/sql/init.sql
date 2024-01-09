@@ -16,11 +16,12 @@ CREATE TABLE item
 CREATE TABLE users
 (
     id          SERIAL PRIMARY KEY,
-    email       VARCHAR(64) NOT NULL,
-    first_name  VARCHAR(64) NOT NULL,
-    middle_name VARCHAR(64) NOT NULL,
-    last_name   VARCHAR(64) NOT NULL,
-    phone       VARCHAR(64) NOT NULL,
-    role        VARCHAR(12) NOT NULL,
+    email       VARCHAR(64)  NOT NULL UNIQUE,
+    password    VARCHAR(128) NOT NULL,
+    first_name  VARCHAR(64)  NOT NULL,
+    middle_name VARCHAR(64)  NOT NULL,
+    last_name   VARCHAR(64)  NOT NULL,
+    phone       VARCHAR(64)  NOT NULL,
+    role        VARCHAR(12)  NOT NULL,
     admin_id    INTEGER REFERENCES users
 );

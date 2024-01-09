@@ -1,20 +1,25 @@
 package org.ilia.inventoryingapp.service;
 
 import lombok.RequiredArgsConstructor;
+import org.ilia.inventoryingapp.database.entity.Role;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.mapper.UserMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -33,6 +38,7 @@ public class UserService {
     @Transactional
     public UserDto create(UserDto userDto) {
         User user = userMapper.toUser(userDto);
+        user.setRole(Role.ADMIN);
         User savedUser = userRepository.save(user);
         return userMapper.toUserDto(savedUser);
     }
@@ -53,5 +59,16 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(email)
+                .map(u -> new org.springframework.security.core.userdetails.User(
+                        u.getEmail(),
+                        u.getPassword(),
+                        Collections.singleton(u.getRole())
+                ))
+                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user:" + email));
     }
 }

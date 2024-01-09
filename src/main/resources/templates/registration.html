@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<form th:action="@{/registration}" method="post" th:object="${user}">
+    <table>
+        <tr>
+            <td>
+                <span>Email:</span>
+            </td>
+            <td>
+                <label for="email">
+                    <input id="email" type="text" name="email" th:value="*{email}">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>First name:</span>
+            </td>
+            <td>
+                <label for="firstName">
+                    <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>Middle name:</span>
+            </td>
+            <td>
+                <label for="middleName">
+                    <input id="middleName" type="text" name="middleName" th:value="*{middleName}">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>Last name:</span>
+            </td>
+            <td>
+                <label for="lastName">
+                    <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>Phone:</span>
+            </td>
+            <td>
+                <label for="phone">
+                    <input id="phone" type="text" name="phone" th:value="*{phone}">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>Password:</span>
+            </td>
+            <td>
+                <label for="password">
+                    <input id="password" type="password" name="password">
+                </label>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <button type="submit">Register</button>
+</form>
+<br/>
+<div th:if="${errors}">
+    <p style="color: red" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"></p>
+</div>
+</body>
+</html>
