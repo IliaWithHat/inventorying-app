@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Side bar</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:fragment="side-bar">
+    <div id="sidebar">
+        <header>
+            <a>Inventorying App</a>
+        </header>
+        <ul class="nav">
+            <li>
+                <a href="/">
+                    <i class="zmdi zmdi-view-dashboard"></i> Items
+                </a>
+            </li>
+            <li>
+                <a href="/items">
+                    <i class="zmdi zmdi-filter-list"></i> Filter
+                </a>
+            </li>
+            <li>
+                <a href="/admin/users">
+                    <i class="zmdi zmdi-accounts-add"></i> Manage Users
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="zmdi zmdi-close"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventorying app</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <br/>
+            <br/>
+            <br/>
+            <form method="post" th:action="@{/items}">
+                <table class="input-table">
+                    <tr>
+                        <th>
+                            <b>serialNumber</b>
+                        </th>
+                        <th>
+                            <label for="inventoryNumber">
+                                <input type="number" id="inventoryNumber" name="inventoryNumber"
+                                       placeholder="Inventory number" autofocus>
+                            </label>
+                        </th>
+                        <th>
+                            <label for="name">
+                                <input type="text" id="name" name="name" placeholder="Place for name">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="storedIn">
+                                <input type="text" id="storedIn" name="storedIn" placeholder="Stored in">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="quantity">
+                                <input type="number" id="quantity" name="quantity" placeholder="Quantity">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="additionalInfo">
+                                <input type="text" id="additionalInfo" name="additionalInfo"
+                                       placeholder="Additional info">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="isOwnedByEmployee">
+                                <input type="checkbox" id="isOwnedByEmployee" name="isOwnedByEmployee">
+                                Employee owned
+                            </label>
+                        </th>
+                    </tr>
+                </table>
+                <br/>
+                <button type="submit" class="add" id="add">Add</button>
+            </form>
+            <br/>
+            <br/>
+            <br/>
+            <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Serial number</th>
+                    <th>Inventory number</th>
+                    <th>Name</th>
+                    <th>Stored in</th>
+                    <th>Quantity</th>
+                    <th>Additional info</th>
+                    <th>Created at</th>
+                    <th>Owned by employee</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="item : ${items.content}">
+                    <td th:text="${item.serialNumber}"></td>
+                    <td th:text="${item.inventoryNumber}"></td>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.storedIn}"></td>
+                    <td th:text="${item.quantity}"></td>
+                    <td th:text="${item.additionalInfo}"></td>
+                    <td th:text="${item.createdAt.toLocalDate()}"></td>
+                    <td th:text="${item.isOwnedByEmployee == true ? 'Yes' : 'No'}"></td>
+                    <td class="text-center">
+                        <form th:action="@{'/items/' + ${item.id}}" method="get">
+                            <button type="submit" class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal"
+                                    data-target="#edit"><span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                        </form>
+                    </td>
+                    <td class="text-center">
+                        <form th:action="@{'/items/' + ${item.id}}" th:method="delete">
+                            <button type="submit" class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal"
+                                    data-target="#delete"><span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

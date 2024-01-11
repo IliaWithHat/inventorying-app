@@ -1,5 +1,114 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+/*Button in table*/
+.btn {
+    padding: 4px 8px !important;
+    font-size: 14px;
+    line-height: 1.42857143;
+}
 
+/*Button in input table*/
+button.add {
+    width: 100%;
+}
+
+/*Sidebar code*/
+#viewport {
+    padding-left: 200px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#content {
+    width: 100%;
+    position: relative;
+    margin-right: 0;
+}
+
+/* Sidebar Styles */
+#sidebar {
+    z-index: 1000;
+    position: fixed;
+    left: 200px;
+    width: 200px;
+    height: 100%;
+    margin-left: -200px;
+    overflow-y: auto;
+    background: #37474F;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#sidebar header {
+    background-color: #263238;
+    font-size: 20px;
+    line-height: 52px;
+    text-align: center;
+}
+
+#sidebar header a {
+    color: #fff;
+    display: block;
+    text-decoration: none;
+}
+
+#sidebar header a:hover {
+    color: #fff;
+}
+
+#sidebar .nav a{
+    background: none;
+    border-bottom: 1px solid #455A64;
+    color: #CFD8DC;
+    font-size: 14px;
+    padding: 16px 24px;
+}
+
+#sidebar .nav a:hover{
+    background: none;
+    color: #ECEFF1;
+}
+
+#sidebar .nav a i{
+    margin-right: 16px;
+}
+
+
+
+
+/* Pagination links */
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+/* Style the active/current link */
+.pagination a.active {
+    background-color: dodgerblue;
+    color: white;
+}
+
+/* Add a grey background color on mouse-over */
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+div.pagination {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+/*Login/registration code*/
 .login-page {
     width: 360px;
     padding: 4% 0 0;
@@ -102,6 +211,8 @@
 
 body {
     font-family: "Roboto", sans-serif;
+    overflow-x: hidden;
+    font-size: 15px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

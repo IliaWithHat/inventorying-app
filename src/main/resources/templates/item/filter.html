@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventorying app</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <br/>
+            <br/>
+            <br/>
+            <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Serial number</th>
+                    <th>Inventory number</th>
+                    <th>Name</th>
+                    <th>Stored in</th>
+                    <th>Quantity</th>
+                    <th>Additional info</th>
+                    <th>Created at</th>
+                    <th>Owned by employee</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>12934678912394687</td>
+                    <td>Pen</td>
+                    <td>Main room</td>
+                    <td>1</td>
+                    <td>color=red size=21x21x21</td>
+                    <td>09/01/2024</td>
+                    <td>Yes</td>
+                    <td class="text-center">
+                        <button type="submit" class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal"
+                                data-target="#edit"><span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button type="submit" class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal"
+                                data-target="#delete"><span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br/>
+            <br/>
+            <br/>
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a class="active" href="#">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#">6</a>
+                <a href="#">7</a>
+                <a href="#">8</a>
+                <a href="#">9</a>
+                <a href="#">10</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
