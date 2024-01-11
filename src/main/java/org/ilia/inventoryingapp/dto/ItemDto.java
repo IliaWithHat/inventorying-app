@@ -12,6 +12,7 @@ import java.util.Map;
 
 @Value
 @Builder
+@UniqueInventoryNumberForEachUser
 public class ItemDto {
 
     Long id;
@@ -21,7 +22,6 @@ public class ItemDto {
 
     @NotNull(message = "Enter inventory number")
     @Min(value = 1, message = "Minimum number is 1")
-    @UniqueInventoryNumberForEachUser
     Long inventoryNumber;
 
     @NotBlank(message = "Enter item name")
