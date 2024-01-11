@@ -13,8 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -24,18 +27,20 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public String getFirstFiveItems(@AuthenticationPrincipal UserDetails userDetails,
-                              Model model) {
+    public String getFirstFiveItems(@ModelAttribute("itemDto") ItemDto itemDto,
+                                    @AuthenticationPrincipal UserDetails userDetails,
+                                    Model model) {
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
+        model.addAttribute("nextSerialNumber", itemDtoPage.getContent().getFirst().getSerialNumber() + 1);
         return "item/items";
     }
 
-    @GetMapping("/items/filter")
+    @GetMapping("/filter")
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
-                          Model model,
-                          Integer page) {
+                              Model model,
+                              Integer page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("serialNumber"));
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
@@ -49,9 +54,21 @@ public class ItemController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestBody ItemDto itemDto) {
-        return itemService.create(itemDto);
+    public String create(@ModelAttribute("itemDto") @Validated ItemDto itemDto,
+                         BindingResult bindingResult,
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("itemDto", itemDto);
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+        } else {
+            itemService.create(userDetails, itemDto);
+            ItemDto saveStoredInString = ItemDto.builder()
+                    .storedIn(itemDto.getStoredIn())
+                    .build();
+            redirectAttributes.addFlashAttribute("itemDto", saveStoredInString);
+        }
+        return "redirect:/items";
     }
 
     @PatchMapping("/{id}")
@@ -64,7 +81,7 @@ public class ItemController {
     public String delete(@PathVariable Long id) {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        TODO use JavaScript to delete row.
+//        TODO use JavaScript for deleting row.
         return "redirect:/items";
     }
 }

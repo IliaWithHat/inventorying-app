@@ -11,11 +11,9 @@ import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -32,9 +30,7 @@ public class ItemService {
     private final ItemMapper itemMapper;
 
     public Page<ItemDto> findAll(UserDetails userDetails, Pageable pageable) {
-        Integer userId = userRepository.findUserByEmail(userDetails.getUsername())
-                .map(User::getId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
         Predicate predicate = QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
                 .build();
@@ -48,9 +44,13 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDto create(ItemDto itemDto) {
+    public ItemDto create(UserDetails userDetails, ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
+
         item.setCreatedAt(LocalDateTime.now());
+        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
+        item.setCreatedBy(User.builder().id(userId).build());
+
         Item savedItem = itemRepository.save(item);
         return itemMapper.toItemDto(savedItem);
     }

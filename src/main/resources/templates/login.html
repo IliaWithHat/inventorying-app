@@ -11,8 +11,8 @@
 <div class="login-page">
     <div class="form">
         <form class="login-form" th:action="@{/login}" method="post">
-            <div style="color: red" th:if="${param.error}">
-                Bad credentials
+            <div th:if="${param.error}" class="error">
+                Incorrect email or password
             </div>
             <br/>
             <label for="email">

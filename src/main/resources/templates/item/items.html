@@ -5,62 +5,76 @@
     <title>Inventorying app</title>
 
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-    <link rel='stylesheet'
-          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
     <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
 </head>
 <body>
 <div id="viewport">
-    <div th:insert="~{side-bar :: side-bar}"></div>
+    <div th:insert="~{fragment/side-bar :: side-bar}"></div>
 
     <div id="content">
         <div class="container-fluid">
             <br/>
             <br/>
             <br/>
-            <form method="post" th:action="@{/items}">
-                <table class="input-table">
+            <form method="post" th:action="@{/items}" th:object="${itemDto}">
+                <table class="table">
+                    <tbody>
                     <tr>
                         <th>
-                            <b>serialNumber</b>
+                            <b th:text="${nextSerialNumber}"></b>
+                            <label for="serialNumber">
+                                <input type="hidden" id="serialNumber" name="serialNumber"
+                                       th:value="${nextSerialNumber}">
+                            </label>
                         </th>
                         <th>
                             <label for="inventoryNumber">
                                 <input type="number" id="inventoryNumber" name="inventoryNumber"
-                                       placeholder="Inventory number" autofocus>
+                                       placeholder="Inventory number" autofocus
+                                       th:value="*{inventoryNumber}">
                             </label>
                         </th>
                         <th>
                             <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Place for name">
+                                <input type="text" id="name" name="name" placeholder="Place for name"
+                                       th:value="*{name}">
                             </label>
                         </th>
                         <th>
                             <label for="storedIn">
-                                <input type="text" id="storedIn" name="storedIn" placeholder="Stored in">
+                                <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
+                                       th:value="*{storedIn}">
                             </label>
                         </th>
                         <th>
                             <label for="quantity">
-                                <input type="number" id="quantity" name="quantity" placeholder="Quantity">
+                                <input type="number" id="quantity" name="quantity" placeholder="Quantity"
+                                       th:value="*{quantity}">
                             </label>
                         </th>
                         <th>
                             <label for="additionalInfo">
                                 <input type="text" id="additionalInfo" name="additionalInfo"
-                                       placeholder="Additional info">
+                                       placeholder="Additional info"
+                                       th:value="*{additionalInfo}">
                             </label>
                         </th>
                         <th>
                             <label for="isOwnedByEmployee">
-                                <input type="checkbox" id="isOwnedByEmployee" name="isOwnedByEmployee">
-                                Employee owned
+                                <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
+                                       name="isOwnedByEmployee"
+                                       th:checked="*{isOwnedByEmployee}">
+                                Owned by employee
                             </label>
                         </th>
                     </tr>
+                    </tbody>
                 </table>
-                <br/>
-                <button type="submit" class="add" id="add">Add</button>
+                <div th:if="${errors}">
+                    <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+                </div>
+                <button type="submit" class="btn btn-primary add-button">Add</button>
             </form>
             <br/>
             <br/>
@@ -82,14 +96,14 @@
                 </thead>
 
                 <tbody>
-                <tr th:each="item : ${items.content}">
-                    <td th:text="${item.serialNumber}"></td>
-                    <td th:text="${item.inventoryNumber}"></td>
-                    <td th:text="${item.name}"></td>
-                    <td th:text="${item.storedIn}"></td>
-                    <td th:text="${item.quantity}"></td>
-                    <td th:text="${item.additionalInfo}"></td>
-                    <td th:text="${item.createdAt.toLocalDate()}"></td>
+                <tr th:each="item : ${items.content}" th:object="${item}">
+                    <td th:text="*{serialNumber}"></td>
+                    <td th:text="*{inventoryNumber}"></td>
+                    <td th:text="*{name}"></td>
+                    <td th:text="*{storedIn}"></td>
+                    <td th:text="*{quantity}"></td>
+                    <td th:text="*{additionalInfo}"></td>
+                    <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="${item.isOwnedByEmployee == true ? 'Yes' : 'No'}"></td>
                     <td class="text-center">
                         <form th:action="@{'/items/' + ${item.id}}" method="get">
