@@ -60,7 +60,7 @@ public class ItemController {
             itemService.create(userDetails, itemDto);
             //TODO add checkbox "Save state of field"
             ItemDto savedFields = ItemDto.builder()
-                    .inventoryNumber(itemDto.getInventoryNumber())
+                    .inventoryNumber(itemDto.getInventoryNumber() + 1)
                     .storedIn(itemDto.getStoredIn())
                     .quantity(itemDto.getQuantity())
                     .isOwnedByEmployee(itemDto.getIsOwnedByEmployee())
@@ -71,8 +71,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id,
-                           Model model) {
+    public String findById(@PathVariable Long id, Model model) {
         ItemDto itemDto = itemService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);

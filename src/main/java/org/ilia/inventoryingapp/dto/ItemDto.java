@@ -17,7 +17,7 @@ public class ItemDto {
 
     Long id;
 
-    //TODO unique serial number how in postgresql. New table VALUES(id, user_id, next_val)
+    //TODO unique serial number how in postgresql. New table VALUES(id, user_id, last_value)
     Long serialNumber;
 
     @NotNull(message = "Enter inventory number")
@@ -36,7 +36,7 @@ public class ItemDto {
 
     String isOwnedByEmployee;
 
-    Map<String, Object> additionalInfo;
+    Map<String, String> additionalInfo;
 
     String image;
 

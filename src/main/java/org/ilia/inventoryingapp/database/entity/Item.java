@@ -36,7 +36,7 @@ public class Item {
     private Boolean isOwnedByEmployee;
 
     @JdbcTypeCode(value = SqlTypes.JSON)
-    private Map<String, Object> additionalInfo;
+    private Map<String, String> additionalInfo;
 
     private String image;
 
