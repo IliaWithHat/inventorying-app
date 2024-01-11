@@ -19,6 +19,7 @@ public class ItemDto {
 
     @NotNull(message = "Enter inventory number")
     @Min(value = 1, message = "Minimum number is 1")
+    //TODO unique number when update
     Long inventoryNumber;
 
     @NotBlank(message = "Enter item name")
@@ -28,10 +29,10 @@ public class ItemDto {
     String storedIn;
 
     @NotNull(message = "Enter quantity")
-    @Min(value = 1,message = "Minimum item quantity is 1")
+    @Min(value = 1, message = "Minimum item quantity is 1")
     Integer quantity;
 
-    Boolean isOwnedByEmployee;
+    String isOwnedByEmployee;
 
     Map<String, Object> additionalInfo;
 

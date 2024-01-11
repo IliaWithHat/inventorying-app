@@ -34,6 +34,7 @@ public class ItemController {
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("nextSerialNumber", itemDtoPage.getContent().getFirst().getSerialNumber() + 1);
+        model.addAttribute("itemDto", itemDto);
         return "item/items";
     }
 
@@ -48,13 +49,16 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto findById(@PathVariable Long id) {
-        return itemService.findById(id)
+    public String findById(@PathVariable Long id,
+                           Model model) {
+        ItemDto itemDto = itemService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        model.addAttribute("itemDto", itemDto);
+        return "item/item";
     }
 
     @PostMapping
-    public String create(@ModelAttribute("itemDto") @Validated ItemDto itemDto,
+    public String create(@Validated ItemDto itemDto,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal UserDetails userDetails,
                          RedirectAttributes redirectAttributes) {
@@ -71,17 +75,26 @@ public class ItemController {
         return "redirect:/items";
     }
 
-    @PatchMapping("/{id}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long id) {
-        return itemService.update(itemDto, id)
+    @PutMapping("/{id}")
+    public String update(@Validated ItemDto itemDto,
+                         BindingResult bindingResult,
+                         @PathVariable Long id,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            return "redirect:/items/{id}";
+        }
+        itemService.update(itemDto, id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
+        return "redirect:/items/{id}";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        TODO use JavaScript for deleting row.
+        //TODO use JavaScript for deleting row.
         return "redirect:/items";
     }
 }

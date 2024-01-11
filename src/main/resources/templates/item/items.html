@@ -64,7 +64,7 @@
                             <label for="isOwnedByEmployee">
                                 <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
                                        name="isOwnedByEmployee"
-                                       th:checked="*{isOwnedByEmployee}">
+                                       th:checked="${itemDto.isOwnedByEmployee != null && itemDto.isOwnedByEmployee.equals('Yes')}">
                                 Owned by employee
                             </label>
                         </th>
@@ -104,7 +104,7 @@
                     <td th:text="*{quantity}"></td>
                     <td th:text="*{additionalInfo}"></td>
                     <td th:text="*{createdAt.toLocalDate()}"></td>
-                    <td th:text="${item.isOwnedByEmployee == true ? 'Yes' : 'No'}"></td>
+                    <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
                         <form th:action="@{'/items/' + ${item.id}}" method="get">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal"

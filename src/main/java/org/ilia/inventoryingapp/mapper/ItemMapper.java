@@ -11,15 +11,26 @@ import org.mapstruct.MappingTarget;
 public interface ItemMapper {
 
     @Mapping(target = "createdBy", expression = "java(toInteger(item.getCreatedBy()))")
+    @Mapping(target = "isOwnedByEmployee", expression = "java(toString(item.getIsOwnedByEmployee()))")
     ItemDto toItemDto(Item item);
 
     @Mapping(target = "createdBy", expression = "java(toUser(itemDto.getCreatedBy()))")
+    @Mapping(target = "isOwnedByEmployee", expression = "java(toBoolean(itemDto.getIsOwnedByEmployee()))")
     Item toItem(ItemDto itemDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "isOwnedByEmployee", expression = "java(toBoolean(itemDto.getIsOwnedByEmployee()))")
     Item copyItemDtoToItem(ItemDto itemDto, @MappingTarget Item item);
+
+    default String toString(boolean b) {
+        return b ? "Yes" : "No";
+    }
+
+    default boolean toBoolean(String s) {
+        return "ON".equalsIgnoreCase(s);
+    }
 
     default Integer toInteger(User user) {
         return user != null ? user.getId() : null;
