@@ -89,7 +89,7 @@
                 <button type="submit" class="btn btn-primary">Save</button>
             </form>
             <br/>
-            <b th:if="${saved != null}" th:text="${saved}"></b>
+            <b th:if="${saved}" th:text="${saved}"></b>
             <br/>
             <br/>
             <form th:method="delete" th:action="@{'/items/' + *{id}}">

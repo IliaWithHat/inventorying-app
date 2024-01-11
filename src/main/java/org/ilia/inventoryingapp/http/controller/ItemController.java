@@ -48,15 +48,6 @@ public class ItemController {
         return "item/filter";
     }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable Long id,
-                           Model model) {
-        ItemDto itemDto = itemService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        model.addAttribute("itemDto", itemDto);
-        return "item/item";
-    }
-
     @PostMapping
     public String create(@Validated ItemDto itemDto,
                          BindingResult bindingResult,
@@ -67,12 +58,25 @@ public class ItemController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             itemService.create(userDetails, itemDto);
-            ItemDto saveStoredInString = ItemDto.builder()
+            //TODO add checkbox "Save state of field"
+            ItemDto savedFields = ItemDto.builder()
+                    .inventoryNumber(itemDto.getInventoryNumber())
                     .storedIn(itemDto.getStoredIn())
+                    .quantity(itemDto.getQuantity())
+                    .isOwnedByEmployee(itemDto.getIsOwnedByEmployee())
                     .build();
-            redirectAttributes.addFlashAttribute("itemDto", saveStoredInString);
+            redirectAttributes.addFlashAttribute("itemDto", savedFields);
         }
         return "redirect:/items";
+    }
+
+    @GetMapping("/{id}")
+    public String findById(@PathVariable Long id,
+                           Model model) {
+        ItemDto itemDto = itemService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        model.addAttribute("itemDto", itemDto);
+        return "item/item";
     }
 
     @PutMapping("/{id}")

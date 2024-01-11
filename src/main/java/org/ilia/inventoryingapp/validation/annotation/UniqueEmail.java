@@ -12,7 +12,6 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Documented
 @Constraint(validatedBy = UniqueEmailImpl.class)
 @Target(FIELD)
 @Retention(RUNTIME)
