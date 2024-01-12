@@ -34,44 +34,49 @@
                 </thead>
 
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>12934678912394687</td>
-                    <td>Pen</td>
-                    <td>Main room</td>
-                    <td>1</td>
-                    <td>color=red size=21x21x21</td>
-                    <td>09/01/2024</td>
-                    <td>Yes</td>
+                <tr th:each="item : ${items.content}" th:object="${item}">
+                    <td th:text="*{serialNumber}"></td>
+                    <td th:text="*{inventoryNumber}"></td>
+                    <td th:text="*{name}"></td>
+                    <td th:text="*{storedIn}"></td>
+                    <td th:text="*{quantity}"></td>
+                    <td th:text="*{additionalInfo}"></td>
+                    <td th:text="*{createdAt.toLocalDate()}"></td>
+                    <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <button type="submit" class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal"
-                                data-target="#edit"><span class="glyphicon glyphicon-pencil"></span>
-                        </button>
+                        <form th:action="@{'/items/' + ${item.id}}" method="get">
+                            <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                        </form>
                     </td>
                     <td class="text-center">
-                        <button type="submit" class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal"
-                                data-target="#delete"><span class="glyphicon glyphicon-trash"></span>
-                        </button>
+                        <form th:action="@{'/items/' + ${item.id} + '?returnTo=/filter'}" th:method="delete">
+                            <button type="submit" class="btn btn-danger btn-xs" data-title="Delete">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <br/>
-            <br/>
-            <br/>
-            <div class="pagination">
-                <a href="#">&laquo;</a>
-                <a class="active" href="#">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-                <a href="#">6</a>
-                <a href="#">7</a>
-                <a href="#">8</a>
-                <a href="#">9</a>
-                <a href="#">10</a>
-                <a href="#">&raquo;</a>
+            <div th:if="${items.metadata.totalPages > 0}" class="pagination">
+                <a th:href="@{/items/filter(page=0)}">&laquo;</a>
+
+<!--                <div th:if="${items.metadata.page <= 5 && items.metadata.totalPages <= 10}">-->
+<!--                    <a th:each="pageNumber : ${#numbers.sequence(0, items.metadata.totalPages - 1)}"-->
+<!--                       th:href="@{/items/filter(page=${pageNumber})}" th:text="${pageNumber + 1}"-->
+<!--                       th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"-->
+<!--                    ></a>-->
+<!--                </div>-->
+
+                <a th:each="pageNumber : ${#numbers.sequence(items.metadata.page - 4, items.metadata.page + 5)}"
+                   th:href="@{/items/filter(page=${pageNumber})}" th:text="${pageNumber + 1}"
+                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"
+                   th:if="${pageNumber >= 0 && pageNumber <= items.metadata.totalPages - 1}"
+                ></a>
+
+                <a th:href="@{/items/filter(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
             </div>
         </div>
     </div>

@@ -33,7 +33,7 @@ public class ItemController {
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
-        model.addAttribute("nextSerialNumber", itemDtoPage.getContent().getFirst().getSerialNumber() + 1);
+//        model.addAttribute("nextSerialNumber", itemDtoPage.getContent().getFirst().getSerialNumber() + 1);
         model.addAttribute("itemDto", itemDto);
         return "item/items";
     }
@@ -41,8 +41,8 @@ public class ItemController {
     @GetMapping("/filter")
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
                               Model model,
-                              Integer page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("serialNumber"));
+                              @RequestParam(defaultValue = "0") Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         return "item/filter";
@@ -94,10 +94,11 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, String returnTo) {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        //TODO use JavaScript for deleting row.
+        if ("/filter".equals(returnTo))
+            return "redirect:/items" + returnTo;
         return "redirect:/items";
     }
 }
