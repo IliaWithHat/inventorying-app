@@ -42,7 +42,7 @@ public class ItemController {
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
                               Model model,
                               @RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         return "item/filter";

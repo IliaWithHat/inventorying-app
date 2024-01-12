@@ -100,7 +100,7 @@ button.add-button {
 }
 
 div.pagination {
-    height: 150px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;

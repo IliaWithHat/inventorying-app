@@ -60,24 +60,16 @@
                 </tr>
                 </tbody>
             </table>
-            <div th:if="${items.metadata.totalPages > 0}" class="pagination">
+            <div th:if="${items.metadata.totalPages > 1}" class="pagination">
                 <a th:href="@{/items/filter(page=0)}">&laquo;</a>
 
-<!--                <div th:if="${items.metadata.page <= 5 && items.metadata.totalPages <= 10}">-->
-<!--                    <a th:each="pageNumber : ${#numbers.sequence(0, items.metadata.totalPages - 1)}"-->
-<!--                       th:href="@{/items/filter(page=${pageNumber})}" th:text="${pageNumber + 1}"-->
-<!--                       th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"-->
-<!--                    ></a>-->
-<!--                </div>-->
-
-                <a th:each="pageNumber : ${#numbers.sequence(items.metadata.page - 4, items.metadata.page + 5)}"
+                <a th:each="pageNumber : ${#numbers.sequence(items.metadata.firstPage, items.metadata.lastPage)}"
                    th:href="@{/items/filter(page=${pageNumber})}" th:text="${pageNumber + 1}"
-                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"
-                   th:if="${pageNumber >= 0 && pageNumber <= items.metadata.totalPages - 1}"
-                ></a>
+                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"></a>
 
                 <a th:href="@{/items/filter(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
             </div>
+            <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
         </div>
     </div>
 </div>

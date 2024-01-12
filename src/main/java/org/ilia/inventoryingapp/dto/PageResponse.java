@@ -12,7 +12,24 @@ public class PageResponse<T> {
     Metadata metadata;
 
     public static <T> PageResponse<T> of(Page<T> page) {
-        Metadata metadata = new Metadata(page.getNumber(), page.getTotalPages(), page.getSize(), page.getTotalElements());
+        int firstPage;
+        int lastPage;
+        int currentPage = page.getNumber();
+        int totalPages = page.getTotalPages() - 1;  //zero based
+        if (totalPages < 10) {
+            firstPage = 0;
+            lastPage = totalPages;
+        } else if (currentPage < 5) {
+            firstPage = 0;
+            lastPage = 9;
+        } else if (totalPages - currentPage < 6) {
+            firstPage = totalPages - 9;
+            lastPage = totalPages;
+        } else {
+            firstPage = currentPage - 4;
+            lastPage = currentPage + 5;
+        }
+        Metadata metadata = new Metadata(page.getNumber(), page.getTotalPages(), page.getSize(), page.getTotalElements(), firstPage, lastPage);
         return new PageResponse<>(page.getContent(), metadata);
     }
 
@@ -22,5 +39,7 @@ public class PageResponse<T> {
         int totalPages;
         int size;
         long totalElements;
+        int firstPage;
+        int lastPage;
     }
 }
