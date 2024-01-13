@@ -15,20 +15,34 @@
 
     <div id="content">
         <div class="container-fluid">
-            <form th:action="@{/items/filter}" method="get">
-                <table class="table">
+            <form th:action="@{/items/filter}" method="get" th:object="${filter}">
+                <br/>
+                <br/>
+                <table class="table table-borderless">
+                    <thead>
+                    <tr>
+                        <th>Inventory number</th>
+                        <th>Item name</th>
+                        <th>Stored in</th>
+                        <th>Time interval</th>
+                        <th></th>
+                        <th>Show items created in</th>
+                        <th>Owned by employee</th>
+                    </tr>
+                    </thead>
+
                     <tbody>
                     <tr>
                         <th>
                             <label for="inventoryNumber">
                                 <input type="number" id="inventoryNumber" name="inventoryNumber"
-                                       placeholder="Inventory number"
+                                       placeholder="Inventory number" autofocus
                                        th:value="*{inventoryNumber}">
                             </label>
                         </th>
                         <th>
                             <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Place for name"
+                                <input type="text" id="name" name="name" placeholder="Item name"
                                        th:value="*{name}">
                             </label>
                         </th>
@@ -39,31 +53,44 @@
                             </label>
                         </th>
                         <th>
-                            <label for="quantity">
-                                <input type="number" id="quantity" name="quantity" placeholder="Quantity"
-                                       th:value="*{quantity}">
+                            <label for="timeIntervalStart">
+                                <input type="date" id="timeIntervalStart" name="timeIntervalStart"
+                                       th:value="*{timeIntervalStart}">
                             </label>
                         </th>
                         <th>
-                            <label for="additionalInfo">
-                                <input type="text" id="additionalInfo" name="additionalInfo"
-                                       placeholder="Additional info"
-                                       th:value="*{additionalInfo}">
+                            <label for="timeIntervalEnd">
+                                <input type="date" id="timeIntervalEnd" name="timeIntervalEnd"
+                                       th:value="*{timeIntervalEnd}">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="showItemCreated">
+                                <select id="showItemCreated" name="showItemCreated">
+                                    <option th:each="option : ${optionsForShowItemCreated}"
+                                            th:value="${option}"
+                                            th:text="${option}"
+                                            th:selected="${filter.showItemCreated != null && filter.showItemCreated == option}">
+                                    </option>
+                                </select>
                             </label>
                         </th>
                         <th>
                             <label for="isOwnedByEmployee">
-                                <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
-                                       name="isOwnedByEmployee"
-                                       th:checked="${itemDto.isOwnedByEmployee != null && itemDto.isOwnedByEmployee.equals('on')} ">
-                                Owned by employee
+                                <select id="isOwnedByEmployee" name="isOwnedByEmployee">
+                                    <option th:each="option : ${optionsForIsOwnedByEmployee}"
+                                            th:value="${option}"
+                                            th:text="${option}"
+                                            th:selected="${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee == option}">
+                                    </option>
+                                </select>
                             </label>
                         </th>
                     </tr>
                     </tbody>
                 </table>
+                <button type="submit" class="btn btn-primary add-button">Filter</button>
             </form>
-            <br/>
             <br/>
             <br/>
             <table id="datatable" class="table table-striped table-bordered">
@@ -71,7 +98,7 @@
                 <tr>
                     <th>Serial number</th>
                     <th>Inventory number</th>
-                    <th>Name</th>
+                    <th>Item name</th>
                     <th>Stored in</th>
                     <th>Quantity</th>
                     <th>Additional info</th>
@@ -93,7 +120,7 @@
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" method="get">
+                        <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
@@ -109,14 +136,41 @@
                 </tr>
                 </tbody>
             </table>
-            <div th:if="${items.metadata.totalPages > 1}" class="pagination">
-                <a th:href="@{/items/filter(page=0)}">&laquo;</a>
+            <div th:if="${items.metadata.totalPages > 1}" class="pagination" th:object="${filter}">
+                <a th:href="@{
+                   '/items/filter?' +
+                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
+                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
+                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
+                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
+                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
+                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
+                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
+                   'page=0'}">&laquo;</a>
 
                 <a th:each="pageNumber : ${#numbers.sequence(items.metadata.firstPage, items.metadata.lastPage)}"
-                   th:href="@{/items/filter(page=${pageNumber})}" th:text="${pageNumber + 1}"
-                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}"></a>
+                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}" th:text="${pageNumber + 1}"
+                   th:href="@{
+                   '/items/filter?' +
+                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
+                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
+                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
+                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
+                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
+                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
+                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
+                   'page=' + ${pageNumber}}"></a>
 
-                <a th:href="@{/items/filter(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
+                <a th:href="@{
+                   '/items/filter?' +
+                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
+                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
+                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
+                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
+                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
+                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
+                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
+                   ${items.metadata.getTotalPages() - 1}}">&raquo;</a>
             </div>
             <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
         </div>

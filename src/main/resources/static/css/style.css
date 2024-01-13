@@ -60,7 +60,7 @@ button.add-button {
     color: #fff;
 }
 
-#sidebar .nav a{
+#sidebar .nav a {
     background: none;
     border-bottom: 1px solid #455A64;
     color: #CFD8DC;
@@ -68,16 +68,14 @@ button.add-button {
     padding: 16px 24px;
 }
 
-#sidebar .nav a:hover{
+#sidebar .nav a:hover {
     background: none;
     color: #ECEFF1;
 }
 
-#sidebar .nav a i{
+#sidebar .nav a i {
     margin-right: 16px;
 }
-
-
 
 
 /* Pagination links */
@@ -105,8 +103,6 @@ div.pagination {
     justify-content: center;
     align-items: center;
 }
-
-
 
 
 /*Login/registration code*/
@@ -147,7 +143,7 @@ div.pagination {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: blue;
+    background: #347AB6;
     width: 100%;
     border: 0;
     padding: 15px;
@@ -157,7 +153,7 @@ div.pagination {
 }
 
 .form button:hover, .form button:active, .form button:focus {
-    background: darkblue;
+    background: #28608F;
 }
 
 .form .message {
@@ -216,4 +212,15 @@ body {
     font-size: 15px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+
+/*Remove border in table*/
+.table-borderless > tbody > tr > td,
+.table-borderless > tbody > tr > th,
+.table-borderless > tfoot > tr > td,
+.table-borderless > tfoot > tr > th,
+.table-borderless > thead > tr > td,
+.table-borderless > thead > tr > th {
+    border: none;
 }

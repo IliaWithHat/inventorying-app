@@ -30,7 +30,7 @@ public class SecurityConfiguration {
         http.formLogin(login -> login
                 .loginPage("/login")
                 .usernameParameter("email")
-                .defaultSuccessUrl("/items"));
+                .defaultSuccessUrl("/items", true));
         return http.build();
     }
 

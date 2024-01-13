@@ -17,11 +17,22 @@
         <div class="container-fluid">
             <br/>
             <br/>
-            <br/>
-            <form method="post" th:action="@{/items}" th:object="${itemDto}">
-                <table class="table">
-                    <tbody>
+            <form method="post" th:action="@{/items}">
+                <table class="table table-borderless">
+                    <thead>
                     <tr>
+                        <th>Serial number</th>
+                        <th>Inventory number</th>
+                        <th>Item name</th>
+                        <th>Stored in</th>
+                        <th>Quantity</th>
+                        <th>Additional info</th>
+                        <th>Owned by employee</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:object="${itemDto}">
                         <th>
                             <b th:text="${items.content.size() == 0 ? 1 : items.content.getFirst().serialNumber + 1}"></b>
                             <label for="serialNumber">
@@ -38,7 +49,7 @@
                         </th>
                         <th>
                             <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Place for name"
+                                <input type="text" id="name" name="name" placeholder="Item name"
                                        th:value="*{name}">
                             </label>
                         </th>
@@ -63,10 +74,59 @@
                         </th>
                         <th>
                             <label for="isOwnedByEmployee">
-                                <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
-                                       name="isOwnedByEmployee"
-                                       th:checked="${itemDto.isOwnedByEmployee != null && itemDto.isOwnedByEmployee.equals('on')} ">
-                                Owned by employee
+                                <input class="form-check-input" type="checkbox" id="isOwnedByEmployee" name="isOwnedByEmployee"
+                                       th:checked="${itemDto.isOwnedByEmployee != null && itemDto.isOwnedByEmployee.equals('on')}">
+                            </label>
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <th>
+                            <label for="saveInventoryNumber">
+                                <input class="form-check-input" type="checkbox" id="saveInventoryNumber" name="saveInventoryNumber"
+                                       th:checked="${saveField.saveInventoryNumber != null && saveField.saveInventoryNumber.equals('on')}">
+                                Save state of field
+                            </label>
+                            <label for="autoincrement">
+                                <input class="form-check-input" type="checkbox" id="autoincrement" name="autoincrement"
+                                       th:checked="${saveField.autoincrement != null && saveField.autoincrement.equals('on')}">
+                                Enable autoincrement.
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveName">
+                                <input class="form-check-input" type="checkbox" id="saveName" name="saveName"
+                                       th:checked="${saveField.saveName != null && saveField.saveName.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveStoredIn">
+                                <input class="form-check-input" type="checkbox" id="saveStoredIn" name="saveStoredIn"
+                                       th:checked="${saveField.saveStoredIn != null && saveField.saveStoredIn.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveQuantity">
+                                <input class="form-check-input" type="checkbox" id="saveQuantity" name="saveQuantity"
+                                       th:checked="${saveField.saveQuantity != null && saveField.saveQuantity.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveAdditionalInfo">
+                                <input class="form-check-input" type="checkbox" id="saveAdditionalInfo" name="saveAdditionalInfo"
+                                       th:checked="${saveField.saveAdditionalInfo != null && saveField.saveAdditionalInfo.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveIsOwnedByEmployee">
+                                <input class="form-check-input" type="checkbox" id="saveIsOwnedByEmployee" name="saveIsOwnedByEmployee"
+                                       th:checked="${saveField.saveIsOwnedByEmployee != null && saveField.saveIsOwnedByEmployee.equals('on')}">
+                                Save state of field
                             </label>
                         </th>
                     </tr>
@@ -85,7 +145,7 @@
                 <tr>
                     <th>Serial number</th>
                     <th>Inventory number</th>
-                    <th>Name</th>
+                    <th>Item name</th>
                     <th>Stored in</th>
                     <th>Quantity</th>
                     <th>Additional info</th>
@@ -107,7 +167,7 @@
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" method="get">
+                        <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>

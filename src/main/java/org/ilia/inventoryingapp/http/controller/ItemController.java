@@ -1,13 +1,13 @@
 package org.ilia.inventoryingapp.http.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.dto.PageResponse;
+import org.ilia.inventoryingapp.viewUtils.PageResponse;
+import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.ItemService;
+import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/items")
 @Controller
@@ -27,29 +29,36 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public String getFirstFiveItems(@ModelAttribute("itemDto") ItemDto itemDto,
-                                    @AuthenticationPrincipal UserDetails userDetails,
+    public String getFirstFiveItems(@AuthenticationPrincipal UserDetails userDetails,
+                                    ItemDto itemDto,
+                                    SaveField saveField,
                                     Model model) {
-        Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
-        Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
+        Page<ItemDto> itemDtoPage = itemService.findLastFiveItems(userDetails);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemDto", itemDto);
+        model.addAttribute("saveField", saveField);
         return "item/items";
     }
 
     @GetMapping("/filter")
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
+                              ItemFilter itemFilter,
                               Model model,
-                              @RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
-        Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, pageable);
+                              @RequestParam(defaultValue = "0") Integer page,
+                              HttpServletRequest httpServletRequest) {
+        Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilter, page);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
+        model.addAttribute("filter", itemFilter);
+        model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
+        model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
+        model.addAttribute("filterParams", httpServletRequest.getParameterMap());
         return "item/filter";
     }
 
     @PostMapping
     public String create(@Validated ItemDto itemDto,
                          BindingResult bindingResult,
+                         SaveField saveField,
                          @AuthenticationPrincipal UserDetails userDetails,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -57,22 +66,16 @@ public class ItemController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             itemService.create(userDetails, itemDto);
-            //TODO add checkbox "Save state of field"
-            ItemDto savedFields = ItemDto.builder()
-                    .inventoryNumber(itemDto.getInventoryNumber() + 1)
-                    .storedIn(itemDto.getStoredIn())
-                    .quantity(itemDto.getQuantity())
-                    .isOwnedByEmployee(itemDto.getIsOwnedByEmployee())
-                    .build();
-            redirectAttributes.addFlashAttribute("itemDto", savedFields);
+            ItemDto itemDtoOnlySavedField =  itemService.saveStateOfFields(itemDto, saveField);
+            redirectAttributes.addFlashAttribute("itemDto", itemDtoOnlySavedField);
         }
+        redirectAttributes.addFlashAttribute("saveField", saveField);
         return "redirect:/items";
     }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model) {
-        ItemDto itemDto = itemService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        ItemDto itemDto = itemService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);
         return "item/item";
     }
@@ -86,8 +89,7 @@ public class ItemController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/items/{id}";
         }
-        itemService.update(itemDto, id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        itemService.update(itemDto, id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
         return "redirect:/items/{id}";
     }

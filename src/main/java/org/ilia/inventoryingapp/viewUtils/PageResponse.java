@@ -1,4 +1,4 @@
-package org.ilia.inventoryingapp.dto;
+package org.ilia.inventoryingapp.viewUtils;
 
 import lombok.Value;
 import org.springframework.data.domain.Page;
@@ -16,18 +16,18 @@ public class PageResponse<T> {
         int lastPage;
         int currentPage = page.getNumber();
         int totalPages = page.getTotalPages() - 1;  //zero based
-        if (totalPages < 10) {
+        if (totalPages < 9) {
             firstPage = 0;
             lastPage = totalPages;
         } else if (currentPage < 5) {
             firstPage = 0;
-            lastPage = 9;
-        } else if (totalPages - currentPage < 6) {
-            firstPage = totalPages - 9;
+            lastPage = 8;
+        } else if (totalPages - currentPage < 5) {
+            firstPage = totalPages - 8;
             lastPage = totalPages;
         } else {
             firstPage = currentPage - 4;
-            lastPage = currentPage + 5;
+            lastPage = currentPage + 4;
         }
         Metadata metadata = new Metadata(page.getNumber(), page.getTotalPages(), page.getSize(), page.getTotalElements(), firstPage, lastPage);
         return new PageResponse<>(page.getContent(), metadata);
