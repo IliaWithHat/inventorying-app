@@ -42,7 +42,7 @@
                         </th>
                         <th>
                             <label for="inventoryNumber">
-                                <input type="number" id="inventoryNumber" name="inventoryNumber"
+                                <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number" autofocus
                                        th:value="*{inventoryNumber}">
                             </label>
@@ -167,7 +167,7 @@
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
+                        <form th:action="@{'/items/' + ${item.id}}" method="get">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>

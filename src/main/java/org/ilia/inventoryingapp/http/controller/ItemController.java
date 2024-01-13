@@ -1,6 +1,5 @@
 package org.ilia.inventoryingapp.http.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
@@ -44,14 +43,12 @@ public class ItemController {
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
                               ItemFilter itemFilter,
                               Model model,
-                              @RequestParam(defaultValue = "0") Integer page,
-                              HttpServletRequest httpServletRequest) {
+                              @RequestParam(defaultValue = "0") Integer page) {
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilter, page);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("filter", itemFilter);
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
         model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
-        model.addAttribute("filterParams", httpServletRequest.getParameterMap());
         return "item/filter";
     }
 
@@ -66,7 +63,7 @@ public class ItemController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             itemService.create(userDetails, itemDto);
-            ItemDto itemDtoOnlySavedField =  itemService.saveStateOfFields(itemDto, saveField);
+            ItemDto itemDtoOnlySavedField = itemService.saveStateOfFields(itemDto, saveField);
             redirectAttributes.addFlashAttribute("itemDto", itemDtoOnlySavedField);
         }
         redirectAttributes.addFlashAttribute("saveField", saveField);
@@ -95,11 +92,18 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id, String returnTo) {
+    public String delete(@PathVariable Long id,
+                         String returnTo,
+                         ItemFilter itemFilter,
+                         Integer page,
+                         RedirectAttributes redirectAttributes) {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        if ("/filter".equals(returnTo))
-            return "redirect:/items" + returnTo;
+        if ("/filter".equals(returnTo)) {
+            redirectAttributes.addFlashAttribute("itemFilter", itemFilter);
+            redirectAttributes.addFlashAttribute("page", page);
+            return "redirect:/items/filter";
+        }
         return "redirect:/items";
     }
 }

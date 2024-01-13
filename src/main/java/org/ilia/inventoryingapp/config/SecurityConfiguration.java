@@ -19,8 +19,6 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/login", "/registration").permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-//                .requestMatchers("/items/**").authenticated()
-//                .requestMatchers("/admin/users").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
         );
         http.logout(logout -> logout

@@ -2,12 +2,9 @@ package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
 @ToString(exclude = "createdBy")
@@ -25,7 +22,7 @@ public class Item {
 
     private Long serialNumber;
 
-    private Long inventoryNumber;
+    private String inventoryNumber;
 
     private String name;
 
@@ -35,10 +32,9 @@ public class Item {
 
     private Boolean isOwnedByEmployee;
 
-    @JdbcTypeCode(value = SqlTypes.JSON)
-    private Map<String, String> additionalInfo;
+    private String additionalInfo;
 
-    private String image;
+//    private String image;
 
     private LocalDateTime createdAt;
 

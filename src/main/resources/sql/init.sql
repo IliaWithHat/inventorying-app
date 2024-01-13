@@ -2,13 +2,12 @@ CREATE TABLE item
 (
     id                   BIGSERIAL PRIMARY KEY,
     serial_number        BIGINT      NOT NULL,
-    inventory_number     BIGINT      NOT NULL,
+    inventory_number     VARCHAR(24) NOT NULL,
     name                 VARCHAR(64) NOT NULL,
     stored_in            VARCHAR(64) NOT NULL,
     quantity             INTEGER     NOT NULL,
     is_owned_by_employee BOOLEAN     NOT NULL,
-    additional_info      JSONB,
-    image                VARCHAR(128),
+    additional_info      VARCHAR(128),
     created_at           TIMESTAMP   NOT NULL,
     created_by           INTEGER     NOT NULL REFERENCES users
 );

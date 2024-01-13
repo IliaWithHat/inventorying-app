@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
-import org.ilia.inventoryingapp.validation.annotation.ValidateAdditionalInfo;
 
 import java.time.LocalDateTime;
 
@@ -20,9 +19,8 @@ public class ItemDto {
     //TODO unique serial number how in postgresql. New table VALUES(id, user_id, last_value)
     Long serialNumber;
 
-    @NotNull(message = "Enter inventory number")
-    @Min(value = 1, message = "Minimum number is 1")
-    Long inventoryNumber;
+    @NotBlank(message = "Enter inventory number")
+    String inventoryNumber;
 
     @NotBlank(message = "Enter item name")
     String name;
@@ -36,10 +34,9 @@ public class ItemDto {
 
     String isOwnedByEmployee;
 
-    @ValidateAdditionalInfo
     String additionalInfo;
 
-    String image;
+//    String image;
 
     LocalDateTime createdAt;
 

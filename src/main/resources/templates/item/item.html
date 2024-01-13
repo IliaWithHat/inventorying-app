@@ -42,7 +42,7 @@
                         </th>
                         <th>
                             <label for="inventoryNumber">
-                                <input type="number" id="inventoryNumber" name="inventoryNumber"
+                                <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number" autofocus
                                        th:value="*{inventoryNumber}">
                             </label>
@@ -88,7 +88,7 @@
                 </div>
                 <b th:if="${saved}" th:text="${saved}"></b>
                 <br/>
-                <button type="submit" class="btn btn-primary" style="margin-right: 20px;">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
             </form>
             <br/>
             <form method="get" th:action="@{'/items/' + *{id}}">

@@ -121,9 +121,9 @@ public class ItemService {
     }
 
     public ItemDto saveStateOfFields(ItemDto itemDto, SaveField saveField) {
-        Long inventoryNumber;
+        String inventoryNumber;
         if (saveField.getAutoincrement() != null)
-            inventoryNumber = itemDto.getInventoryNumber() + 1;
+            inventoryNumber = itemDto.getInventoryNumber() + " autoincrement in progress";
         else
             inventoryNumber = itemDto.getInventoryNumber();
 

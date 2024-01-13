@@ -35,7 +35,7 @@
                     <tr>
                         <th>
                             <label for="inventoryNumber">
-                                <input type="number" id="inventoryNumber" name="inventoryNumber"
+                                <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number" autofocus
                                        th:value="*{inventoryNumber}">
                             </label>
@@ -127,7 +127,17 @@
                         </form>
                     </td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id} + '?returnTo=/filter'}" th:method="delete">
+                        <form th:method="delete" th:action="@{
+                        '/items/' + ${item.id} + '?' +
+                        ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
+                        ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
+                        ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
+                        ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
+                        ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
+                        ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
+                        ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
+                        'page=' + ${items.metadata.page} + '&' +
+                        'returnTo=/filter'}">
                             <button type="submit" class="btn btn-danger btn-xs" data-title="Delete">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>

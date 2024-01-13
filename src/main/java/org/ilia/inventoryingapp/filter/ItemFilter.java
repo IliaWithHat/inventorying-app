@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ItemFilter {
 
-    private Long inventoryNumber;
+    private String inventoryNumber;
     private String name;
     private String storedIn;
     private LocalDate timeIntervalStart;
