@@ -10,6 +10,9 @@ public class MainPageController {
     @GetMapping("/")
     @ResponseBody
     public String getMainPage() {
-        return "<H3>Проходи, не задерживайся.</H3>";
+        return """
+                <H3>Проходи, не задерживайся.</H3>
+                <a href="/items">Ладно, ухожу.</a>
+                """;
     }
 }

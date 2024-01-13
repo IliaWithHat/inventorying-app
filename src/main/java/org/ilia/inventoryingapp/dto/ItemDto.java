@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
+import org.ilia.inventoryingapp.validation.annotation.ValidateAdditionalInfo;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Value
 @Builder
@@ -36,7 +36,8 @@ public class ItemDto {
 
     String isOwnedByEmployee;
 
-    Map<String, String> additionalInfo;
+    @ValidateAdditionalInfo
+    String additionalInfo;
 
     String image;
 
