@@ -2,6 +2,8 @@ package org.ilia.inventoryingapp.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ItemService {
@@ -49,7 +52,7 @@ public class ItemService {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
 
         LocalDateTime showItemCreated = null;
-        if (itemFilter.getShowItemCreated() != null) {
+        if (itemFilter.getShowItemCreated() != null && !"Ignore".equals(itemFilter.getShowItemCreated())) {
             switch (itemFilter.getShowItemCreated()) {
                 case "1 day" -> showItemCreated = LocalDateTime.now().minusDays(1);
                 case "3 day" -> showItemCreated = LocalDateTime.now().minusDays(3);
@@ -60,6 +63,8 @@ public class ItemService {
                 case "6 month" -> showItemCreated = LocalDateTime.now().minusMonths(6);
                 case "1 year" -> showItemCreated = LocalDateTime.now().minusYears(1);
             }
+            itemFilter.setTimeIntervalStart(null);
+            itemFilter.setTimeIntervalEnd(null);
         }
 
         Boolean isOwnedByEmployee = null;
@@ -122,11 +127,11 @@ public class ItemService {
 
     public ItemDto saveStateOfFields(ItemDto itemDto, SaveField saveField) {
         String inventoryNumber;
-        if (saveField.getAutoincrement() != null)
-            inventoryNumber = itemDto.getInventoryNumber() + " autoincrement in progress";
-        else
+        if (saveField.getAutoincrement() != null) {
+            inventoryNumber = incrementStringNumber(itemDto.getInventoryNumber());
+        } else {
             inventoryNumber = itemDto.getInventoryNumber();
-
+        }
         return ItemDto.builder()
                 .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryNumber)
                 .name(saveField.getSaveName() == null ? null : itemDto.getName())
@@ -135,5 +140,23 @@ public class ItemService {
                 .additionalInfo(saveField.getSaveAdditionalInfo() == null ? null : itemDto.getAdditionalInfo())
                 .isOwnedByEmployee(saveField.getSaveIsOwnedByEmployee() == null ? null : itemDto.getIsOwnedByEmployee())
                 .build();
+    }
+
+    private String incrementStringNumber(String inventoryNumber) {
+        //TODO delete method should save state of fields or create a new tab and close it.
+        try {
+            if (inventoryNumber.contains("-")) {
+                String numberAfterHyphen = inventoryNumber.substring(inventoryNumber.indexOf("-") + 1);
+                String numberBeforeHyphen = inventoryNumber.substring(0, inventoryNumber.indexOf("-") + 1);
+                long number = Long.parseLong(numberAfterHyphen) + 1;
+                return numberBeforeHyphen + "0".repeat(numberAfterHyphen.length() - String.valueOf(number).length()) + number;
+            } else {
+                long number = Long.parseLong(inventoryNumber) + 1;
+                return "0".repeat(inventoryNumber.length() - String.valueOf(number).length()) + number;
+            }
+        } catch (Exception e) {
+            log.warn("Error increment this string: {}", inventoryNumber);
+            return "";
+        }
     }
 }

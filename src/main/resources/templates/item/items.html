@@ -167,14 +167,14 @@
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" method="get">
+                        <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
                         </form>
                     </td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" th:method="delete">
+                        <form th:action="@{'/items/' + ${item.id}}" th:method="delete" target="_blank">
                             <button type="submit" class="btn btn-danger btn-xs" data-title="Delete">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>

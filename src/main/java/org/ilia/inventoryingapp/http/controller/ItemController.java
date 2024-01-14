@@ -42,11 +42,11 @@ public class ItemController {
     @GetMapping("/filter")
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
                               ItemFilter itemFilter,
-                              Model model,
-                              @RequestParam(defaultValue = "0") Integer page) {
+                              @RequestParam(defaultValue = "0") Integer page,
+                              Model model) {
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilter, page);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
-        model.addAttribute("filter", itemFilter);
+        model.addAttribute("itemFilter", itemFilter);
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
         model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
         return "item/filter";
@@ -100,8 +100,8 @@ public class ItemController {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         if ("/filter".equals(returnTo)) {
-            redirectAttributes.addFlashAttribute("itemFilter", itemFilter);
-            redirectAttributes.addFlashAttribute("page", page);
+            redirectAttributes.addFlashAttribute(itemFilter);
+            redirectAttributes.addFlashAttribute(page);
             return "redirect:/items/filter";
         }
         return "redirect:/items";

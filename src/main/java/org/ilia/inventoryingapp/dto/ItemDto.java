@@ -1,8 +1,6 @@
 package org.ilia.inventoryingapp.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
@@ -19,12 +17,15 @@ public class ItemDto {
     //TODO unique serial number how in postgresql. New table VALUES(id, user_id, last_value)
     Long serialNumber;
 
+    @Size(max = 24, message = "The maximum length of the inventory number is 24 characters")
     @NotBlank(message = "Enter inventory number")
     String inventoryNumber;
 
+    @Size(max = 64, message = "The maximum length of an item name is 64 characters")
     @NotBlank(message = "Enter item name")
     String name;
 
+    @Size(max = 64, message = "The maximum length of a stored in field is 64 characters")
     @NotBlank(message = "Enter where item is located")
     String storedIn;
 
@@ -34,6 +35,7 @@ public class ItemDto {
 
     String isOwnedByEmployee;
 
+    @Size(max = 128, message = "The maximum length of additional information is 128 characters")
     String additionalInfo;
 
 //    String image;

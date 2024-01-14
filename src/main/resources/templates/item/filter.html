@@ -15,7 +15,7 @@
 
     <div id="content">
         <div class="container-fluid">
-            <form th:action="@{/items/filter}" method="get" th:object="${filter}">
+            <form th:action="@{/items/filter}" method="get" th:object="${itemFilter}">
                 <br/>
                 <br/>
                 <table class="table table-borderless">
@@ -70,7 +70,7 @@
                                     <option th:each="option : ${optionsForShowItemCreated}"
                                             th:value="${option}"
                                             th:text="${option}"
-                                            th:selected="${filter.showItemCreated != null && filter.showItemCreated == option}">
+                                            th:selected="${itemFilter.showItemCreated != null && itemFilter.showItemCreated == option}">
                                     </option>
                                 </select>
                             </label>
@@ -81,7 +81,7 @@
                                     <option th:each="option : ${optionsForIsOwnedByEmployee}"
                                             th:value="${option}"
                                             th:text="${option}"
-                                            th:selected="${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee == option}">
+                                            th:selected="${itemFilter.isOwnedByEmployee != null && itemFilter.isOwnedByEmployee == option}">
                                     </option>
                                 </select>
                             </label>
@@ -90,6 +90,10 @@
                     </tbody>
                 </table>
                 <button type="submit" class="btn btn-primary add-button">Filter</button>
+            </form>
+            <br/>
+            <form th:action="@{/items}" method="get">
+                <button type="submit" class="btn btn-success add-button">Export to PDF</button>
             </form>
             <br/>
             <br/>
@@ -126,18 +130,18 @@
                             </button>
                         </form>
                     </td>
-                    <td class="text-center">
-                        <form th:method="delete" th:action="@{
-                        '/items/' + ${item.id} + '?' +
-                        ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
-                        ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
-                        ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
-                        ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
-                        ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
-                        ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
-                        ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
-                        'page=' + ${items.metadata.page} + '&' +
-                        'returnTo=/filter'}">
+                    <td class="text-center" th:object="${itemFilter}">
+                        <form th:method="delete" th:action="@{/items/{id}(
+                            id=${item.id},
+                            returnTo='/filter',
+                            page=${items.metadata.page},
+                            inventoryNumber=*{inventoryNumber},
+                            name=*{name},
+                            storedIn=*{storedIn},
+                            timeIntervalStart=*{timeIntervalStart},
+                            timeIntervalEnd=*{timeIntervalEnd},
+                            showItemCreated=*{showItemCreated},
+                            isOwnedByEmployee=*{isOwnedByEmployee})}">
                             <button type="submit" class="btn btn-danger btn-xs" data-title="Delete">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
@@ -146,41 +150,38 @@
                 </tr>
                 </tbody>
             </table>
-            <div th:if="${items.metadata.totalPages > 1}" class="pagination" th:object="${filter}">
-                <a th:href="@{
-                   '/items/filter?' +
-                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
-                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
-                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
-                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
-                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
-                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
-                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
-                   'page=0'}">&laquo;</a>
+            <div th:if="${items.metadata.totalPages > 1}" class="pagination" th:object="${itemFilter}">
+                <a th:href="@{/items/filter(
+                    page=0,
+                    inventoryNumber=*{inventoryNumber},
+                    name=*{name},
+                    storedIn=*{storedIn},
+                    timeIntervalStart=*{timeIntervalStart},
+                    timeIntervalEnd=*{timeIntervalEnd},
+                    showItemCreated=*{showItemCreated},
+                    isOwnedByEmployee=*{isOwnedByEmployee})}">&laquo;</a>
 
                 <a th:each="pageNumber : ${#numbers.sequence(items.metadata.firstPage, items.metadata.lastPage)}"
                    th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}" th:text="${pageNumber + 1}"
-                   th:href="@{
-                   '/items/filter?' +
-                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
-                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
-                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
-                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
-                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
-                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
-                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
-                   'page=' + ${pageNumber}}"></a>
+                   th:href="@{/items/filter(
+                       page=${pageNumber},
+                       inventoryNumber=*{inventoryNumber},
+                       name=*{name},
+                       storedIn=*{storedIn},
+                       timeIntervalStart=*{timeIntervalStart},
+                       timeIntervalEnd=*{timeIntervalEnd},
+                       showItemCreated=*{showItemCreated},
+                       isOwnedByEmployee=*{isOwnedByEmployee})}"></a>
 
-                <a th:href="@{
-                   '/items/filter?' +
-                   ${filter.inventoryNumber != null && filter.inventoryNumber != '' ? 'inventoryNumber=' + filter.inventoryNumber + '&' : ''} +
-                   ${filter.name != null && filter.name != '' ? 'name=' + filter.name + '&' : ''} +
-                   ${filter.storedIn != null && filter.storedIn != '' ? 'storedIn=' + filter.storedIn + '&' : ''} +
-                   ${filter.timeIntervalStart != null && filter.timeIntervalStart != '' ? 'timeIntervalStart=' + filter.timeIntervalStart + '&' : ''} +
-                   ${filter.timeIntervalEnd != null && filter.timeIntervalEnd != '' ? 'timeIntervalEnd=' + filter.timeIntervalEnd + '&' : ''} +
-                   ${filter.showItemCreated != null && filter.showItemCreated != '' ? 'showItemCreated=' + filter.showItemCreated + '&' : ''} +
-                   ${filter.isOwnedByEmployee != null && filter.isOwnedByEmployee != '' ? 'isOwnedByEmployee=' + filter.isOwnedByEmployee + '&' : ''} +
-                   ${items.metadata.getTotalPages() - 1}}">&raquo;</a>
+                <a th:href="@{/items/filter(
+                    page=${items.metadata.getTotalPages() - 1},
+                    inventoryNumber=*{inventoryNumber},
+                    name=*{name},
+                    storedIn=*{storedIn},
+                    timeIntervalStart=*{timeIntervalStart},
+                    timeIntervalEnd=*{timeIntervalEnd},
+                    showItemCreated=*{showItemCreated},
+                    isOwnedByEmployee=*{isOwnedByEmployee})}">&raquo;</a>
             </div>
             <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
         </div>
