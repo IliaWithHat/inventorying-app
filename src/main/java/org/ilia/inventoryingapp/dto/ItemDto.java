@@ -38,8 +38,6 @@ public class ItemDto {
     @Size(max = 128, message = "The maximum length of additional information is 128 characters")
     String additionalInfo;
 
-//    String image;
-
     LocalDateTime createdAt;
 
     Integer createdBy;

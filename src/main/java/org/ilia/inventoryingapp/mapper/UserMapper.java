@@ -28,20 +28,15 @@ public interface UserMapper {
 
     default String encodePassword(UserDto userDto) {
         PasswordEncoder passwordEncoder = new SecurityConfiguration().passwordEncoder();
+        //TODO test this
         return passwordEncoder.encode(userDto.getPassword());
     }
 
     default Integer toInteger(User user) {
-        if (user.getAdmin() != null) {
-            return user.getAdmin().getId();
-        }
-        return null;
+        return user.getAdmin() == null ? null : user.getAdmin().getId();
     }
 
     default User toAdmin(UserDto userDto) {
-        if (userDto.getAdminId() != null) {
-            return User.builder().id(userDto.getAdminId()).build();
-        }
-        return null;
+        return userDto.getAdminId() == null ? null : User.builder().id(userDto.getAdminId()).build();
     }
 }

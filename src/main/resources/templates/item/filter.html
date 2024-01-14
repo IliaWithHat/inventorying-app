@@ -109,7 +109,6 @@
                     <th>Created at</th>
                     <th>Owned by employee</th>
                     <th>Edit</th>
-                    <th>Delete</th>
                 </tr>
                 </thead>
 
@@ -127,23 +126,6 @@
                         <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                        </form>
-                    </td>
-                    <td class="text-center" th:object="${itemFilter}">
-                        <form th:method="delete" th:action="@{/items/{id}(
-                            id=${item.id},
-                            returnTo='/filter',
-                            page=${items.metadata.page},
-                            inventoryNumber=*{inventoryNumber},
-                            name=*{name},
-                            storedIn=*{storedIn},
-                            timeIntervalStart=*{timeIntervalStart},
-                            timeIntervalEnd=*{timeIntervalEnd},
-                            showItemCreated=*{showItemCreated},
-                            isOwnedByEmployee=*{isOwnedByEmployee})}">
-                            <button type="submit" class="btn btn-danger btn-xs" data-title="Delete">
-                                <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </form>
                     </td>

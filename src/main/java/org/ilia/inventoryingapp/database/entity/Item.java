@@ -34,8 +34,6 @@ public class Item {
 
     private String additionalInfo;
 
-//    private String image;
-
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

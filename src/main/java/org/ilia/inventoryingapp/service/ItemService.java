@@ -2,7 +2,6 @@ package org.ilia.inventoryingapp.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -143,16 +143,21 @@ public class ItemService {
     }
 
     private String incrementStringNumber(String inventoryNumber) {
-        //TODO delete method should save state of fields or create a new tab and close it.
         try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Integer userId = userRepository.findUserIdByEmail(email);
+            String firstInventoryNumber = itemRepository.findFirstInventoryNumberByUserId(userId);
             if (inventoryNumber.contains("-")) {
                 String numberAfterHyphen = inventoryNumber.substring(inventoryNumber.indexOf("-") + 1);
                 String numberBeforeHyphen = inventoryNumber.substring(0, inventoryNumber.indexOf("-") + 1);
                 long number = Long.parseLong(numberAfterHyphen) + 1;
                 return numberBeforeHyphen + "0".repeat(numberAfterHyphen.length() - String.valueOf(number).length()) + number;
-            } else {
+            } else if (inventoryNumber.charAt(0) == '0' || firstInventoryNumber.charAt(0) == '0') {
                 long number = Long.parseLong(inventoryNumber) + 1;
                 return "0".repeat(inventoryNumber.length() - String.valueOf(number).length()) + number;
+            } else {
+                long number = Long.parseLong(inventoryNumber) + 1;
+                return String.valueOf(number);
             }
         } catch (Exception e) {
             log.warn("Error increment this string: {}", inventoryNumber);

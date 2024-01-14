@@ -92,18 +92,11 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id,
-                         String returnTo,
-                         ItemFilter itemFilter,
-                         Integer page,
-                         RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public String delete(@PathVariable Long id) {
+        //TODO add checkbox to bach delete
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        if ("/filter".equals(returnTo)) {
-            redirectAttributes.addFlashAttribute(itemFilter);
-            redirectAttributes.addFlashAttribute(page);
-            return "redirect:/items/filter";
-        }
-        return "redirect:/items";
+        return "<script>window.close();</script>";
     }
 }

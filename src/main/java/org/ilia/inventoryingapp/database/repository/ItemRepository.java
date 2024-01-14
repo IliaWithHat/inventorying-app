@@ -13,4 +13,7 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
 
     @Query("from Item i where i.inventoryNumber = :inventoryNumber and i.createdBy.id = :user")
     Optional<Item> findItemByInventoryNumberAndCreatedBy(String inventoryNumber, Integer user);
+
+    @Query("select i.inventoryNumber from Item i where i.createdBy.id = :user order by i.serialNumber limit 1")
+    String findFirstInventoryNumberByUserId(Integer user);
 }

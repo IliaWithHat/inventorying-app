@@ -29,7 +29,7 @@ public class PageResponse<T> {
             firstPage = currentPage - 4;
             lastPage = currentPage + 4;
         }
-        Metadata metadata = new Metadata(page.getNumber(), page.getTotalPages(), page.getSize(), page.getTotalElements(), firstPage, lastPage);
+        Metadata metadata = new Metadata(currentPage, page.getTotalPages(), page.getSize(), page.getTotalElements(), firstPage, lastPage);
         return new PageResponse<>(page.getContent(), metadata);
     }
 
