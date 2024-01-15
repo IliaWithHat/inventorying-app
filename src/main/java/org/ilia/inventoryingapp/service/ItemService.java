@@ -76,8 +76,8 @@ public class ItemService {
 
         Predicate predicate = QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
-                .add(itemFilter.getInventoryNumber(), item.inventoryNumber::eq)
                 .add(itemFilter.getName(), item.name::containsIgnoreCase)
+                .add(itemFilter.getInventoryNumber(), item.inventoryNumber::eq)
                 .add(itemFilter.getStoredIn(), item.storedIn::containsIgnoreCase)
                 .add(itemFilter.getTimeIntervalStart() == null ? null : itemFilter.getTimeIntervalStart().atStartOfDay(), item.createdAt::goe)
                 .add(itemFilter.getTimeIntervalEnd() == null ? null : itemFilter.getTimeIntervalEnd().atTime(23, 59, 59), item.createdAt::loe)
@@ -132,11 +132,12 @@ public class ItemService {
             inventoryNumber = itemDto.getInventoryNumber();
         }
         return ItemDto.builder()
-                .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryNumber)
                 .name(saveField.getSaveName() == null ? null : itemDto.getName())
+                .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryNumber)
                 .storedIn(saveField.getSaveStoredIn() == null ? null : itemDto.getStoredIn())
+                .units(saveField.getSaveUnits() == null ? null : itemDto.getUnits())
                 .quantity(saveField.getSaveQuantity() == null ? null : itemDto.getQuantity())
-                .additionalInfo(saveField.getSaveAdditionalInfo() == null ? null : itemDto.getAdditionalInfo())
+                .price(saveField.getSavePrice() == null ? null : itemDto.getPrice())
                 .isOwnedByEmployee(saveField.getSaveIsOwnedByEmployee() == null ? null : itemDto.getIsOwnedByEmployee())
                 .build();
     }

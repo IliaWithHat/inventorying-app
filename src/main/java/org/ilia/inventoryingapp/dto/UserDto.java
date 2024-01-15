@@ -27,10 +27,6 @@ public class UserDto {
     @Size(max = 64, message = "The maximum length of first name is 64 characters")
     String firstName;
 
-    @NotBlank(message = "Enter middle name")
-    @Size(max = 64, message = "The maximum length of middle name is 64 characters")
-    String middleName;
-
     @NotBlank(message = "Enter last name")
     @Size(max = 64, message = "The maximum length of last name is 64 characters")
     String lastName;

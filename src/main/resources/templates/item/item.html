@@ -23,11 +23,12 @@
                     <thead>
                     <tr>
                         <th>Serial number</th>
-                        <th>Inventory number</th>
                         <th>Name</th>
+                        <th>Inventory number</th>
                         <th>Stored in</th>
+                        <th>Units</th>
                         <th>Quantity</th>
-                        <th>Additional info</th>
+                        <th>Price</th>
                         <th>Owned by employee</th>
                     </tr>
                     </thead>
@@ -41,16 +42,16 @@
                             </label>
                         </th>
                         <th>
-                            <label for="inventoryNumber">
-                                <input type="text" id="inventoryNumber" name="inventoryNumber"
-                                       placeholder="Inventory number" autofocus
-                                       th:value="*{inventoryNumber}">
+                            <label for="name">
+                                <input type="text" id="name" name="name" placeholder="Place for name"
+                                       th:value="*{name}" autofocus>
                             </label>
                         </th>
                         <th>
-                            <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Place for name"
-                                       th:value="*{name}">
+                            <label for="inventoryNumber">
+                                <input type="text" id="inventoryNumber" name="inventoryNumber"
+                                       placeholder="Inventory number"
+                                       th:value="*{inventoryNumber}">
                             </label>
                         </th>
                         <th>
@@ -60,16 +61,26 @@
                             </label>
                         </th>
                         <th>
-                            <label for="quantity">
-                                <input type="number" id="quantity" name="quantity" placeholder="Quantity"
-                                       th:value="*{quantity}">
+                            <label for="units">
+                                <select id="units" name="units" th:field="${itemDto.units}">
+                                    <option th:each="option : ${units}"
+                                            th:text="${option}"
+                                            th:value="${option}"
+                                            th:selected="${itemDto.units == option}">
+                                    </option>
+                                </select>
                             </label>
                         </th>
                         <th>
-                            <label for="additionalInfo">
-                                <input type="text" id="additionalInfo" name="additionalInfo"
-                                       placeholder="Additional info"
-                                       th:value="*{additionalInfo}">
+                            <label for="quantity">
+                                <input type="number" id="quantity" name="quantity" placeholder="Quantity"
+                                       th:value="*{quantity}" step=0.01>
+                            </label>
+                        </th>
+                        <th>
+                            <label for="price">
+                                <input type="number" id="price" name="price" placeholder="Price"
+                                       th:value="*{price}" step=0.01>
                             </label>
                         </th>
                         <th>

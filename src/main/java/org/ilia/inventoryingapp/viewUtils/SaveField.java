@@ -11,11 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SaveField {
 
+    private String saveName;
     private String saveInventoryNumber;
     private String autoincrement;
-    private String saveName;
     private String saveStoredIn;
+    private String saveUnits;
     private String saveQuantity;
-    private String saveAdditionalInfo;
+    private String savePrice;
     private String saveIsOwnedByEmployee;
 }
