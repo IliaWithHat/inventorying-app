@@ -60,7 +60,7 @@
                         </th>
                         <th>
                             <label for="units">
-                                <select id="units" name="units">
+                                <select id="units" name="units" th:field="${itemDto.units}">
                                     <option th:each="option : ${units}"
                                             th:text="${option}"
                                             th:value="${option}"

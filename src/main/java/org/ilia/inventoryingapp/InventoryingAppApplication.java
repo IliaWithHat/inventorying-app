@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class InventoryingAppApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(InventoryingAppApplication.class, args);
-		log.info("Done");
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(InventoryingAppApplication.class, args);
+        log.info("Done");
+    }
 }
