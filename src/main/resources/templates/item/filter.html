@@ -21,8 +21,8 @@
                 <table class="table table-borderless">
                     <thead>
                     <tr>
-                        <th>Inventory number</th>
                         <th>Item name</th>
+                        <th>Inventory number</th>
                         <th>Stored in</th>
                         <th>Time interval</th>
                         <th></th>
@@ -34,16 +34,16 @@
                     <tbody>
                     <tr>
                         <th>
+                            <label for="name">
+                                <input type="text" id="name" name="name" placeholder="Item name"
+                                       th:value="*{name}">
+                            </label>
+                        </th>
+                        <th>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number" autofocus
                                        th:value="*{inventoryNumber}">
-                            </label>
-                        </th>
-                        <th>
-                            <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Item name"
-                                       th:value="*{name}">
                             </label>
                         </th>
                         <th>
@@ -101,11 +101,12 @@
                 <thead>
                 <tr>
                     <th>Serial number</th>
-                    <th>Inventory number</th>
                     <th>Item name</th>
+                    <th>Inventory number</th>
                     <th>Stored in</th>
+                    <th>Units</th>
                     <th>Quantity</th>
-                    <th>Additional info</th>
+                    <th>Price</th>
                     <th>Created at</th>
                     <th>Owned by employee</th>
                     <th>Edit</th>
@@ -115,11 +116,12 @@
                 <tbody>
                 <tr th:each="item : ${items.content}" th:object="${item}">
                     <td th:text="*{serialNumber}"></td>
-                    <td th:text="*{inventoryNumber}"></td>
                     <td th:text="*{name}"></td>
+                    <td th:text="*{inventoryNumber}"></td>
                     <td th:text="*{storedIn}"></td>
+                    <td th:text="*{units}"></td>
                     <td th:text="*{quantity}"></td>
-                    <td th:text="*{additionalInfo}"></td>
+                    <td th:text="*{price}"></td>
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">

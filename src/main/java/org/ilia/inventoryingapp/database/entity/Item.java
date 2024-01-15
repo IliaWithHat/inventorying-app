@@ -22,17 +22,19 @@ public class Item {
 
     private Long serialNumber;
 
-    private String inventoryNumber;
-
     private String name;
+
+    private String inventoryNumber;
 
     private String storedIn;
 
-    private Integer quantity;
+    private String units;
+
+    private Double quantity;
+
+    private Double price;
 
     private Boolean isOwnedByEmployee;
-
-    private String additionalInfo;
 
     private LocalDateTime createdAt;
 
