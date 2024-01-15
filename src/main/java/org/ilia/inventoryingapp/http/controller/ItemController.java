@@ -50,6 +50,7 @@ public class ItemController {
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemFilter", itemFilter);
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
+        //TODO replace enum
         model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
         return "item/filter";
     }
