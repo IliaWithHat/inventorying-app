@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,15 +143,17 @@ public class ItemService {
 
     private String incrementStringNumber(String inventoryNumber) {
         try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Integer userId = userRepository.findUserIdByEmail(email);
-            String firstInventoryNumber = itemRepository.findFirstInventoryNumberByUserId(userId);
-            if (inventoryNumber.contains("-")) {
-                String numberAfterHyphen = inventoryNumber.substring(inventoryNumber.indexOf("-") + 1);
+            if (inventoryNumber.contains(".")) {
+                String numberBeforeDot = inventoryNumber.substring(0, inventoryNumber.lastIndexOf(".") + 1);
+                String numberAfterDot = inventoryNumber.substring(inventoryNumber.lastIndexOf(".") + 1);
+                long number = Long.parseLong(numberAfterDot) + 1;
+                return numberBeforeDot + "0".repeat(numberAfterDot.length() - String.valueOf(number).length()) + number;
+            } else if (inventoryNumber.contains("-")) {
                 String numberBeforeHyphen = inventoryNumber.substring(0, inventoryNumber.indexOf("-") + 1);
+                String numberAfterHyphen = inventoryNumber.substring(inventoryNumber.indexOf("-") + 1);
                 long number = Long.parseLong(numberAfterHyphen) + 1;
                 return numberBeforeHyphen + "0".repeat(numberAfterHyphen.length() - String.valueOf(number).length()) + number;
-            } else if (inventoryNumber.charAt(0) == '0' || firstInventoryNumber.charAt(0) == '0') {
+            } else if (inventoryNumber.charAt(0) == '0') {
                 long number = Long.parseLong(inventoryNumber) + 1;
                 return "0".repeat(inventoryNumber.length() - String.valueOf(number).length()) + number;
             } else {
