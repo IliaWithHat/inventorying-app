@@ -62,7 +62,6 @@ public class ItemService {
                 .map(itemMapper::toItemDto);
     }
 
-    //TODO enable second level cache in Hibernate
     //TODO результаты с самым высоким совпадением должны быть на первом месте
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
         Predicate predicate = buildPredicateByItemFilter(itemFilter, userDetails);

@@ -2,6 +2,8 @@ package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Data
 @ToString(exclude = "admin")
@@ -11,6 +13,8 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "users")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User {
 
     @Id

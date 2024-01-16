@@ -1,19 +1,30 @@
 package org.ilia.inventoryingapp.database.repository;
 
+import com.querydsl.core.types.Predicate;
+import jakarta.persistence.QueryHint;
 import org.ilia.inventoryingapp.database.entity.Item;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import static org.hibernate.annotations.QueryHints.CACHEABLE;
+
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item> {
 
+    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+    Page<Item> findAll(Predicate predicate, Pageable pageable);
+
+    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+    Optional<Item> findById(Long aLong);
+
+    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
     @Query("from Item i where i.inventoryNumber = :inventoryNumber and i.createdBy.id = :user")
     Optional<Item> findItemByInventoryNumberAndCreatedBy(String inventoryNumber, Integer user);
-
-    @Query("select i.inventoryNumber from Item i where i.createdBy.id = :user order by i.serialNumber limit 1")
-    String findFirstInventoryNumberByUserId(Integer user);
 }

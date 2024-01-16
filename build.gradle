@@ -47,6 +47,8 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     implementation 'com.itextpdf:itext7-core:8.0.2'
+    implementation 'org.hibernate.orm:hibernate-jcache:6.4.1.Final'
+    implementation 'org.ehcache:ehcache:3.10.8'
 
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
