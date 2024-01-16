@@ -2,12 +2,11 @@ package org.ilia.inventoryingapp.database.entity;
 
 public enum Units {
     PIECE("Piece"),
-    KILOGRAM("Kilogram"),
+    KILOGRAM("Kg"),
     TON("Ton"),
     LITRE("Litre"),
     METER("Meter"),
-    METER2("Meter2"),
-    PACKAGE("Package"),
+    METER2("M2"),
     PAIR("Pair"),
     ROLL("Roll");
 

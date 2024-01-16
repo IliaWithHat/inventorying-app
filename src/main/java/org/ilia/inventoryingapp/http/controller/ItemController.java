@@ -7,8 +7,11 @@ import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.ItemService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -101,5 +104,18 @@ public class ItemController {
         if (!itemService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return "<script>window.close();</script>";
+    }
+
+    @PostMapping("/export")
+    @ResponseBody
+    public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
+                                              ItemFilter itemFilter) {
+        Resource file = itemService.loadResource(itemFilter, userDetails);
+
+        if (file == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"table.pdf\"").body(file);
     }
 }

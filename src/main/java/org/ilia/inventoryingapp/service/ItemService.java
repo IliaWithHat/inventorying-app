@@ -1,7 +1,19 @@
 package org.ilia.inventoryingapp.service;
 
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.UnitValue;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
@@ -12,6 +24,8 @@ import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +34,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
@@ -48,6 +65,65 @@ public class ItemService {
     //TODO enable second level cache in Hibernate
     //TODO результаты с самым высоким совпадением должны быть на первом месте
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
+        Predicate predicate = buildPredicateByItemFilter(itemFilter, userDetails);
+
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
+        return itemRepository.findAll(predicate, pageable)
+                .map(itemMapper::toItemDto);
+    }
+
+    @SneakyThrows
+    public Resource loadResource(ItemFilter itemFilter, UserDetails userDetails) {
+        Path pathToTable = Files.createTempFile(null, ".pdf");
+        PdfWriter writer = new PdfWriter(pathToTable.toFile());
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf, PageSize.A4.rotate());
+
+        document.setMargins(20, 20, 20, 20);
+        PdfFont font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
+        Table table = new Table(new float[]{2, 7, 4, 3, 2, 2, 3, 2, 3}, true);
+        table.setWidth(UnitValue.createPercentValue(100));
+
+        int fontSize = 8;
+        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Units", "Quantity", "Price", "Created at", "Owned by employee");
+        header.forEach(s -> table.addHeaderCell(new Cell().add(new Paragraph(s).setFont(bold).setFontSize(fontSize))));
+
+        document.add(table);
+
+        Predicate predicate = buildPredicateByItemFilter(itemFilter, userDetails);
+        int totalPages = 0;
+        int pageNumber = 0;
+        do {
+            Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
+            Page<Item> items = itemRepository.findAll(predicate, pageable);
+            if (pageNumber == 0)
+                totalPages = items.getTotalPages();
+            pageNumber++;
+
+            items.forEach(i -> {
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getSerialNumber())).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getName()).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getInventoryNumber()).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getStoredIn()).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getUnits()).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getQuantity())).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getPrice())).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getCreatedAt().toLocalDate())).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getIsOwnedByEmployee() ? "Yes" : "No").setFont(font).setFontSize(fontSize)));
+            });
+
+            if (pageNumber % 5 == 0)
+                table.flush();
+        } while (pageNumber < totalPages);
+
+        table.complete();
+        document.close();
+
+        return new UrlResource(pathToTable.toUri());
+    }
+
+    private Predicate buildPredicateByItemFilter(ItemFilter itemFilter, UserDetails userDetails) {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
 
         LocalDateTime showItemCreated = null;
@@ -74,7 +150,7 @@ public class ItemService {
             }
         }
 
-        Predicate predicate = QPredicates.builder()
+        return QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
                 .add(itemFilter.getName(), item.name::containsIgnoreCase)
                 .add(itemFilter.getInventoryNumber(), item.inventoryNumber::eq)
@@ -84,9 +160,6 @@ public class ItemService {
                 .add(showItemCreated, item.createdAt::goe)
                 .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
                 .build();
-        Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
-        return itemRepository.findAll(predicate, pageable)
-                .map(itemMapper::toItemDto);
     }
 
     public Optional<ItemDto> findById(Long id) {

@@ -36,13 +36,12 @@
                         <th>
                             <label for="name">
                                 <input type="text" id="name" name="name" placeholder="Item name"
-                                       th:value="*{name}">
+                                       th:value="*{name}" autofocus>
                             </label>
                         </th>
                         <th>
                             <label for="inventoryNumber">
-                                <input type="text" id="inventoryNumber" name="inventoryNumber"
-                                       placeholder="Inventory number" autofocus
+                                <input type="text" id="inventoryNumber" name="inventoryNumber" placeholder="Inventory number"
                                        th:value="*{inventoryNumber}">
                             </label>
                         </th>
@@ -92,7 +91,14 @@
                 <button type="submit" class="btn btn-primary add-button">Filter</button>
             </form>
             <br/>
-            <form th:action="@{/items}" method="get">
+            <form th:object="${itemFilter}" th:action="@{/items/export}" method="post">
+                <input type="hidden" name="name" th:value="*{name}"/>
+                <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
+                <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
+                <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
+                <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
+                <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
+                <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
                 <button type="submit" class="btn btn-success add-button">Export to PDF</button>
             </form>
             <br/>
