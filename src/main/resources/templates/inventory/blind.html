@@ -15,14 +15,17 @@
 
     <div id="content">
         <div class="container-fluid">
-            <form th:action="@{/items/inventory/blind}" method="post">
-                <table class="table table-borderless">
+            <br/>
+            <br/>
+            <br/>
+            <form th:action="@{/inventory/blind}" method="post">
+                <table class="table table-borderless" style="display: flex;">
                     <tbody>
                     <tr>
                         <th>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
-                                       placeholder="Inventory number">
+                                       placeholder="Inventory number" autofocus>
                             </label>
                         </th>
                         <th>
@@ -44,8 +47,8 @@
                     </tbody>
                 </table>
             </form>
-            <form th:action="@{items/inventory/export}">
-                <button type="submit" class="btn btn-danger">Finish inventory</button>
+            <form th:action="@{/inventory/export}">
+                <button type="submit" class="btn btn-danger add-button">Finish inventory</button>
             </form>
         </div>
     </div>

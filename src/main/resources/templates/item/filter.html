@@ -93,40 +93,22 @@
                     <button type="submit" class="btn btn-primary add-button">Filter</button>
                 </form>
                 <br/>
-                <form th:object="${itemFilter}" th:action="@{/items/export}" method="get">
-                    <input type="hidden" name="name" th:value="*{name}"/>
-                    <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
-                    <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
-                    <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
-                    <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
-                    <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
-                    <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
+                <form th:action="@{/items/filter/clear}" th:method="delete">
+                    <button type="submit" class="btn btn-danger add-button">Clear filter</button>
+                </form>
+                <br/>
+                <form th:action="@{/items/export}" method="get">
                     <button type="submit" class="btn btn-success add-button">Export to PDF</button>
                 </form>
                 <br/>
-
                 <div style="display: flex; justify-content: space-between;">
-                    <form th:action="@{/inventory/sighted}" th:object="${itemFilter}" method="get"
+                    <form th:action="@{/inventory/sighted}" method="get"
                           style="flex: 1;  margin-right: 8px;">
-                        <input type="hidden" name="name" th:value="*{name}"/>
-                        <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
-                        <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
-                        <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
-                        <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
-                        <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
-                        <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
                         <button type="submit" class="btn btn-warning add-button">Start "sighted" inventorying</button>
                     </form>
 
-                    <form th:action="@{/inventory/blind}" th:object="${itemFilter}" method="get"
+                    <form th:action="@{/inventory/blind}" method="get"
                           style="flex: 1; margin-left: 8px;">
-                        <input type="hidden" name="name" th:value="*{name}"/>
-                        <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
-                        <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
-                        <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
-                        <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
-                        <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
-                        <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
                         <button type="submit" class="btn btn-warning add-button">Start "blind" inventorying</button>
                     </form>
                 </div>
@@ -170,38 +152,14 @@
                 </tr>
                 </tbody>
             </table>
-            <div th:if="${items.metadata.totalPages > 1}" class="pagination" th:object="${itemFilter}">
-                <a th:href="@{/items/filter(
-                    page=0,
-                    inventoryNumber=*{inventoryNumber},
-                    name=*{name},
-                    storedIn=*{storedIn},
-                    timeIntervalStart=*{timeIntervalStart},
-                    timeIntervalEnd=*{timeIntervalEnd},
-                    showItemCreated=*{showItemCreated},
-                    isOwnedByEmployee=*{isOwnedByEmployee})}">&laquo;</a>
+            <div th:if="${items.metadata.totalPages > 1}" class="pagination">
+                <a th:href="@{/items/filter(page=0)}">&laquo;</a>
 
                 <a th:each="pageNumber : ${#numbers.sequence(items.metadata.firstPage, items.metadata.lastPage)}"
                    th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}" th:text="${pageNumber + 1}"
-                   th:href="@{/items/filter(
-                       page=${pageNumber},
-                       inventoryNumber=*{inventoryNumber},
-                       name=*{name},
-                       storedIn=*{storedIn},
-                       timeIntervalStart=*{timeIntervalStart},
-                       timeIntervalEnd=*{timeIntervalEnd},
-                       showItemCreated=*{showItemCreated},
-                       isOwnedByEmployee=*{isOwnedByEmployee})}"></a>
+                   th:href="@{/items/filter(page=${pageNumber})}"></a>
 
-                <a th:href="@{/items/filter(
-                    page=${items.metadata.getTotalPages() - 1},
-                    inventoryNumber=*{inventoryNumber},
-                    name=*{name},
-                    storedIn=*{storedIn},
-                    timeIntervalStart=*{timeIntervalStart},
-                    timeIntervalEnd=*{timeIntervalEnd},
-                    showItemCreated=*{showItemCreated},
-                    isOwnedByEmployee=*{isOwnedByEmployee})}">&raquo;</a>
+                <a th:href="@{/items/filter(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
             </div>
             <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
         </div>

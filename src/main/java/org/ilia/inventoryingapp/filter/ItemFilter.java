@@ -17,4 +17,14 @@ public class ItemFilter {
     private LocalDate timeIntervalEnd;
     private String showItemCreated;
     private String isOwnedByEmployee;
+
+    public void resetFilter() {
+        this.name = null;
+        this.inventoryNumber = null;
+        this.storedIn = null;
+        this.timeIntervalStart = null;
+        this.timeIntervalEnd = null;
+        this.showItemCreated = null;
+        this.isOwnedByEmployee = null;
+    }
 }

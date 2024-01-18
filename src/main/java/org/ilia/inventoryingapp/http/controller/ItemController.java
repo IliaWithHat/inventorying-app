@@ -1,5 +1,6 @@
 package org.ilia.inventoryingapp.http.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Units;
 import org.ilia.inventoryingapp.dto.ItemDto;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 @Controller
+@SessionAttributes("itemFilter")
 public class ItemController {
 
     private final ItemService itemService;
@@ -55,6 +57,13 @@ public class ItemController {
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
         model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
         return "item/filter";
+    }
+
+    @DeleteMapping("/filter/clear")
+    public String clearFilter(HttpSession session) {
+        ItemFilter itemFilter = (ItemFilter) session.getAttribute("itemFilter");
+        itemFilter.resetFilter();
+        return "redirect:/items/filter";
     }
 
     @PostMapping
