@@ -5,43 +5,28 @@ import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.time.LocalDateTime;
-
 @Data
-@ToString(exclude = "createdBy")
+@ToString(exclude = "user")
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Item {
+public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long serialNumber;
-
-    private String name;
-
     private String inventoryNumber;
 
-    private String storedIn;
+    private Double currentQuantity;
 
-    private String units;
-
-    private Double quantity;
-
-    private Double price;
-
-    private Boolean isOwnedByEmployee;
-
-    private LocalDateTime createdAt;
+    private Double currentPrice;
 
     @ManyToOne
-    @JoinColumn(name = "created_by")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private User createdBy;
+    private User user;
 }

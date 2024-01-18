@@ -31,10 +31,10 @@ public interface ItemMapper {
     }
 
     default Integer toInteger(User user) {
-        return user != null ? user.getId() : null;
+        return user == null ? null : user.getId();
     }
 
     default User toUser(Integer id) {
-        return id != null ? User.builder().id(id).build() : null;
+        return id == null ? null : User.builder().id(id).build();
     }
 }

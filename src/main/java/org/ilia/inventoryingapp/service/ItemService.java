@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.database.querydsl.BuildPredicate;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
@@ -51,6 +52,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ItemMapper itemMapper;
+    private final BuildPredicate buildPredicate;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
@@ -64,7 +66,7 @@ public class ItemService {
 
     //TODO результаты с самым высоким совпадением должны быть на первом месте
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
-        Predicate predicate = buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
@@ -72,7 +74,7 @@ public class ItemService {
     }
 
     @SneakyThrows
-    public Resource loadResource(ItemFilter itemFilter, UserDetails userDetails) {
+    public Resource generatePdfByItemFilterAndUserDetails(ItemFilter itemFilter, UserDetails userDetails) {
         Path pathToTable = Files.createTempFile(null, ".pdf");
         PdfWriter writer = new PdfWriter(pathToTable.toFile());
         PdfDocument pdf = new PdfDocument(writer);
@@ -90,7 +92,7 @@ public class ItemService {
 
         document.add(table);
 
-        Predicate predicate = buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
         int totalPages = 0;
         int pageNumber = 0;
         do {
@@ -121,45 +123,6 @@ public class ItemService {
         return new UrlResource(pathToTable.toUri());
     }
 
-    private Predicate buildPredicateByItemFilter(ItemFilter itemFilter, UserDetails userDetails) {
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
-
-        LocalDateTime showItemCreated = null;
-        if (itemFilter.getShowItemCreated() != null && !"Ignore".equals(itemFilter.getShowItemCreated())) {
-            switch (itemFilter.getShowItemCreated()) {
-                case "1 day" -> showItemCreated = LocalDateTime.now().minusDays(1);
-                case "3 day" -> showItemCreated = LocalDateTime.now().minusDays(3);
-                case "1 week" -> showItemCreated = LocalDateTime.now().minusWeeks(1);
-                case "2 week" -> showItemCreated = LocalDateTime.now().minusWeeks(2);
-                case "1 month" -> showItemCreated = LocalDateTime.now().minusMonths(1);
-                case "3 month" -> showItemCreated = LocalDateTime.now().minusMonths(3);
-                case "6 month" -> showItemCreated = LocalDateTime.now().minusMonths(6);
-                case "1 year" -> showItemCreated = LocalDateTime.now().minusYears(1);
-            }
-            itemFilter.setTimeIntervalStart(null);
-            itemFilter.setTimeIntervalEnd(null);
-        }
-
-        Boolean isOwnedByEmployee = null;
-        if (itemFilter.getIsOwnedByEmployee() != null) {
-            switch (itemFilter.getIsOwnedByEmployee()) {
-                case "Yes" -> isOwnedByEmployee = true;
-                case "No" -> isOwnedByEmployee = false;
-            }
-        }
-
-        return QPredicates.builder()
-                .add(userId, item.createdBy.id::eq)
-                .add(itemFilter.getName(), item.name::containsIgnoreCase)
-                .add(itemFilter.getInventoryNumber(), item.inventoryNumber::eq)
-                .add(itemFilter.getStoredIn(), item.storedIn::containsIgnoreCase)
-                .add(itemFilter.getTimeIntervalStart() == null ? null : itemFilter.getTimeIntervalStart().atStartOfDay(), item.createdAt::goe)
-                .add(itemFilter.getTimeIntervalEnd() == null ? null : itemFilter.getTimeIntervalEnd().atTime(23, 59, 59), item.createdAt::loe)
-                .add(showItemCreated, item.createdAt::goe)
-                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
-                .build();
-    }
-
     public Optional<ItemDto> findById(Long id) {
         return itemRepository.findById(id)
                 .map(itemMapper::toItemDto);
@@ -169,6 +132,7 @@ public class ItemService {
     public ItemDto create(UserDetails userDetails, ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
 
+        //TODO enable auditing
         item.setCreatedAt(LocalDateTime.now());
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
         item.setCreatedBy(User.builder().id(userId).build());

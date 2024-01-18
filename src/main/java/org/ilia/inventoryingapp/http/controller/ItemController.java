@@ -1,6 +1,5 @@
 package org.ilia.inventoryingapp.http.controller;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Units;
 import org.ilia.inventoryingapp.dto.ItemDto;
@@ -20,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -60,17 +60,16 @@ public class ItemController {
     }
 
     @DeleteMapping("/filter/clear")
-    public String clearFilter(HttpSession session) {
-        ItemFilter itemFilter = (ItemFilter) session.getAttribute("itemFilter");
-        itemFilter.resetFilter();
+    public String clearFilter(SessionStatus sessionStatus) {
+        sessionStatus.setComplete();
         return "redirect:/items/filter";
     }
 
     @PostMapping
-    public String create(@Validated ItemDto itemDto,
+    public String create(@AuthenticationPrincipal UserDetails userDetails,
+                         @Validated ItemDto itemDto,
                          BindingResult bindingResult,
                          SaveField saveField,
-                         @AuthenticationPrincipal UserDetails userDetails,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("itemDto", itemDto);
@@ -119,7 +118,7 @@ public class ItemController {
     @ResponseBody
     public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
                                               ItemFilter itemFilter) {
-        Resource file = itemService.loadResource(itemFilter, userDetails);
+        Resource file = itemService.generatePdfByItemFilterAndUserDetails(itemFilter, userDetails);
 
         if (file == null)
             return ResponseEntity.notFound().build();

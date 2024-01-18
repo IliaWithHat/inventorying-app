@@ -18,26 +18,29 @@
             <br/>
             <br/>
             <br/>
-            <form th:action="@{/inventory/blind}" method="post">
+            <form th:action="@{/inventory/blind}" method="post" th:object="${inventoryDto}">
                 <table class="table table-borderless" style="display: flex;">
                     <tbody>
                     <tr>
                         <th>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
+                                       th:value="*{inventoryNumber}"
                                        placeholder="Inventory number" autofocus>
                             </label>
                         </th>
                         <th>
                             <label for="currentQuantity">
                                 <input type="number" id="currentQuantity" name="currentQuantity"
+                                       th:value="*{currentQuantity}"
                                        placeholder="Current quantity" step=0.01>
                             </label>
                         </th>
                         <th>
                             <label for="currentPrice">
-                                <input type="number" id="currentPrice" name="currentPrice" placeholder="Current price"
-                                       step=0.01>
+                                <input type="number" id="currentPrice" name="currentPrice"
+                                       th:value="*{currentPrice}"
+                                       placeholder="Current price" step=0.01>
                             </label>
                         </th>
                         <th>
@@ -47,8 +50,15 @@
                     </tbody>
                 </table>
             </form>
-            <form th:action="@{/inventory/export}">
-                <button type="submit" class="btn btn-danger add-button">Finish inventory</button>
+            <div th:if="${errors}">
+                <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+            </div>
+            <form th:action="@{/inventory/export}" method="get">
+                <button type="submit" class="btn btn-success add-button">Finish inventory</button>
+            </form>
+            <br/>
+            <form th:action="@{/inventory/cancel}" th:method="delete">
+                <button type="submit" class="btn btn-danger add-button">Cancel inventory</button>
             </form>
         </div>
     </div>
