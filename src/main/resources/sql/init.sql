@@ -26,7 +26,7 @@ CREATE TABLE item
     name                 VARCHAR(64)      NOT NULL,
     inventory_number     VARCHAR(24)      NOT NULL,
     stored_in            VARCHAR(64)      NOT NULL,
-    units                VARCHAR(12)      NOT NULL,
+    unit                 VARCHAR(12)      NOT NULL,
     quantity             DOUBLE PRECISION NOT NULL,
     price                DOUBLE PRECISION NOT NULL,
     is_owned_by_employee BOOLEAN          NOT NULL,

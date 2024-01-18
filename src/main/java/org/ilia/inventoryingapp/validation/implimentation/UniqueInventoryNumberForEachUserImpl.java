@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Item;
+import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
@@ -21,8 +22,8 @@ public class UniqueInventoryNumberForEachUserImpl implements ConstraintValidator
     @Override
     public boolean isValid(ItemDto itemDto, ConstraintValidatorContext context) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Integer userId = userRepository.findUserIdByEmail(email);
-        Optional<Item> item = itemRepository.findItemByInventoryNumberAndCreatedBy(itemDto.getInventoryNumber(), userId);
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        Optional<Item> item = itemRepository.findItemByInventoryNumberAndCreatedBy(itemDto.getInventoryNumber(), user);
         return item.isEmpty() || item.get().getId().equals(itemDto.getId());
     }
 }

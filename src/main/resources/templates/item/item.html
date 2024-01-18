@@ -26,7 +26,7 @@
                         <th>Name</th>
                         <th>Inventory number</th>
                         <th>Stored in</th>
-                        <th>Units</th>
+                        <th>Unit</th>
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Owned by employee</th>
@@ -61,12 +61,12 @@
                             </label>
                         </th>
                         <th>
-                            <label for="units">
-                                <select id="units" name="units" th:field="${itemDto.units}">
+                            <label for="unit">
+                                <select id="unit" name="unit" th:field="${itemDto.unit}">
                                     <option th:each="option : ${units}"
                                             th:text="${option}"
                                             th:value="${option}"
-                                            th:selected="${itemDto.units == option}">
+                                            th:selected="${itemDto.unit == option}">
                                     </option>
                                 </select>
                             </label>

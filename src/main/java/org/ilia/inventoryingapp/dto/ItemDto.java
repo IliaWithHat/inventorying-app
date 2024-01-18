@@ -29,7 +29,7 @@ public class ItemDto {
     @NotBlank(message = "Enter where item is located")
     String storedIn;
 
-    String units;
+    String unit;
 
     @NotNull(message = "Enter quantity")
     @Positive(message = "Enter positive item quantity")

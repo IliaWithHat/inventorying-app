@@ -47,6 +47,29 @@
                             <button type="submit" class="btn btn-primary">Send data</button>
                         </th>
                     </tr>
+                    <tr>
+                        <th>
+                            <label for="saveInventoryNumber">
+                                <input type="checkbox" id="saveInventoryNumber" name="saveInventoryNumber"
+                                       th:checked="${saveField.saveInventoryNumber != null && saveField.saveInventoryNumber.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="saveQuantity">
+                                <input type="checkbox" id="saveQuantity" name="saveQuantity"
+                                       th:checked="${saveField.saveQuantity != null && saveField.saveQuantity.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                        <th>
+                            <label for="savePrice">
+                                <input type="checkbox" id="savePrice" name="savePrice"
+                                       th:checked="${saveField.savePrice != null && saveField.savePrice.equals('on')}">
+                                Save state of field
+                            </label>
+                        </th>
+                    </tr>
                     </tbody>
                 </table>
             </form>

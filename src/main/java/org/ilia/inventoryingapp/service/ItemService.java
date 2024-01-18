@@ -86,8 +86,9 @@ public class ItemService {
         Table table = new Table(new float[]{2, 7, 4, 3, 1, 2, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
-        int fontSize = 9;
-        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Units", "Quantity", "Price", "Owned by employee");
+        int fontSize = 8;
+
+        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Quantity", "Price", "Owned by employee");
         header.forEach(s -> table.addHeaderCell(new Cell().add(new Paragraph(s).setFont(bold).setFontSize(fontSize))));
 
         document.add(table);
@@ -107,7 +108,7 @@ public class ItemService {
                 table.addCell(new Cell().add(new Paragraph(i.getName()).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(i.getInventoryNumber()).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(i.getStoredIn()).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getUnits()).setFont(font).setFontSize(fontSize)));
+                table.addCell(new Cell().add(new Paragraph(i.getUnit()).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getQuantity())).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getPrice())).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(i.getIsOwnedByEmployee() ? "Yes" : "No").setFont(font).setFontSize(fontSize)));
@@ -170,7 +171,7 @@ public class ItemService {
                 .name(saveField.getSaveName() == null ? null : itemDto.getName())
                 .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryNumber)
                 .storedIn(saveField.getSaveStoredIn() == null ? null : itemDto.getStoredIn())
-                .units(saveField.getSaveUnits() == null ? null : itemDto.getUnits())
+                .unit(saveField.getSaveUnit() == null ? null : itemDto.getUnit())
                 .quantity(saveField.getSaveQuantity() == null ? null : itemDto.getQuantity())
                 .price(saveField.getSavePrice() == null ? null : itemDto.getPrice())
                 .isOwnedByEmployee(saveField.getSaveIsOwnedByEmployee() == null ? null : itemDto.getIsOwnedByEmployee())

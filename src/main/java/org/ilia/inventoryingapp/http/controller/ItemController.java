@@ -1,7 +1,7 @@
 package org.ilia.inventoryingapp.http.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.ilia.inventoryingapp.database.entity.Units;
+import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.ItemService;
@@ -42,7 +42,7 @@ public class ItemController {
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemDto", itemDto);
         model.addAttribute("saveField", saveField);
-        model.addAttribute("units", Units.values());
+        model.addAttribute("units", Unit.values());
         return "item/items";
     }
 
@@ -87,7 +87,7 @@ public class ItemController {
     public String findById(@PathVariable Long id, Model model) {
         ItemDto itemDto = itemService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);
-        model.addAttribute("units", Units.values());
+        model.addAttribute("units", Unit.values());
         return "item/item";
     }
 

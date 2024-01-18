@@ -1,6 +1,6 @@
 package org.ilia.inventoryingapp.database.entity;
 
-public enum Units {
+public enum Unit {
     PIECE("Pc"),
     GRAM("G"),
     KILOGRAM("Kg"),
@@ -13,7 +13,7 @@ public enum Units {
 
     private final String name;
 
-    Units(String name) {
+    Unit(String name) {
         this.name = name;
     }
 

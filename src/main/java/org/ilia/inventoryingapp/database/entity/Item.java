@@ -30,7 +30,7 @@ public class Item {
 
     private String storedIn;
 
-    private String units;
+    private String unit;
 
     private Double quantity;
 

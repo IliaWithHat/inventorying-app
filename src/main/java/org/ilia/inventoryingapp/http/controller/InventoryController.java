@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.InventoryService;
+import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class InventoryController {
     @GetMapping("/blind")
     public String blindInventory(@AuthenticationPrincipal UserDetails userDetails,
                                  InventoryDto inventoryDto,
+                                 SaveField saveField,
                                  Model model) {
         Object firstTime = model.getAttribute("firstTime");
         if (firstTime == null) {
@@ -35,6 +37,7 @@ public class InventoryController {
             inventoryService.deleteInventoryByUserDetails(userDetails);
         }
         model.addAttribute("inventoryDto", inventoryDto);
+        model.addAttribute("saveField", saveField);
         return "inventory/blind";
     }
 
@@ -42,13 +45,17 @@ public class InventoryController {
     public String create(@AuthenticationPrincipal UserDetails userDetails,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
+                         SaveField saveField,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("inventoryDto", inventoryDto);
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             inventoryService.create(userDetails, inventoryDto);
+            InventoryDto inventoryDtoWithSavedFields = inventoryService.saveStateOfFields(inventoryDto, saveField);
+            redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
         }
+        redirectAttributes.addFlashAttribute(saveField);
         return "redirect:/inventory/blind";
     }
 
@@ -64,10 +71,10 @@ public class InventoryController {
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
                                                   ItemFilter itemFilter,
                                                   SessionStatus sessionStatus) {
+        Resource file = inventoryService.generateFullPdfByItemFilterAndUserDetails(itemFilter, userDetails);
+
         sessionStatus.setComplete();
         inventoryService.deleteInventoryByUserDetails(userDetails);
-
-        Resource file = inventoryService.generateFullPdfByItemFilterAndUserDetails(itemFilter, userDetails);
 
         if (file == null)
             return ResponseEntity.notFound().build();

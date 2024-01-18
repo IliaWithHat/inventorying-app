@@ -15,7 +15,7 @@ public class SaveField {
     private String saveInventoryNumber;
     private String autoincrement;
     private String saveStoredIn;
-    private String saveUnits;
+    private String saveUnit;
     private String saveQuantity;
     private String savePrice;
     private String saveIsOwnedByEmployee;
