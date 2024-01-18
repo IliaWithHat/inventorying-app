@@ -106,7 +106,7 @@ public class ItemController {
         return "<script>window.close();</script>";
     }
 
-    @PostMapping("/export")
+    @GetMapping("/export")
     @ResponseBody
     public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
                                               ItemFilter itemFilter) {

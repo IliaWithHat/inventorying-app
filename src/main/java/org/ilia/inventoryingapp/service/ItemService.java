@@ -81,11 +81,11 @@ public class ItemService {
         document.setMargins(20, 20, 20, 20);
         PdfFont font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
         PdfFont bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
-        Table table = new Table(new float[]{2, 7, 4, 3, 2, 2, 3, 2, 3}, true);
+        Table table = new Table(new float[]{2, 7, 4, 3, 1, 2, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
-        int fontSize = 8;
-        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Units", "Quantity", "Price", "Created at", "Owned by employee");
+        int fontSize = 9;
+        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Units", "Quantity", "Price", "Owned by employee");
         header.forEach(s -> table.addHeaderCell(new Cell().add(new Paragraph(s).setFont(bold).setFontSize(fontSize))));
 
         document.add(table);
@@ -108,7 +108,6 @@ public class ItemService {
                 table.addCell(new Cell().add(new Paragraph(i.getUnits()).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getQuantity())).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getPrice())).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getCreatedAt().toLocalDate())).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(i.getIsOwnedByEmployee() ? "Yes" : "No").setFont(font).setFontSize(fontSize)));
             });
 

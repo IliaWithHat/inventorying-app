@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blind inventory</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{fragment/side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <form th:action="@{/items/inventory/blind}" method="post">
+                <table class="table table-borderless">
+                    <tbody>
+                    <tr>
+                        <th>
+                            <label for="inventoryNumber">
+                                <input type="text" id="inventoryNumber" name="inventoryNumber"
+                                       placeholder="Inventory number">
+                            </label>
+                        </th>
+                        <th>
+                            <label for="currentQuantity">
+                                <input type="number" id="currentQuantity" name="currentQuantity"
+                                       placeholder="Current quantity" step=0.01>
+                            </label>
+                        </th>
+                        <th>
+                            <label for="currentPrice">
+                                <input type="number" id="currentPrice" name="currentPrice" placeholder="Current price"
+                                       step=0.01>
+                            </label>
+                        </th>
+                        <th>
+                            <button type="submit" class="btn btn-primary">Send data</button>
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <form th:action="@{items/inventory/export}">
+                <button type="submit" class="btn btn-danger">Finish inventory</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

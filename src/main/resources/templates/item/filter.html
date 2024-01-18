@@ -7,7 +7,7 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
     <link rel='stylesheet'
           href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
 </head>
 <body>
 <div id="viewport">
@@ -15,92 +15,122 @@
 
     <div id="content">
         <div class="container-fluid">
-            <form th:action="@{/items/filter}" method="get" th:object="${itemFilter}">
-                <br/>
-                <br/>
-                <table class="table table-borderless">
-                    <thead>
-                    <tr>
-                        <th>Item name</th>
-                        <th>Inventory number</th>
-                        <th>Stored in</th>
-                        <th>Time interval</th>
-                        <th></th>
-                        <th>Show items created in</th>
-                        <th>Owned by employee</th>
-                    </tr>
-                    </thead>
+            <div th:if="${items.metadata.page == 0}">
+                <form th:action="@{/items/filter}" method="get" th:object="${itemFilter}">
+                    <br/>
+                    <br/>
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th>Item name</th>
+                            <th>Inventory number</th>
+                            <th>Stored in</th>
+                            <th>Time interval</th>
+                            <th></th>
+                            <th>Show items created in</th>
+                            <th>Owned by employee</th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
-                    <tr>
-                        <th>
-                            <label for="name">
-                                <input type="text" id="name" name="name" placeholder="Item name"
-                                       th:value="*{name}" autofocus>
-                            </label>
-                        </th>
-                        <th>
-                            <label for="inventoryNumber">
-                                <input type="text" id="inventoryNumber" name="inventoryNumber" placeholder="Inventory number"
-                                       th:value="*{inventoryNumber}">
-                            </label>
-                        </th>
-                        <th>
-                            <label for="storedIn">
-                                <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
-                                       th:value="*{storedIn}">
-                            </label>
-                        </th>
-                        <th>
-                            <label for="timeIntervalStart">
-                                <input type="date" id="timeIntervalStart" name="timeIntervalStart"
-                                       th:value="*{timeIntervalStart}">
-                            </label>
-                        </th>
-                        <th>
-                            <label for="timeIntervalEnd">
-                                <input type="date" id="timeIntervalEnd" name="timeIntervalEnd"
-                                       th:value="*{timeIntervalEnd}">
-                            </label>
-                        </th>
-                        <th>
-                            <label for="showItemCreated">
-                                <select id="showItemCreated" name="showItemCreated">
-                                    <option th:each="option : ${optionsForShowItemCreated}"
-                                            th:value="${option}"
-                                            th:text="${option}"
-                                            th:selected="${itemFilter.showItemCreated != null && itemFilter.showItemCreated == option}">
-                                    </option>
-                                </select>
-                            </label>
-                        </th>
-                        <th>
-                            <label for="isOwnedByEmployee">
-                                <select id="isOwnedByEmployee" name="isOwnedByEmployee">
-                                    <option th:each="option : ${optionsForIsOwnedByEmployee}"
-                                            th:value="${option}"
-                                            th:text="${option}"
-                                            th:selected="${itemFilter.isOwnedByEmployee != null && itemFilter.isOwnedByEmployee == option}">
-                                    </option>
-                                </select>
-                            </label>
-                        </th>
-                    </tr>
-                    </tbody>
-                </table>
-                <button type="submit" class="btn btn-primary add-button">Filter</button>
-            </form>
-            <br/>
-            <form th:object="${itemFilter}" th:action="@{/items/export}" method="post">
-                <input type="hidden" name="name" th:value="*{name}"/>
-                <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
-                <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
-                <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
-                <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
-                <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
-                <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
-                <button type="submit" class="btn btn-success add-button">Export to PDF</button>
-            </form>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label for="name">
+                                    <input type="text" id="name" name="name" placeholder="Item name"
+                                           th:value="*{name}" autofocus>
+                                </label>
+                            </th>
+                            <th>
+                                <label for="inventoryNumber">
+                                    <input type="text" id="inventoryNumber" name="inventoryNumber"
+                                           placeholder="Inventory number"
+                                           th:value="*{inventoryNumber}">
+                                </label>
+                            </th>
+                            <th>
+                                <label for="storedIn">
+                                    <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
+                                           th:value="*{storedIn}">
+                                </label>
+                            </th>
+                            <th>
+                                <label for="timeIntervalStart">
+                                    <input type="date" id="timeIntervalStart" name="timeIntervalStart"
+                                           th:value="*{timeIntervalStart}">
+                                </label>
+                            </th>
+                            <th>
+                                <label for="timeIntervalEnd">
+                                    <input type="date" id="timeIntervalEnd" name="timeIntervalEnd"
+                                           th:value="*{timeIntervalEnd}">
+                                </label>
+                            </th>
+                            <th>
+                                <label for="showItemCreated">
+                                    <select id="showItemCreated" name="showItemCreated">
+                                        <option th:each="option : ${optionsForShowItemCreated}"
+                                                th:value="${option}"
+                                                th:text="${option}"
+                                                th:selected="${itemFilter.showItemCreated != null && itemFilter.showItemCreated == option}">
+                                        </option>
+                                    </select>
+                                </label>
+                            </th>
+                            <th>
+                                <label for="isOwnedByEmployee">
+                                    <select id="isOwnedByEmployee" name="isOwnedByEmployee">
+                                        <option th:each="option : ${optionsForIsOwnedByEmployee}"
+                                                th:value="${option}"
+                                                th:text="${option}"
+                                                th:selected="${itemFilter.isOwnedByEmployee != null && itemFilter.isOwnedByEmployee == option}">
+                                        </option>
+                                    </select>
+                                </label>
+                            </th>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary add-button">Filter</button>
+                </form>
+                <br/>
+                <form th:object="${itemFilter}" th:action="@{/items/export}" method="get">
+                    <input type="hidden" name="name" th:value="*{name}"/>
+                    <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
+                    <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
+                    <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
+                    <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
+                    <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
+                    <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
+                    <button type="submit" class="btn btn-success add-button">Export to PDF</button>
+                </form>
+                <br/>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <form th:action="@{/inventory/sighted}" th:object="${itemFilter}" method="get"
+                          style="flex: 1;  margin-right: 8px;">
+                        <input type="hidden" name="name" th:value="*{name}"/>
+                        <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
+                        <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
+                        <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
+                        <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
+                        <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
+                        <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
+                        <button type="submit" class="btn btn-warning add-button">Start "sighted" inventorying</button>
+                    </form>
+
+                    <form th:action="@{/inventory/blind}" th:object="${itemFilter}" method="get"
+                          style="flex: 1; margin-left: 8px;">
+                        <input type="hidden" name="name" th:value="*{name}"/>
+                        <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}"/>
+                        <input type="hidden" name="storedIn" th:value="*{storedIn}"/>
+                        <input type="hidden" name="timeIntervalStart" th:value="*{timeIntervalStart}"/>
+                        <input type="hidden" name="timeIntervalEnd" th:value="*{timeIntervalEnd}"/>
+                        <input type="hidden" name="showItemCreated" th:value="*{showItemCreated}"/>
+                        <input type="hidden" name="isOwnedByEmployee" th:value="*{isOwnedByEmployee}"/>
+                        <button type="submit" class="btn btn-warning add-button">Start "blind" inventorying</button>
+                    </form>
+                </div>
+            </div>
             <br/>
             <br/>
             <table id="datatable" class="table table-striped table-bordered">
