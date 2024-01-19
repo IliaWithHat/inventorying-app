@@ -19,7 +19,7 @@ public class InventoryDto {
     String inventoryNumber;
 
     @NotNull(message = "Enter quantity")
-    @Positive(message = "Enter positive item quantity")
+    @PositiveOrZero(message = "Minimum item quantity is 0")
     Double currentQuantity;
 
     @NotNull(message = "Enter price")

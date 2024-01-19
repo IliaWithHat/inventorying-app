@@ -11,14 +11,13 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
-import com.querydsl.core.types.Predicate;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.database.querydsl.BuildPredicate;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
@@ -28,9 +27,6 @@ import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +43,6 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
-    private final BuildPredicate buildPredicate;
     private final UserRepository userRepository;
 
     public InventoryDto create(UserDetails userDetails, InventoryDto inventoryDto) {
@@ -93,19 +88,17 @@ public class InventoryService {
 
         document.add(table);
 
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
         int totalPages = 0;
         int pageNumber = 0;
         do {
-            Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
-            Page<Object[]> itemsAndInventory = inventoryRepository.findItemsAndInventory(predicate, pageable);
+            Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(itemFilter, userDetails, pageNumber);
             if (pageNumber == 0)
                 totalPages = itemsAndInventory.getTotalPages();
             pageNumber++;
 
             itemsAndInventory.forEach(i -> {
-                Item item = (Item) i[0];
-                Inventory inventory = (Inventory) i[1];
+                Item item = i.get(0, Item.class);
+                Inventory inventory = i.get(1, Inventory.class);
 
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(item.getSerialNumber())).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(item.getName()).setFont(font).setFontSize(fontSize)));
@@ -119,7 +112,6 @@ public class InventoryService {
                 Double currentQuantity = inventory == null ? 0.0 : inventory.getCurrentQuantity();
                 Double currentPrice = inventory == null ? 0.0 : inventory.getCurrentPrice();
 
-                //TODO made this
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(quantity)).setFont(font).setFontSize(fontSize)));
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(price)).setFont(font).setFontSize(fontSize)));
 
@@ -127,12 +119,24 @@ public class InventoryService {
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(currentPrice)).setFont(font).setFontSize(fontSize)));
 
 
+                if (currentQuantity > quantity) {
+                    table.addCell(new Cell().add(new Paragraph(String.valueOf(currentQuantity - quantity)).setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph(String.valueOf(currentPrice - price)).setFont(font).setFontSize(fontSize)));
 
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(quantity)).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(price)).setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                } else if (quantity > currentQuantity) {
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
 
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(quantity)).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(price)).setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph(String.valueOf(quantity - currentQuantity)).setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph(String.valueOf(price - currentPrice)).setFont(font).setFontSize(fontSize)));
+                } else {
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                    table.addCell(new Cell().add(new Paragraph("0.0").setFont(font).setFontSize(fontSize)));
+                }
             });
 
             if (pageNumber % 5 == 0)
