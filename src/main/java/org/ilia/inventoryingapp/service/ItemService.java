@@ -7,9 +7,11 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +76,7 @@ public class ItemService {
     }
 
     @SneakyThrows
-    public Resource generatePdfByItemFilterAndUserDetails(ItemFilter itemFilter, UserDetails userDetails) {
+    public Resource generatePdf(ItemFilter itemFilter, UserDetails userDetails) {
         Path pathToTable = Files.createTempFile(null, ".pdf");
         PdfWriter writer = new PdfWriter(pathToTable.toFile());
         PdfDocument pdf = new PdfDocument(writer);
@@ -86,42 +88,65 @@ public class ItemService {
         Table table = new Table(new float[]{2, 7, 4, 3, 1, 2, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
-        int fontSize = 8;
+        float borderWidth = 1.2F;
 
         List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Quantity", "Price", "Owned by employee");
-        header.forEach(s -> table.addHeaderCell(new Cell().add(new Paragraph(s).setFont(bold).setFontSize(fontSize))));
+        header.forEach(s -> table.addHeaderCell(createCell(s, 1, bold).setBorder(new SolidBorder(borderWidth)).setTextAlignment(TextAlignment.CENTER)));
 
         document.add(table);
 
         Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
         int totalPages = 0;
         int pageNumber = 0;
+        long totalElements = 0;
+        double[] quantityAndPrice = new double[2];
         do {
             Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
             Page<Item> items = itemRepository.findAll(predicate, pageable);
-            if (pageNumber == 0)
+            if (pageNumber == 0) {
                 totalPages = items.getTotalPages();
+                totalElements = items.getTotalElements();
+            }
             pageNumber++;
 
             items.forEach(i -> {
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getSerialNumber())).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getName()).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getInventoryNumber()).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getStoredIn()).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getUnit()).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getQuantity())).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(i.getPrice())).setFont(font).setFontSize(fontSize)));
-                table.addCell(new Cell().add(new Paragraph(i.getIsOwnedByEmployee() ? "Yes" : "No").setFont(font).setFontSize(fontSize)));
+                table.addCell(createCell(String.valueOf(i.getSerialNumber()), 1, font).setBorderLeft(new SolidBorder(borderWidth)));
+                table.addCell(createCell(i.getName(), 1, font));
+                table.addCell(createCell(i.getInventoryNumber(), 1, font));
+                table.addCell(createCell(i.getStoredIn(), 1, font));
+                table.addCell(createCell(i.getUnit(), 1, font));
+                table.addCell(createCell(String.valueOf(i.getQuantity()), 1, font));
+                table.addCell(createCell(String.valueOf(i.getPrice()), 1, font));
+                table.addCell(createCell(i.getIsOwnedByEmployee() ? "Yes" : "No", 1, font).setBorderRight(new SolidBorder(borderWidth)));
+
+                quantityAndPrice[0] += i.getQuantity();
+                quantityAndPrice[1] += i.getPrice();
             });
 
             if (pageNumber % 5 == 0)
                 table.flush();
         } while (pageNumber < totalPages);
 
+        table.addCell(createCell("Total", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        for (int i = 0; i < 2; i++) {
+            table.addCell(createCell(String.valueOf(quantityAndPrice[i]), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
+        }
+
+        table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
+
+        table.addCell(createCell("Total items", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell(String.valueOf(totalElements), 2, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
+
+        table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
+
         table.complete();
         document.close();
 
         return new UrlResource(pathToTable.toUri());
+    }
+
+    private Cell createCell(String text, int colspan, PdfFont font) {
+        return new Cell(1, colspan).add(new Paragraph(text).setFont(font).setFontSize(8));
     }
 
     public Optional<ItemDto> findById(Long id) {

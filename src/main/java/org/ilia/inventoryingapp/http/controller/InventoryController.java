@@ -41,7 +41,7 @@ public class InventoryController {
         return "inventory/blind";
     }
 
-    @PostMapping("/blind")
+    @PostMapping
     public String create(@AuthenticationPrincipal UserDetails userDetails,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
@@ -71,7 +71,7 @@ public class InventoryController {
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
                                                   ItemFilter itemFilter,
                                                   SessionStatus sessionStatus) {
-        Resource file = inventoryService.generateFullPdfByItemFilterAndUserDetails(itemFilter, userDetails);
+        Resource file = inventoryService.generateFullPdf(itemFilter, userDetails);
 
         sessionStatus.setComplete();
         inventoryService.deleteInventoryByUserDetails(userDetails);
@@ -79,6 +79,7 @@ public class InventoryController {
         if (file == null)
             return ResponseEntity.notFound().build();
 
+        //TODO after sending file make redirect to /items/filter
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"table.pdf\"").body(file);
     }

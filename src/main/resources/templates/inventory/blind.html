@@ -18,7 +18,7 @@
             <br/>
             <br/>
             <br/>
-            <form th:action="@{/inventory/blind}" method="post" th:object="${inventoryDto}">
+            <form th:action="@{/inventory}" method="post" th:object="${inventoryDto}">
                 <table class="table table-borderless" style="display: flex;">
                     <tbody>
                     <tr>
@@ -42,9 +42,6 @@
                                        th:value="*{currentPrice}"
                                        placeholder="Current price" step=0.01>
                             </label>
-                        </th>
-                        <th>
-                            <button type="submit" class="btn btn-primary">Send data</button>
                         </th>
                     </tr>
                     <tr>
@@ -72,10 +69,12 @@
                     </tr>
                     </tbody>
                 </table>
+                <div th:if="${errors}">
+                    <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+                </div>
+                <button type="submit" class="btn btn-primary add-button">Send data</button>
             </form>
-            <div th:if="${errors}">
-                <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
-            </div>
+            <br/>
             <form th:action="@{/inventory/export}" method="get">
                 <button type="submit" class="btn btn-success add-button">Finish inventory</button>
             </form>

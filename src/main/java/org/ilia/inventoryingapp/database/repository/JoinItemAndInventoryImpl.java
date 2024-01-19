@@ -27,7 +27,6 @@ public class JoinItemAndInventoryImpl implements JoinItemAndInventory {
 
         Pageable pageable = PageRequest.of(pageNumber, 50);
         Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
-        System.out.println(predicate);
 
         List<Tuple> result = queryFactory
                 .select(item, inventory)
