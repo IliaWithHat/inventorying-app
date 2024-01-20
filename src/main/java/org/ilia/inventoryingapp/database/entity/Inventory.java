@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.math.BigDecimal;
+
 @Data
 @ToString(exclude = "user")
 @EqualsAndHashCode(of = "id")
@@ -22,9 +24,9 @@ public class Inventory {
 
     private String inventoryNumber;
 
-    private Double currentQuantity;
+    private BigDecimal currentQuantity;
 
-    private Double currentPrice;
+    private BigDecimal currentPrice;
 
     @ManyToOne
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

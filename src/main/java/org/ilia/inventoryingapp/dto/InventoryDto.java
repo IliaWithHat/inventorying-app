@@ -6,6 +6,8 @@ import lombok.Value;
 import org.ilia.inventoryingapp.validation.annotation.InventoryNumberExist;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumber;
 
+import java.math.BigDecimal;
+
 @Value
 @Builder
 public class InventoryDto {
@@ -20,11 +22,13 @@ public class InventoryDto {
 
     @NotNull(message = "Enter quantity")
     @PositiveOrZero(message = "Minimum item quantity is 0")
-    Double currentQuantity;
+    @Max(value = 99999, message = "Quantity must be less than 99999")
+    BigDecimal currentQuantity;
 
     @NotNull(message = "Enter price")
     @PositiveOrZero(message = "Minimum item price is 0")
-    Double currentPrice;
+    @Max(value = 99999, message = "Price must be less than 99999")
+    BigDecimal currentPrice;
 
     Integer userId;
 }

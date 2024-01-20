@@ -5,7 +5,6 @@ import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.InventoryService;
-import org.ilia.inventoryingapp.service.ItemService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;

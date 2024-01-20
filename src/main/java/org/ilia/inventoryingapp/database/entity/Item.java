@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,9 +33,9 @@ public class Item {
 
     private String unit;
 
-    private Double quantity;
+    private BigDecimal quantity;
 
-    private Double price;
+    private BigDecimal price;
 
     private Boolean isOwnedByEmployee;
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Value
@@ -33,11 +34,13 @@ public class ItemDto {
 
     @NotNull(message = "Enter quantity")
     @Positive(message = "Enter positive item quantity")
-    Double quantity;
+    @Max(value = 99999, message = "Quantity must be less than 99999")
+    BigDecimal quantity;
 
     @NotNull(message = "Enter price")
     @PositiveOrZero(message = "Minimum item price is 0")
-    Double price;
+    @Max(value = 99999, message = "Price must be less than 99999")
+    BigDecimal price;
 
     String isOwnedByEmployee;
 

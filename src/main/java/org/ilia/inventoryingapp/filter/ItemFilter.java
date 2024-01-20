@@ -1,6 +1,9 @@
 package org.ilia.inventoryingapp.filter;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -17,14 +20,4 @@ public class ItemFilter {
     private LocalDate timeIntervalEnd;
     private String showItemCreated;
     private String isOwnedByEmployee;
-
-    public void resetFilter() {
-        this.name = null;
-        this.inventoryNumber = null;
-        this.storedIn = null;
-        this.timeIntervalStart = null;
-        this.timeIntervalEnd = null;
-        this.showItemCreated = null;
-        this.isOwnedByEmployee = null;
-    }
 }

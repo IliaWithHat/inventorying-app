@@ -37,9 +37,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,7 +101,10 @@ public class ItemService {
         int totalPages = 0;
         int pageNumber = 0;
         long totalElements = 0;
-        double[] quantityAndPrice = new double[2];
+        List<BigDecimal> quantityAndPrice = new ArrayList<>(2);
+        for (int i = 0; i < 2; i++) {
+            quantityAndPrice.add(new BigDecimal(0));
+        }
         do {
             Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
             Page<Item> items = itemRepository.findAll(predicate, pageable);
@@ -110,17 +115,17 @@ public class ItemService {
             pageNumber++;
 
             items.forEach(i -> {
-                table.addCell(createCell(String.valueOf(i.getSerialNumber()), 1, font).setBorderLeft(new SolidBorder(borderWidth)));
+                table.addCell(createCell(i.getSerialNumber().toString(), 1, font).setBorderLeft(new SolidBorder(borderWidth)));
                 table.addCell(createCell(i.getName(), 1, font));
                 table.addCell(createCell(i.getInventoryNumber(), 1, font));
                 table.addCell(createCell(i.getStoredIn(), 1, font));
                 table.addCell(createCell(i.getUnit(), 1, font));
-                table.addCell(createCell(String.valueOf(i.getQuantity()), 1, font));
-                table.addCell(createCell(String.valueOf(i.getPrice()), 1, font));
+                table.addCell(createCell(i.getQuantity().toString(), 1, font));
+                table.addCell(createCell(i.getPrice().toString(), 1, font));
                 table.addCell(createCell(i.getIsOwnedByEmployee() ? "Yes" : "No", 1, font).setBorderRight(new SolidBorder(borderWidth)));
 
-                quantityAndPrice[0] += i.getQuantity();
-                quantityAndPrice[1] += i.getPrice();
+                quantityAndPrice.set(0, quantityAndPrice.get(0).add(i.getQuantity()));
+                quantityAndPrice.set(1, quantityAndPrice.get(1).add(i.getPrice()));
             });
 
             if (pageNumber % 5 == 0)
@@ -129,7 +134,7 @@ public class ItemService {
 
         table.addCell(createCell("Total", 5, bold).setBorder(new SolidBorder(borderWidth)));
         for (int i = 0; i < 2; i++) {
-            table.addCell(createCell(String.valueOf(quantityAndPrice[i]), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
+            table.addCell(createCell(quantityAndPrice.get(i).toString(), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
         }
 
         table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
