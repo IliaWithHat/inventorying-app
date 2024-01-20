@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventorying app</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{fragment/side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <br/>
+            <br/>
+            <table th:if="${items.content.size() > 0}" id="datatable" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Serial number</th>
+                    <th>Item name</th>
+                    <th>Inventory number</th>
+                    <th>Stored in</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Current quantity</th>
+                    <th>Current price</th>
+                    <th>Send</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="item : ${items.content}" th:object="${item}">
+                    <form th:action="@{/inventory(returnTo=sighted)}" method="post">
+                        <td th:text="*{serialNumber}"></td>
+                        <td th:text="*{name}"></td>
+                        <td th:text="*{inventoryNumber}"></td>
+                        <td th:text="*{storedIn}"></td>
+                        <td th:text="*{getUnit}"></td>
+                        <td th:text="*{quantity}"></td>
+                        <td th:text="*{price}"></td>
+                        <th>
+                            <label for="inventoryNumber">
+                                <input type="hidden" id="inventoryNumber" name="inventoryNumber"
+                                       th:value="*{inventoryNumber}">
+                            </label>
+                            <label for="currentQuantity">
+                                <input type="number" id="currentQuantity" name="currentQuantity"
+                                       th:value="*{quantity}"
+                                       placeholder="Current quantity" step=0.01>
+                            </label>
+                        </th>
+                        <th>
+                            <label for="currentPrice">
+                                <input type="number" id="currentPrice" name="currentPrice"
+                                       th:value="*{price}"
+                                       placeholder="Current price" step=0.01>
+                            </label>
+                        </th>
+                        <td class="text-center">
+                            <button type="submit" class="btn btn-success btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${items.metadata.page == items.metadata.totalPages - 1 or items.metadata.totalPages == 0}">
+                <form th:action="@{/inventory/export}" method="get">
+                    <button type="submit" class="btn btn-success add-button">Finish inventory</button>
+                </form>
+                <br/>
+                <form th:action="@{/inventory/cancel}" th:method="delete">
+                    <button type="submit" class="btn btn-danger add-button">Cancel inventory</button>
+                </form>
+            </div>
+            <div th:if="${items.metadata.totalPages > 1}" class="pagination">
+                <a th:href="@{/inventory/sighted(page=0)}">&laquo;</a>
+
+                <a th:each="pageNumber : ${#numbers.sequence(items.metadata.firstPage, items.metadata.lastPage)}"
+                   th:classappend="${pageNumber == items.metadata.page ? 'active' : ''}" th:text="${pageNumber + 1}"
+                   th:href="@{/inventory/sighted(page=${pageNumber})}"></a>
+
+                <a th:href="@{/inventory/sighted(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
+            </div>
+            <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

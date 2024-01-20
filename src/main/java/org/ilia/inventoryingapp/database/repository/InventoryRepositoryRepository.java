@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface InventoryRepository extends JpaRepository<Inventory, Long>, QuerydslPredicateExecutor<Inventory>, JoinItemAndInventory {
+public interface InventoryRepositoryRepository extends JpaRepository<Inventory, Long>, QuerydslPredicateExecutor<Inventory>, ItemAndInventoryRepository {
 
     @Modifying
     @Query("delete from Inventory i where i.user.id = :userId")

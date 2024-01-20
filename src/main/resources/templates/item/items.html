@@ -101,17 +101,22 @@
                             </label>
                         </th>
                         <th>
-                            <label for="saveInventoryNumber">
-                                <input class="form-check-input" type="checkbox" id="saveInventoryNumber"
-                                       name="saveInventoryNumber"
-                                       th:checked="${saveField.saveInventoryNumber != null && saveField.saveInventoryNumber.equals('on')}">
-                                Save state of field
-                            </label>
-                            <label for="autoincrement">
-                                <input class="form-check-input" type="checkbox" id="autoincrement" name="autoincrement"
-                                       th:checked="${saveField.autoincrement != null && saveField.autoincrement.equals('on')}">
-                                Enable autoincrement.
-                            </label>
+                            <div>
+                                <label for="saveInventoryNumber">
+                                    <input class="form-check-input" type="checkbox" id="saveInventoryNumber"
+                                           name="saveInventoryNumber"
+                                           th:checked="${saveField.saveInventoryNumber != null && saveField.saveInventoryNumber.equals('on')}">
+                                    Save state of field
+                                </label>
+                            </div>
+                            <div>
+                                <label for="autoincrement">
+                                    <input class="form-check-input" type="checkbox" id="autoincrement"
+                                           name="autoincrement"
+                                           th:checked="${saveField.autoincrement != null && saveField.autoincrement.equals('on')}">
+                                    Enable autoincrement.
+                                </label>
+                            </div>
                         </th>
                         <th>
                             <label for="saveStoredIn">

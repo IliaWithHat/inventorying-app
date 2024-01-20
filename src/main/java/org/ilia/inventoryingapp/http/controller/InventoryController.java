@@ -2,10 +2,14 @@ package org.ilia.inventoryingapp.http.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.InventoryDto;
+import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.InventoryService;
+import org.ilia.inventoryingapp.service.ItemService;
+import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,18 +35,34 @@ public class InventoryController {
                                  InventoryDto inventoryDto,
                                  SaveField saveField,
                                  Model model) {
-        Object firstTime = model.getAttribute("firstTime");
-        if (firstTime == null) {
-            model.addAttribute("firstTime", new Object());
-            inventoryService.deleteInventoryByUserDetails(userDetails);
-        }
+        clearTableInventoryBeforeStartInventorying(userDetails, model);
         model.addAttribute("inventoryDto", inventoryDto);
         model.addAttribute("saveField", saveField);
         return "inventory/blind";
     }
 
+    @GetMapping("/sighted")
+    public String sightedInventory(@AuthenticationPrincipal UserDetails userDetails,
+                                   Model model,
+                                   ItemFilter itemFilter,
+                                   @RequestParam(defaultValue = "0") Integer page) {
+        clearTableInventoryBeforeStartInventorying(userDetails, model);
+        Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilter, page);
+        model.addAttribute("items", PageResponse.of(items));
+        return "inventory/sighted";
+    }
+
+    private void clearTableInventoryBeforeStartInventorying(UserDetails userDetails, Model model) {
+        Object firstTime = model.getAttribute("firstTime");
+        if (firstTime == null) {
+            model.addAttribute("firstTime", new Object());
+            inventoryService.deleteInventoryByUserDetails(userDetails);
+        }
+    }
+
     @PostMapping
     public String create(@AuthenticationPrincipal UserDetails userDetails,
+                         String returnTo,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
                          SaveField saveField,
@@ -56,7 +76,7 @@ public class InventoryController {
             redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
         }
         redirectAttributes.addFlashAttribute(saveField);
-        return "redirect:/inventory/blind";
+        return "redirect:/inventory/" + returnTo;
     }
 
     @DeleteMapping("/cancel")

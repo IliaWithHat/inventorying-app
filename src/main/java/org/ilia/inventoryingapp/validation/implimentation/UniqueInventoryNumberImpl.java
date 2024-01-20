@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.database.repository.InventoryRepository;
+import org.ilia.inventoryingapp.database.repository.InventoryRepositoryRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumber;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UniqueInventoryNumberImpl implements ConstraintValidator<UniqueInventoryNumber, String> {
 
-    private final InventoryRepository inventoryRepository;
+    private final InventoryRepositoryRepository inventoryRepository;
     private final UserRepository userRepository;
 
     @Override

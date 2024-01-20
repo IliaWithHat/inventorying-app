@@ -13,9 +13,9 @@ CREATE TABLE users
 CREATE TABLE inventory
 (
     id               BIGSERIAL PRIMARY KEY,
-    inventory_number VARCHAR(24)      NOT NULL,
-    current_quantity DOUBLE PRECISION NOT NULL,
-    current_price    DOUBLE PRECISION NOT NULL,
+    inventory_number VARCHAR(24)   NOT NULL,
+    current_quantity NUMERIC(8, 3) NOT NULL,
+    current_price    NUMERIC(8, 3) NOT NULL,
     user_id          INTEGER REFERENCES users
 );
 

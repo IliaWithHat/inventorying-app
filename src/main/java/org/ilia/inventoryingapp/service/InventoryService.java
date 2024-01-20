@@ -20,11 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.database.repository.InventoryRepository;
+import org.ilia.inventoryingapp.database.repository.InventoryRepositoryRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
+import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.InventoryMapper;
+import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -43,10 +45,16 @@ import java.util.List;
 @Transactional
 public class InventoryService {
 
-    private final InventoryRepository inventoryRepository;
+    private final InventoryRepositoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
+    private final ItemMapper itemMapper;
     private final UserRepository userRepository;
     private final int fontSize = 8;
+
+    public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
+        return inventoryRepository.findItemsThatWereNotInventoried(itemFilter, userDetails, page)
+                .map(itemMapper::toItemDto);
+    }
 
     public InventoryDto create(UserDetails userDetails, InventoryDto inventoryDto) {
         Inventory inventory = inventoryMapper.toInventory(inventoryDto);
