@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.database.repository.InventoryRepositoryRepository;
+import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
@@ -47,7 +47,7 @@ import java.util.List;
 @Transactional
 public class InventoryService {
 
-    private final InventoryRepositoryRepository inventoryRepository;
+    private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
     private final ItemMapper itemMapper;
     private final UserRepository userRepository;
