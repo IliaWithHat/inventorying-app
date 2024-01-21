@@ -134,7 +134,7 @@ public class InventoryService {
                 BigDecimal price = item.getPrice();
 
                 BigDecimal currentQuantity = inventory == null ? new BigDecimal("0.000") : inventory.getCurrentQuantity();
-                BigDecimal currentPrice = inventory == null ? new BigDecimal("0.000") : inventory.getCurrentPrice();
+                BigDecimal currentPrice = inventory == null ? new BigDecimal("0.00") : inventory.getCurrentPrice();
 
                 table.addCell(createCell(quantity.toString(), 1, font));
                 table.addCell(createCell(price.toString(), 1, font));
@@ -159,10 +159,10 @@ public class InventoryService {
                     quantityAndPrice.set(5, quantityAndPrice.get(5).add(surplusPrice));
 
                     table.addCell(createCell("0.000", 1, font));
-                    table.addCell(createCell("0.000", 1, font).setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell("0.00", 1, font).setBorderRight(new SolidBorder(borderWidth)));
                 } else if (quantity.compareTo(currentQuantity) > 0) {
                     table.addCell(createCell("0.000", 1, font));
-                    table.addCell(createCell("0.000", 1, font));
+                    table.addCell(createCell("0.00", 1, font));
 
                     BigDecimal shortageQuantity = quantity.subtract(currentQuantity);
                     BigDecimal shortagePrice = price.subtract(currentPrice);
@@ -174,9 +174,9 @@ public class InventoryService {
                     quantityAndPrice.set(7, quantityAndPrice.get(7).add(shortagePrice));
                 } else {
                     table.addCell(createCell("0.000", 1, font));
+                    table.addCell(createCell("0.00", 1, font));
                     table.addCell(createCell("0.000", 1, font));
-                    table.addCell(createCell("0.000", 1, font));
-                    table.addCell(createCell("0.000", 1, font).setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell("0.00", 1, font).setBorderRight(new SolidBorder(borderWidth)));
                 }
             });
 

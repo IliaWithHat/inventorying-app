@@ -34,12 +34,12 @@ public class ItemDto {
 
     @NotNull(message = "Enter quantity")
     @Positive(message = "Enter positive item quantity")
-    @Max(value = 99999, message = "Quantity must be less than 99999")
+    @Max(value = 9_999_999, message = "Quantity must be less than 9_999_999")
     BigDecimal quantity;
 
     @NotNull(message = "Enter price")
     @PositiveOrZero(message = "Minimum item price is 0")
-    @Max(value = 99999, message = "Price must be less than 99999")
+    @Max(value = 9_999_999_999L, message = "Price must be less than 9_999_999_999")
     BigDecimal price;
 
     String isOwnedByEmployee;

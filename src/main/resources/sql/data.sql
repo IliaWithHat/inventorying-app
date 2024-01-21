@@ -13,13 +13,13 @@ VALUES ('1', 'Chair', '00000001', 'Room 1', 'Pc', 1, 50, false, '2024-01-19', 1)
        ('8', 'Table', '00000008', 'Room 1', 'Pc', 1, 75, false, '2024-01-19', 1),
        ('9', 'Closet', '00000009', 'Room 1', 'Pc', 1, 120, false, '2024-01-19', 1),
        ('10', 'Wire', '00000010', 'Warehouse', 'M', 5.1, 25, false, '2024-01-19', 1),
-       ('11', 'Cable', '00000011', 'Warehouse', 'M', 8.5, 70, false, '2024-01-19', 1),
+       ('11', 'Cable', '00000011', 'Warehouse', 'M', 8.55, 70.12, false, '2024-01-19', 1),
        ('12', 'Net', '00000012', 'Warehouse', 'M2', 0.4, 0.0, false, '2024-01-19', 1),
        ('13', 'Glasses', '00000013', 'Warehouse', 'Pc', 1, 15, false, '2024-01-19', 1),
        ('14', 'Engine', '00000014', 'Warehouse', 'Pc', 1, 2000, false, '2024-01-19', 1),
        ('15', 'Thermometer', '00000015', 'Warehouse', 'Pc', 10, 133, false, '2024-01-19', 1),
-       ('16', 'Boots', '00000016', 'Warehouse', 'Pair', 5, 120, false, '2024-01-19', 1),
+       ('16', 'Boots', '00000016', 'Warehouse', 'Pair', 5, 123.33, false, '2024-01-19', 1),
        ('17', 'Wallpaper white', '00000017', 'Warehouse', 'Roll', 34, 1333, false, '2024-01-19', 1),
        ('18', 'Wallpaper black', '00000018', 'Warehouse', 'Roll', 22, 9288, false, '2024-01-19', 1),
        ('19', 'Wallpaper blue', '00000019', 'Warehouse', 'Roll', 76, 100, false, '2024-01-19', 1),
-       ('20', 'Sand', '00000020', 'Warehouse', 'T', 3.32, 9382, false, '2024-01-19', 1);
+       ('20', 'Sand', '00000020', 'Warehouse', 'T', 3.322, 9382.05, false, '2024-01-19', 1);
