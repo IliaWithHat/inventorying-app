@@ -26,8 +26,6 @@ public class Inventory {
 
     private BigDecimal currentQuantity;
 
-    private BigDecimal currentPrice;
-
     @ManyToOne
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private User user;

@@ -25,10 +25,10 @@
                     <th>Inventory number</th>
                     <th>Stored in</th>
                     <th>Unit</th>
+                    <th>Price per unit</th>
                     <th>Quantity</th>
-                    <th>Price</th>
+                    <th>Sum</th>
                     <th>Current quantity</th>
-                    <th>Current price</th>
                     <th>Send</th>
                 </tr>
                 </thead>
@@ -41,8 +41,9 @@
                         <td th:text="*{inventoryNumber}"></td>
                         <td th:text="*{storedIn}"></td>
                         <td th:text="*{getUnit}"></td>
+                        <td th:text="*{getPricePerUnit}"></td>
                         <td th:text="*{quantity}"></td>
-                        <td th:text="*{price}"></td>
+                        <td th:text="*{sum}"></td>
                         <th>
                             <label for="inventoryNumber">
                                 <input type="hidden" id="inventoryNumber" name="inventoryNumber"
@@ -52,13 +53,6 @@
                                 <input type="number" id="currentQuantity" name="currentQuantity"
                                        th:value="*{quantity}" autofocus
                                        placeholder="Current quantity" step=0.001>
-                            </label>
-                        </th>
-                        <th>
-                            <label for="currentPrice">
-                                <input type="number" id="currentPrice" name="currentPrice"
-                                       th:value="*{price}"
-                                       placeholder="Current price" step=0.01>
                             </label>
                         </th>
                         <td class="text-center">

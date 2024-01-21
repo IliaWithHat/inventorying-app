@@ -35,7 +35,7 @@ public class Item {
 
     private BigDecimal quantity;
 
-    private BigDecimal price;
+    private BigDecimal pricePerUnit;
 
     private Boolean isOwnedByEmployee;
 

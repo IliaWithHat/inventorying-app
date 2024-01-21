@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -87,12 +88,12 @@ public class ItemService {
         document.setMargins(20, 20, 20, 20);
         PdfFont font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
         PdfFont bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
-        Table table = new Table(new float[]{2, 7, 4, 3, 1, 2, 3, 3}, true);
+        Table table = new Table(new float[]{2, 7, 3, 3, 1, 3, 3, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
         float borderWidth = 1.2F;
 
-        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Quantity", "Price", "Owned by employee");
+        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit", "Quantity", "Sum", "Owned by employee");
         header.forEach(s -> table.addHeaderCell(createCell(s, 1, bold).setBorder(new SolidBorder(borderWidth)).setTextAlignment(TextAlignment.CENTER)));
 
         document.add(table);
@@ -101,9 +102,9 @@ public class ItemService {
         int totalPages = 0;
         int pageNumber = 0;
         long totalElements = 0;
-        List<BigDecimal> quantityAndPrice = new ArrayList<>(2);
+        List<BigDecimal> quantityAndSum = new ArrayList<>(2);
         for (int i = 0; i < 2; i++) {
-            quantityAndPrice.add(new BigDecimal(0));
+            quantityAndSum.add(new BigDecimal(0));
         }
         do {
             Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
@@ -115,31 +116,34 @@ public class ItemService {
             pageNumber++;
 
             items.forEach(i -> {
+                BigDecimal sum = i.getQuantity().multiply(i.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
+
                 table.addCell(createCell(i.getSerialNumber().toString(), 1, font).setBorderLeft(new SolidBorder(borderWidth)));
                 table.addCell(createCell(i.getName(), 1, font));
                 table.addCell(createCell(i.getInventoryNumber(), 1, font));
                 table.addCell(createCell(i.getStoredIn(), 1, font));
                 table.addCell(createCell(i.getUnit(), 1, font));
+                table.addCell(createCell(i.getPricePerUnit().toString(), 1, font));
                 table.addCell(createCell(i.getQuantity().toString(), 1, font));
-                table.addCell(createCell(i.getPrice().toString(), 1, font));
+                table.addCell(createCell(sum.toString(), 1, font));
                 table.addCell(createCell(i.getIsOwnedByEmployee() ? "Yes" : "No", 1, font).setBorderRight(new SolidBorder(borderWidth)));
 
-                quantityAndPrice.set(0, quantityAndPrice.get(0).add(i.getQuantity()));
-                quantityAndPrice.set(1, quantityAndPrice.get(1).add(i.getPrice()));
+                quantityAndSum.set(0, quantityAndSum.get(0).add(i.getQuantity()));
+                quantityAndSum.set(1, quantityAndSum.get(1).add(sum));
             });
 
             if (pageNumber % 5 == 0)
                 table.flush();
         } while (pageNumber < totalPages);
 
-        table.addCell(createCell("Total", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("Total", 6, bold).setBorder(new SolidBorder(borderWidth)));
         for (int i = 0; i < 2; i++) {
-            table.addCell(createCell(quantityAndPrice.get(i).toString(), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
+            table.addCell(createCell(quantityAndSum.get(i).toString(), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
         }
 
         table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
 
-        table.addCell(createCell("Total items", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("Total items", 6, bold).setBorder(new SolidBorder(borderWidth)));
         table.addCell(createCell(String.valueOf(totalElements), 2, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
 
         table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
@@ -203,7 +207,7 @@ public class ItemService {
                 .storedIn(saveField.getSaveStoredIn() == null ? null : itemDto.getStoredIn())
                 .unit(saveField.getSaveUnit() == null ? null : itemDto.getUnit())
                 .quantity(saveField.getSaveQuantity() == null ? null : itemDto.getQuantity())
-                .price(saveField.getSavePrice() == null ? null : itemDto.getPrice())
+                .pricePerUnit(saveField.getSavePrice() == null ? null : itemDto.getPricePerUnit())
                 .isOwnedByEmployee(saveField.getSaveIsOwnedByEmployee() == null ? null : itemDto.getIsOwnedByEmployee())
                 .build();
     }

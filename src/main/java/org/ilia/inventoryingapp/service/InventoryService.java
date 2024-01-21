@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -83,12 +84,12 @@ public class InventoryService {
         document.setMargins(20, 20, 20, 20);
         PdfFont font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
         PdfFont bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
-        Table table = new Table(new float[]{2, 7, 4, 3, 1, 2, 3, 2, 3, 2, 3, 2, 3}, true);
+        Table table = new Table(new float[]{2, 7, 4, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
         float borderWidth = 1.2F;
 
-        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit");
+        List<String> header = List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit");
         header.forEach(s -> table.addHeaderCell(new Cell(2, 1).add(new Paragraph(s)
                         .setFont(bold)
                         .setFontSize(fontSize)
@@ -98,9 +99,9 @@ public class InventoryService {
         List<String> header1 = List.of("According to inventory", "Actual availability", "Surplus", "Shortage");
         header1.forEach(s -> table.addHeaderCell(createCell(s, 2, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth))));
 
-        List<String> qAndP = List.of("Quantity", "Price");
+        List<String> qAndS = List.of("Quantity", "Sum");
         for (int i = 0; i < 8; i++) {
-            table.addHeaderCell(createCell(qAndP.get(i % 2 == 0 ? 0 : 1), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
+            table.addHeaderCell(createCell(qAndS.get(i % 2 == 0 ? 0 : 1), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
         }
 
         document.add(table);
@@ -110,7 +111,7 @@ public class InventoryService {
         long totalElements = 0;
         List<BigDecimal> quantityAndPrice = new ArrayList<>(8);
         for (int i = 0; i < 8; i++) {
-            quantityAndPrice.add(new BigDecimal(0));
+            quantityAndPrice.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
         }
         do {
             Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(itemFilter, userDetails, pageNumber);
@@ -129,34 +130,35 @@ public class InventoryService {
                 table.addCell(createCell(item.getInventoryNumber(), 1, font));
                 table.addCell(createCell(item.getStoredIn(), 1, font));
                 table.addCell(createCell(item.getUnit(), 1, font));
+                table.addCell(createCell(item.getPricePerUnit().toString(), 1, font));
 
                 BigDecimal quantity = item.getQuantity();
-                BigDecimal price = item.getPrice();
-
                 BigDecimal currentQuantity = inventory == null ? new BigDecimal("0.000") : inventory.getCurrentQuantity();
-                BigDecimal currentPrice = inventory == null ? new BigDecimal("0.00") : inventory.getCurrentPrice();
+
+                BigDecimal sum = quantity.multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal currentSum = currentQuantity.multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
 
                 table.addCell(createCell(quantity.toString(), 1, font));
-                table.addCell(createCell(price.toString(), 1, font));
+                table.addCell(createCell(sum.toString(), 1, font));
 
                 table.addCell(createCell(currentQuantity.toString(), 1, font));
-                table.addCell(createCell(currentPrice.toString(), 1, font));
+                table.addCell(createCell(currentSum.toString(), 1, font));
 
                 quantityAndPrice.set(0, quantityAndPrice.get(0).add(quantity));
-                quantityAndPrice.set(1, quantityAndPrice.get(1).add(price));
+                quantityAndPrice.set(1, quantityAndPrice.get(1).add(sum));
 
                 quantityAndPrice.set(2, quantityAndPrice.get(2).add(currentQuantity));
-                quantityAndPrice.set(3, quantityAndPrice.get(3).add(currentPrice));
+                quantityAndPrice.set(3, quantityAndPrice.get(3).add(currentSum));
 
                 if (currentQuantity.compareTo(quantity) > 0) {
                     BigDecimal surplusQuantity = currentQuantity.subtract(quantity);
-                    BigDecimal surplusPrice = currentPrice.subtract(price);
+                    BigDecimal surplusSum = currentSum.subtract(sum);
 
                     table.addCell(createCell(surplusQuantity.toString(), 1, font));
-                    table.addCell(createCell(surplusPrice.toString(), 1, font));
+                    table.addCell(createCell(surplusSum.toString(), 1, font));
 
                     quantityAndPrice.set(4, quantityAndPrice.get(4).add(surplusQuantity));
-                    quantityAndPrice.set(5, quantityAndPrice.get(5).add(surplusPrice));
+                    quantityAndPrice.set(5, quantityAndPrice.get(5).add(surplusSum));
 
                     table.addCell(createCell("0.000", 1, font));
                     table.addCell(createCell("0.00", 1, font).setBorderRight(new SolidBorder(borderWidth)));
@@ -165,13 +167,13 @@ public class InventoryService {
                     table.addCell(createCell("0.00", 1, font));
 
                     BigDecimal shortageQuantity = quantity.subtract(currentQuantity);
-                    BigDecimal shortagePrice = price.subtract(currentPrice);
+                    BigDecimal shortageSum = sum.subtract(currentSum);
 
                     table.addCell(createCell(shortageQuantity.toString(), 1, font));
-                    table.addCell(createCell(shortagePrice.toString(), 1, font).setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell(shortageSum.toString(), 1, font).setBorderRight(new SolidBorder(borderWidth)));
 
                     quantityAndPrice.set(6, quantityAndPrice.get(6).add(shortageQuantity));
-                    quantityAndPrice.set(7, quantityAndPrice.get(7).add(shortagePrice));
+                    quantityAndPrice.set(7, quantityAndPrice.get(7).add(shortageSum));
                 } else {
                     table.addCell(createCell("0.000", 1, font));
                     table.addCell(createCell("0.00", 1, font));
@@ -184,12 +186,12 @@ public class InventoryService {
                 table.flush();
         } while (pageNumber < totalPages);
 
-        table.addCell(createCell("Total", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("Total", 6, bold).setBorder(new SolidBorder(borderWidth)));
         for (int i = 0; i < 8; i++) {
             table.addCell(createCell(quantityAndPrice.get(i).toString(), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
         }
 
-        table.addCell(createCell("Total items", 5, bold).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("Total items", 6, bold).setBorder(new SolidBorder(borderWidth)));
         table.addCell(createCell(String.valueOf(totalElements), 8, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
 
         table.complete();
@@ -206,7 +208,6 @@ public class InventoryService {
         return InventoryDto.builder()
                 .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryDto.getInventoryNumber())
                 .currentQuantity(saveField.getSaveQuantity() == null ? null : inventoryDto.getCurrentQuantity())
-                .currentPrice(saveField.getSavePrice() == null ? null : inventoryDto.getCurrentPrice())
                 .build();
     }
 }

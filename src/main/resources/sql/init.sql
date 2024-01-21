@@ -15,7 +15,6 @@ CREATE TABLE inventory
     id               BIGSERIAL PRIMARY KEY,
     inventory_number VARCHAR(24)    NOT NULL,
     current_quantity NUMERIC(10, 3) NOT NULL,
-    current_price    NUMERIC(12, 2) NOT NULL,
     user_id          INTEGER REFERENCES users
 );
 
@@ -28,7 +27,7 @@ CREATE TABLE item
     stored_in            VARCHAR(64)    NOT NULL,
     unit                 VARCHAR(12)    NOT NULL,
     quantity             NUMERIC(10, 3) NOT NULL,
-    price                NUMERIC(12, 2) NOT NULL,
+    price_per_unit       NUMERIC(12, 2) NOT NULL,
     is_owned_by_employee BOOLEAN        NOT NULL,
     created_at           TIMESTAMP      NOT NULL,
     created_by           INTEGER        NOT NULL REFERENCES users

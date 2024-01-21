@@ -36,13 +36,6 @@
                                        placeholder="Current quantity" step=0.001>
                             </label>
                         </th>
-                        <th>
-                            <label for="currentPrice">
-                                <input type="number" id="currentPrice" name="currentPrice"
-                                       th:value="*{currentPrice}"
-                                       placeholder="Current price" step=0.01>
-                            </label>
-                        </th>
                     </tr>
                     <tr>
                         <th>
@@ -56,13 +49,6 @@
                             <label for="saveQuantity">
                                 <input type="checkbox" id="saveQuantity" name="saveQuantity"
                                        th:checked="${saveField.saveQuantity != null && saveField.saveQuantity.equals('on')}">
-                                Save state of field
-                            </label>
-                        </th>
-                        <th>
-                            <label for="savePrice">
-                                <input type="checkbox" id="savePrice" name="savePrice"
-                                       th:checked="${saveField.savePrice != null && saveField.savePrice.equals('on')}">
                                 Save state of field
                             </label>
                         </th>

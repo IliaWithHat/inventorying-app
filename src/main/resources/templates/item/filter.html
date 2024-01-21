@@ -123,8 +123,9 @@
                     <th>Inventory number</th>
                     <th>Stored in</th>
                     <th>Unit</th>
+                    <th>Price per unit</th>
                     <th>Quantity</th>
-                    <th>Price</th>
+                    <th>Sum</th>
                     <th>Created at</th>
                     <th>Owned by employee</th>
                     <th>Edit</th>
@@ -138,8 +139,9 @@
                     <td th:text="*{inventoryNumber}"></td>
                     <td th:text="*{storedIn}"></td>
                     <td th:text="*{getUnit}"></td>
+                    <td th:text="*{getPricePerUnit}"></td>
                     <td th:text="*{quantity}"></td>
-                    <td th:text="*{price}"></td>
+                    <td th:text="*{sum}"></td>
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
