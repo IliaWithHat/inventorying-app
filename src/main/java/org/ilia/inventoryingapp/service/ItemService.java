@@ -58,6 +58,8 @@ public class ItemService {
     private final UserRepository userRepository;
     private final ItemMapper itemMapper;
     private final BuildPredicate buildPredicate;
+    private PdfFont font;
+    private PdfFont bold;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
@@ -86,8 +88,8 @@ public class ItemService {
         Document document = new Document(pdf, PageSize.A4.rotate());
 
         document.setMargins(20, 20, 20, 20);
-        PdfFont font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
-        PdfFont bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
+        font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
+        bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
         Table table = new Table(new float[]{2, 7, 3, 3, 1, 3, 3, 3, 3}, true);
         table.setWidth(UnitValue.createPercentValue(100));
 
@@ -118,15 +120,15 @@ public class ItemService {
             items.forEach(i -> {
                 BigDecimal sum = i.getQuantity().multiply(i.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
 
-                table.addCell(createCell(i.getSerialNumber().toString(), 1, font).setBorderLeft(new SolidBorder(borderWidth)));
-                table.addCell(createCell(i.getName(), 1, font));
-                table.addCell(createCell(i.getInventoryNumber(), 1, font));
-                table.addCell(createCell(i.getStoredIn(), 1, font));
-                table.addCell(createCell(i.getUnit(), 1, font));
-                table.addCell(createCell(i.getPricePerUnit().toString(), 1, font));
-                table.addCell(createCell(i.getQuantity().toString(), 1, font));
-                table.addCell(createCell(sum.toString(), 1, font));
-                table.addCell(createCell(i.getIsOwnedByEmployee() ? "Yes" : "No", 1, font).setBorderRight(new SolidBorder(borderWidth)));
+                table.addCell(createCell(i.getSerialNumber().toString()).setBorderLeft(new SolidBorder(borderWidth)));
+                table.addCell(createCell(i.getName()));
+                table.addCell(createCell(i.getInventoryNumber()));
+                table.addCell(createCell(i.getStoredIn()));
+                table.addCell(createCell(i.getUnit()));
+                table.addCell(createCell(i.getPricePerUnit().toString()));
+                table.addCell(createCell(i.getQuantity().toString()));
+                table.addCell(createCell(sum.toString()));
+                table.addCell(createCell(i.getIsOwnedByEmployee() ? "Yes" : "No").setBorderRight(new SolidBorder(borderWidth)));
 
                 quantityAndSum.set(0, quantityAndSum.get(0).add(i.getQuantity()));
                 quantityAndSum.set(1, quantityAndSum.get(1).add(sum));
@@ -141,17 +143,21 @@ public class ItemService {
             table.addCell(createCell(quantityAndSum.get(i).toString(), 1, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
         }
 
-        table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("").setBorder(new SolidBorder(borderWidth)));
 
         table.addCell(createCell("Total items", 6, bold).setBorder(new SolidBorder(borderWidth)));
         table.addCell(createCell(String.valueOf(totalElements), 2, bold).setTextAlignment(TextAlignment.CENTER).setBorder(new SolidBorder(borderWidth)));
 
-        table.addCell(createCell("", 1, font).setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("").setBorder(new SolidBorder(borderWidth)));
 
         table.complete();
         document.close();
 
         return new UrlResource(pathToTable.toUri());
+    }
+
+    private Cell createCell(String text) {
+        return createCell(text, 1, font);
     }
 
     private Cell createCell(String text, int colspan, PdfFont font) {
