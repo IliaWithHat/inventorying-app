@@ -2,9 +2,11 @@ package org.ilia.inventoryingapp.database.repository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.querydsl.BuildPredicate;
 import org.ilia.inventoryingapp.filter.ItemFilter;
@@ -78,5 +80,18 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .fetchCount();
 
         return new PageImpl<>(result, pageable, total);
+    }
+
+    @Override
+    public List<Inventory> findExtraInventory(ItemFilter itemFilter, UserDetails userDetails) {
+        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        return new JPAQuery<Inventory>(entityManager)
+                .select(inventory)
+                .from(item)
+                .leftJoin(inventory)
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .where(predicate.not(), inventory.isNotNull())
+                .orderBy(item.serialNumber.asc())
+                .fetch();
     }
 }
