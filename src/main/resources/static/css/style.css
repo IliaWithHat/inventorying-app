@@ -3,7 +3,7 @@
 /*Button in table*/
 .btn {
     padding: 4px 8px !important;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.42857143;
 }
 
@@ -65,7 +65,7 @@ button.add-button {
     background: none;
     color: #CFD8DC;
     font-weight: bolder;
-    font-size: 14px;
+    font-size: 16px;
     padding: 16px 24px;
 }
 
@@ -137,7 +137,7 @@ div.pagination {
     margin: 0 0 15px;
     padding: 15px;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .form button {
@@ -149,7 +149,7 @@ div.pagination {
     border: 0;
     padding: 15px;
     color: #FFFFFF;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
 }
 
@@ -160,7 +160,7 @@ div.pagination {
 .form .message {
     margin: 15px 0 0;
     color: #b3b3b3;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .form .message a {
@@ -208,9 +208,9 @@ div.pagination {
 }
 
 body {
-    font-family: "Lucida Sans", sans-serif;
+    font-family: "Roboto", sans-serif;
     overflow-x: hidden;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 
