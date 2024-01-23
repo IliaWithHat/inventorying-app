@@ -36,7 +36,7 @@ button.add-button {
     height: 100%;
     margin-left: -200px;
     overflow-y: auto;
-    background: #37474F;
+    background: #20253B;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -44,7 +44,8 @@ button.add-button {
 }
 
 #sidebar header {
-    background-color: #263238;
+    background-color: #171B2D;
+    font-weight: bold;
     font-size: 20px;
     line-height: 52px;
     text-align: center;
@@ -62,8 +63,8 @@ button.add-button {
 
 #sidebar .nav a {
     background: none;
-    border-bottom: 1px solid #455A64;
     color: #CFD8DC;
+    font-weight: bolder;
     font-size: 14px;
     padding: 16px 24px;
 }
@@ -207,11 +208,9 @@ div.pagination {
 }
 
 body {
-    font-family: "Roboto", sans-serif;
+    font-family: "Lucida Sans", sans-serif;
     overflow-x: hidden;
-    font-size: 15px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
 }
 
 
