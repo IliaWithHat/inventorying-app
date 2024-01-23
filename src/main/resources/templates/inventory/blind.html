@@ -22,36 +22,36 @@
                 <table class="table table-borderless" style="display: flex;">
                     <tbody>
                     <tr>
-                        <th>
+                        <td>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        th:value="*{inventoryNumber}"
                                        placeholder="Inventory number" autofocus>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="currentQuantity">
                                 <input type="number" id="currentQuantity" name="currentQuantity"
                                        th:value="*{currentQuantity}"
                                        placeholder="Current quantity" step=0.001>
                             </label>
-                        </th>
+                        </td>
                     </tr>
                     <tr>
-                        <th>
+                        <td>
                             <label for="saveInventoryNumber">
                                 <input type="checkbox" id="saveInventoryNumber" name="saveInventoryNumber"
                                        th:checked="${saveField.saveInventoryNumber != null && saveField.saveInventoryNumber.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="saveQuantity">
                                 <input type="checkbox" id="saveQuantity" name="saveQuantity"
                                        th:checked="${saveField.saveQuantity != null && saveField.saveQuantity.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

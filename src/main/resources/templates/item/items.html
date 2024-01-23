@@ -33,33 +33,33 @@
 
                     <tbody>
                     <tr th:object="${itemDto}">
-                        <th>
+                        <td>
                             <b th:text="${items.content.size() == 0 ? 1 : items.content.getFirst().serialNumber + 1}"></b>
                             <label for="serialNumber">
                                 <input type="hidden" id="serialNumber" name="serialNumber"
                                        th:value="${items.content.size() == 0 ? 1 : items.content.getFirst().serialNumber + 1}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="name">
                                 <input type="text" id="name" name="name" placeholder="Item name"
                                        th:value="*{name}" autofocus>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number"
                                        th:value="*{inventoryNumber}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="storedIn">
                                 <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
                                        th:value="*{storedIn}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="unit">
                                 <select id="unit" name="unit" th:field="${itemDto.unit}">
                                     <option th:each="option : ${units}"
@@ -69,38 +69,38 @@
                                     </option>
                                 </select>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="pricePerUnit">
                                 <input type="number" id="pricePerUnit" name="pricePerUnit" placeholder="Price per unit"
                                        th:value="*{getPricePerUnit}" step=0.01>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="quantity">
                                 <input type="number" id="quantity" name="quantity" placeholder="Quantity"
                                        th:value="*{quantity}" step=0.001>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="isOwnedByEmployee">
                                 <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
                                        name="isOwnedByEmployee"
                                        th:checked="${itemDto.isOwnedByEmployee != null && itemDto.isOwnedByEmployee.equals('on')}">
                             </label>
-                        </th>
+                        </td>
                     </tr>
-
+                    
                     <tr>
-                        <th></th>
-                        <th>
+                        <td></td>
+                        <td>
                             <label for="saveName">
                                 <input class="form-check-input" type="checkbox" id="saveName" name="saveName"
                                        th:checked="${saveField.saveName != null && saveField.saveName.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <div>
                                 <label for="saveInventoryNumber">
                                     <input class="form-check-input" type="checkbox" id="saveInventoryNumber"
@@ -114,46 +114,46 @@
                                     <input class="form-check-input" type="checkbox" id="autoincrement"
                                            name="autoincrement"
                                            th:checked="${saveField.autoincrement != null && saveField.autoincrement.equals('on')}">
-                                    Enable autoincrement.
+                                    Enable autoincrement
                                 </label>
                             </div>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="saveStoredIn">
                                 <input class="form-check-input" type="checkbox" id="saveStoredIn" name="saveStoredIn"
                                        th:checked="${saveField.saveStoredIn != null && saveField.saveStoredIn.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="saveUnit">
                                 <input class="form-check-input" type="checkbox" id="saveUnit" name="saveUnit"
                                        th:checked="${saveField.getSaveUnit != null && saveField.getSaveUnit.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="savePrice">
                                 <input class="form-check-input" type="checkbox" id="savePrice" name="savePrice"
                                        th:checked="${saveField.savePrice != null && saveField.savePrice.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="saveQuantity">
                                 <input class="form-check-input" type="checkbox" id="saveQuantity" name="saveQuantity"
                                        th:checked="${saveField.saveQuantity != null && saveField.saveQuantity.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="saveIsOwnedByEmployee">
                                 <input class="form-check-input" type="checkbox" id="saveIsOwnedByEmployee"
                                        name="saveIsOwnedByEmployee"
                                        th:checked="${saveField.saveIsOwnedByEmployee != null && saveField.saveIsOwnedByEmployee.equals('on')}">
                                 Save state of field
                             </label>
-                        </th>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

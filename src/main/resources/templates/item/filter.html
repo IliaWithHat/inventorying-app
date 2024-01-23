@@ -34,38 +34,38 @@
 
                         <tbody>
                         <tr>
-                            <th>
+                            <td>
                                 <label for="name">
                                     <input type="text" id="name" name="name" placeholder="Item name"
                                            th:value="*{name}" autofocus>
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="inventoryNumber">
                                     <input type="text" id="inventoryNumber" name="inventoryNumber"
                                            placeholder="Inventory number"
                                            th:value="*{inventoryNumber}">
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="storedIn">
                                     <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
                                            th:value="*{storedIn}">
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="timeIntervalStart">
                                     <input type="date" id="timeIntervalStart" name="timeIntervalStart"
                                            th:value="*{timeIntervalStart}">
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="timeIntervalEnd">
                                     <input type="date" id="timeIntervalEnd" name="timeIntervalEnd"
                                            th:value="*{timeIntervalEnd}">
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="showItemCreated">
                                     <select id="showItemCreated" name="showItemCreated">
                                         <option th:each="option : ${optionsForShowItemCreated}"
@@ -75,8 +75,8 @@
                                         </option>
                                     </select>
                                 </label>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <label for="isOwnedByEmployee">
                                     <select id="isOwnedByEmployee" name="isOwnedByEmployee">
                                         <option th:each="option : ${optionsForIsOwnedByEmployee}"
@@ -86,7 +86,7 @@
                                         </option>
                                     </select>
                                 </label>
-                            </th>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

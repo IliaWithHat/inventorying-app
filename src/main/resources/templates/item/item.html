@@ -31,35 +31,36 @@
                         <th>Owned by employee</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     <tr>
-                        <th>
+                        <td>
                             <b th:text="*{serialNumber}"></b>
                             <label for="serialNumber">
                                 <input type="hidden" id="serialNumber" name="serialNumber"
                                        th:value="*{serialNumber}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="name">
                                 <input type="text" id="name" name="name" placeholder="Place for name"
                                        th:value="*{name}" autofocus>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="inventoryNumber">
                                 <input type="text" id="inventoryNumber" name="inventoryNumber"
                                        placeholder="Inventory number"
                                        th:value="*{inventoryNumber}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="storedIn">
                                 <input type="text" id="storedIn" name="storedIn" placeholder="Stored in"
                                        th:value="*{storedIn}">
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="unit">
                                 <select id="unit" name="unit" th:field="${itemDto.unit}">
                                     <option th:each="option : ${units}"
@@ -69,27 +70,27 @@
                                     </option>
                                 </select>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="pricePerUnit">
                                 <input type="number" id="pricePerUnit" name="pricePerUnit" placeholder="Price per unit"
                                        th:value="*{getPricePerUnit}" step=0.01>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="quantity">
                                 <input type="number" id="quantity" name="quantity" placeholder="Quantity"
                                        th:value="*{quantity}" step=0.001>
                             </label>
-                        </th>
-                        <th>
+                        </td>
+                        <td>
                             <label for="isOwnedByEmployee">
                                 <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
                                        name="isOwnedByEmployee"
                                        th:checked="${itemDto.isOwnedByEmployee.equals('Yes')}">
                                 Owned by employee
                             </label>
-                        </th>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

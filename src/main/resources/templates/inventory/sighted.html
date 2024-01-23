@@ -44,7 +44,7 @@
                         <td th:text="*{getPricePerUnit}"></td>
                         <td th:text="*{quantity}"></td>
                         <td th:text="*{sum}"></td>
-                        <th>
+                        <td>
                             <label for="inventoryNumber">
                                 <input type="hidden" id="inventoryNumber" name="inventoryNumber"
                                        th:value="*{inventoryNumber}">
@@ -54,7 +54,7 @@
                                        th:value="*{quantity}" autofocus
                                        placeholder="Current quantity" step=0.001>
                             </label>
-                        </th>
+                        </td>
                         <td class="text-center">
                             <button type="submit" class="btn btn-success btn-xs">
                                 <span class="glyphicon glyphicon-ok"></span>
