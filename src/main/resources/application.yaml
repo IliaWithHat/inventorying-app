@@ -27,3 +27,5 @@ spring:
         javax:
           cache:
             missing_cache_strategy: create
+server:
+  address: 192.168.1.5
