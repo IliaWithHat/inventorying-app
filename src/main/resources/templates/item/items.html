@@ -33,7 +33,7 @@
 
                     <tbody>
                     <tr th:object="${itemDto}">
-                        <td>
+                        <td class="text-center">
                             <b th:text="${items.content.size() == 0 ? 1 : items.content.getFirst().serialNumber + 1}"></b>
                             <label for="serialNumber">
                                 <input type="hidden" id="serialNumber" name="serialNumber"
@@ -90,7 +90,7 @@
                             </label>
                         </td>
                     </tr>
-                    
+
                     <tr>
                         <td></td>
                         <td>
