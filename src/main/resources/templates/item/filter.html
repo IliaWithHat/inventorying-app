@@ -68,7 +68,7 @@
                                 <label for="showItemCreated">
                                     <select id="showItemCreated" name="showItemCreated">
                                         <option th:each="option : ${optionsForShowItemCreated}"
-                                                th:value="${option}"
+                                                th:value="${option.name()}"
                                                 th:text="${option}"
                                                 th:selected="${itemFilter.showItemCreated != null && itemFilter.showItemCreated == option}">
                                         </option>

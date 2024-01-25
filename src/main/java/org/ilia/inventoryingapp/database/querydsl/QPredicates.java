@@ -25,7 +25,18 @@ public class QPredicates {
         return this;
     }
 
-    public Predicate build() {
+    public QPredicates add(Predicate predicate) {
+        if (predicate != null) {
+            predicates.add(predicate);
+        }
+        return this;
+    }
+
+    public Predicate buildAnd() {
         return ExpressionUtils.allOf(predicates);
+    }
+
+    public Predicate buildOr() {
+        return ExpressionUtils.anyOf(predicates);
     }
 }

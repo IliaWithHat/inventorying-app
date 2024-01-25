@@ -65,13 +65,12 @@ public class ItemService {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
         Predicate predicate = QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
-                .build();
+                .buildAnd();
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
         return itemRepository.findAll(predicate, pageable)
                 .map(itemMapper::toItemDto);
     }
 
-    //TODO результаты с самым высоким совпадением должны быть на первом месте
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
         Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
 

@@ -3,6 +3,7 @@ package org.ilia.inventoryingapp.http.controller;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
+import org.ilia.inventoryingapp.filter.TimeDurationEnum;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.service.ItemService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
@@ -55,7 +56,7 @@ public class ItemController {
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemFilter", itemFilter);
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
-        model.addAttribute("optionsForShowItemCreated", List.of("Ignore", "1 day", "3 day", "1 week", "2 week", "1 month", "3 month", "6 month", "1 year"));
+        model.addAttribute("optionsForShowItemCreated", TimeDurationEnum.values());
         return "item/filter";
     }
 

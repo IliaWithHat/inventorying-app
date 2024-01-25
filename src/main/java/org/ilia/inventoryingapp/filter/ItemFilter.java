@@ -18,6 +18,6 @@ public class ItemFilter {
     private String storedIn;
     private LocalDate timeIntervalStart;
     private LocalDate timeIntervalEnd;
-    private String showItemCreated;
+    private TimeDurationEnum showItemCreated;
     private String isOwnedByEmployee;
 }
