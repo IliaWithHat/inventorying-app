@@ -56,6 +56,7 @@
                             </label>
                         </td>
                         <td class="text-center">
+                            <input type="hidden" name="page" th:value="${items.metadata.totalElements > 21 ? items.metadata.page : 0}">
                             <button type="submit" class="btn btn-success btn-xs">
                                 <span class="glyphicon glyphicon-ok"></span>
                             </button>

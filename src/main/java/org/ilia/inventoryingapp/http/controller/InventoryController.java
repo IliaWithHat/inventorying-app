@@ -62,6 +62,7 @@ public class InventoryController {
     @PostMapping
     public String create(@AuthenticationPrincipal UserDetails userDetails,
                          String returnTo,
+                         @RequestParam(defaultValue = "0") Integer page,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
                          SaveField saveField,
@@ -75,7 +76,9 @@ public class InventoryController {
             redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
         }
         redirectAttributes.addFlashAttribute(saveField);
-        return "redirect:/inventory/" + returnTo;
+        if ("sighted".equals(returnTo))
+            return String.format("redirect:/inventory/sighted?page=%d", page);
+        return "redirect:/inventory/blind";
     }
 
     @DeleteMapping("/cancel")
