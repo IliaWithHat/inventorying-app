@@ -123,7 +123,7 @@ public class ItemService {
                 table.addCell(createCell(i.getName()));
                 table.addCell(createCell(i.getInventoryNumber()));
                 table.addCell(createCell(i.getStoredIn()));
-                table.addCell(createCell(i.getUnit()));
+                table.addCell(createCell(i.getUnit().toString()));
                 table.addCell(createCell(i.getPricePerUnit().toString()));
                 table.addCell(createCell(i.getQuantity().toString()));
                 table.addCell(createCell(sum.toString()));

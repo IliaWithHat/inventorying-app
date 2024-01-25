@@ -3,6 +3,7 @@ package org.ilia.inventoryingapp.dto;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
+import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class ItemDto {
     @NotBlank(message = "Enter where item is located")
     String storedIn;
 
-    String unit;
+    Unit unit;
 
     @NotNull(message = "Enter quantity")
     @Positive(message = "Enter positive item quantity")

@@ -134,7 +134,7 @@ public class InventoryService {
                 table.addCell(createCell(item.getName()));
                 table.addCell(createCell(item.getInventoryNumber()));
                 table.addCell(createCell(item.getStoredIn()));
-                table.addCell(createCell(item.getUnit()));
+                table.addCell(createCell(item.getUnit().toString()));
                 table.addCell(createCell(item.getPricePerUnit().toString()));
 
                 BigDecimal quantity = item.getQuantity();

@@ -31,7 +31,8 @@ public class Item {
 
     private String storedIn;
 
-    private String unit;
+    @Enumerated(value = EnumType.STRING)
+    private Unit unit;
 
     private BigDecimal quantity;
 
