@@ -10,12 +10,19 @@ CREATE TABLE users
     admin_id   INTEGER REFERENCES users
 );
 
+CREATE TABLE item_sequence
+(
+    id         SERIAL PRIMARY KEY,
+    last_value BIGINT  NOT NULL,
+    user_id    INTEGER NOT NULL REFERENCES users
+);
+
 CREATE TABLE inventory
 (
     id               BIGSERIAL PRIMARY KEY,
     inventory_number VARCHAR(24)    NOT NULL,
     current_quantity NUMERIC(10, 3) NOT NULL,
-    user_id          INTEGER REFERENCES users
+    user_id          INTEGER        NOT NULL REFERENCES users
 );
 
 CREATE TABLE item

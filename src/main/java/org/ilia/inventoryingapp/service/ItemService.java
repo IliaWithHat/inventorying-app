@@ -22,8 +22,8 @@ import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.querydsl.BuildPredicate;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
-import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
+import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
@@ -55,14 +55,15 @@ import static org.ilia.inventoryingapp.database.entity.QItem.item;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final ItemSequenceService itemSequenceService;
     private final ItemMapper itemMapper;
     private final BuildPredicate buildPredicate;
     private PdfFont font;
     private PdfFont bold;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
+        Integer userId = userService.findUserByEmail(userDetails.getUsername()).getId();
         Predicate predicate = QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
                 .buildAnd();
@@ -174,8 +175,10 @@ public class ItemService {
 
         //TODO enable auditing
         item.setCreatedAt(LocalDateTime.now());
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
-        item.setCreatedBy(User.builder().id(userId).build());
+        UserDto user = userService.findUserByEmail(userDetails.getUsername());
+        item.setCreatedBy(User.builder().id(user.getId()).build());
+
+        item.setSerialNumber(itemSequenceService.nextval(user.getEmail()));
 
         Item savedItem = itemRepository.save(item);
         return itemMapper.toItemDto(savedItem);

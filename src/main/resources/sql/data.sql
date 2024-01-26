@@ -1,5 +1,8 @@
 INSERT INTO users(email, password, first_name, last_name, phone, role, admin_id)
-VALUES ('admin', '{noop}admin', 'Ilia', 'Rozhko', '123-123-12-12', 'ADMIN', null);
+VALUES ('test', '{noop}1234', 'Ilia', 'Rozhko', '123-123-12-12', 'ADMIN', null);
+
+INSERT INTO item_sequence(last_value, user_id)
+VALUES (21, 1);
 
 INSERT INTO item(serial_number, name, inventory_number, stored_in, unit, quantity, price_per_unit, is_owned_by_employee,
                  created_at, created_by)

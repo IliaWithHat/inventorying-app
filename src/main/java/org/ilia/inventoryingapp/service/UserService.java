@@ -22,6 +22,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ItemSequenceService itemSequenceService;
 
     public List<UserDto> findAll() {
         return userRepository.findAll()
@@ -34,10 +35,18 @@ public class UserService implements UserDetailsService {
                 .map(userMapper::toUserDto);
     }
 
+    public UserDto findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email)
+                .map(userMapper::toUserDto)
+                .orElseThrow();
+    }
+
     @Transactional
     public UserDto create(UserDto userDto) {
         User user = userMapper.toUser(userDto);
         User savedUser = userRepository.save(user);
+
+        itemSequenceService.createSequence(savedUser);
         return userMapper.toUserDto(savedUser);
     }
 

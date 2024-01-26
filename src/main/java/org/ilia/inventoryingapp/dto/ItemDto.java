@@ -16,7 +16,6 @@ public class ItemDto {
 
     Long id;
 
-    //TODO unique serial number how in postgresql. New table VALUES(id, user_id, last_value)
     Long serialNumber;
 
     @Size(max = 64, message = "The maximum length of an item name is 64 characters")

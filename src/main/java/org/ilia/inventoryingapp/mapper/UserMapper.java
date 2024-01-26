@@ -7,29 +7,34 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "adminId", expression = "java(toInteger(user))")
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "adminId", expression = "java(toInteger(user))")
     UserDto toUserDto(User user);
 
-    @Mapping(target = "admin", expression = "java(toAdmin(userDto))")
     @Mapping(target = "password", expression = "java(encodePassword(userDto))")
+    @Mapping(target = "admin", expression = "java(toAdmin(userDto))")
     User toUser(UserDto userDto);
 
-    @Mapping(target = "admin", ignore = true)
-    @Mapping(target = "role", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "admin", ignore = true)
     User copyUserDtoToUser(UserDto userDto, @MappingTarget User user);
 
     default String encodePassword(UserDto userDto) {
         PasswordEncoder passwordEncoder = new SecurityConfiguration().passwordEncoder();
-        //TODO test this
-        return passwordEncoder.encode(userDto.getPassword());
+        return Optional.ofNullable(userDto.getPassword())
+                .filter(StringUtils::hasText)
+                .map(passwordEncoder::encode)
+                .orElse(null);
     }
 
     default Integer toInteger(User user) {

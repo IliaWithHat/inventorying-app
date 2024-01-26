@@ -5,6 +5,7 @@ import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.filter.TimeDurationEnum;
+import org.ilia.inventoryingapp.service.ItemSequenceService;
 import org.ilia.inventoryingapp.service.ItemService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
@@ -33,6 +34,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemSequenceService itemSequenceService;
 
     @GetMapping
     public String getFirstFiveItems(@AuthenticationPrincipal UserDetails userDetails,
@@ -44,6 +46,7 @@ public class ItemController {
         model.addAttribute("itemDto", itemDto);
         model.addAttribute("saveField", saveField);
         model.addAttribute("units", Unit.values());
+        model.addAttribute("currval", itemSequenceService.currval(userDetails.getUsername()));
         return "item/items";
     }
 

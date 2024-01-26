@@ -96,11 +96,11 @@
                     <button type="submit" class="btn btn-danger add-button">Clear filter</button>
                 </form>
                 <br/>
-                <form th:action="@{/items/export}" method="get">
+                <form th:if="${items.metadata.totalElements != 0}" th:action="@{/items/export}" method="get">
                     <button type="submit" class="btn btn-success add-button">Export to PDF</button>
                 </form>
                 <br/>
-                <div style="display: flex; justify-content: space-between;">
+                <div th:if="${items.metadata.totalElements != 0}" style="display: flex; justify-content: space-between;">
                     <form th:action="@{/inventory/sighted}" method="get"
                           style="flex: 1;  margin-right: 8px;">
                         <button type="submit" class="btn btn-warning add-button">Start "sighted" inventorying</button>
@@ -114,7 +114,7 @@
             </div>
             <br/>
             <br/>
-            <table id="datatable" class="table table-striped table-bordered">
+            <table th:if="${items.metadata.totalElements != 0}" id="datatable" class="table table-striped table-bordered">
                 <thead>
                 <tr>
                     <th>Serial number</th>
@@ -162,7 +162,7 @@
 
                 <a th:href="@{/items/filter(page=${items.metadata.getTotalPages() - 1})}">&raquo;</a>
             </div>
-            <span th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
+            <span th:if="${items.metadata.totalElements != 0}" th:text="'Total elements: ' + ${items.metadata.totalElements} + '. Total pages: ' + ${items.metadata.totalPages}"></span>
         </div>
     </div>
 </div>
