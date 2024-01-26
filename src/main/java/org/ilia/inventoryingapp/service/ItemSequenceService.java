@@ -29,14 +29,14 @@ public class ItemSequenceService {
     }
 
     public Long nextval(String email) {
-        UserDto user = userService.findUserByEmail(email);
+        UserDto user = userService.findUserByEmail(email).orElseThrow();
         ItemSequence itemSequence = itemSequenceRepository.findItemSequenceByUserId(user.getId());
         itemSequence.setLastValue(itemSequence.getLastValue() + 1);
         return itemSequenceRepository.save(itemSequence).getLastValue();
     }
 
     public Long currval(String email) {
-        UserDto user = userService.findUserByEmail(email);
+        UserDto user = userService.findUserByEmail(email).orElseThrow();
         return itemSequenceRepository.findItemSequenceByUserId(user.getId()).getLastValue();
     }
 }

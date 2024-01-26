@@ -35,10 +35,9 @@ public class UserService implements UserDetailsService {
                 .map(userMapper::toUserDto);
     }
 
-    public UserDto findUserByEmail(String email) {
+    public Optional<UserDto> findUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
-                .map(userMapper::toUserDto)
-                .orElseThrow();
+                .map(userMapper::toUserDto);
     }
 
     @Transactional

@@ -26,6 +26,7 @@ import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
+import org.ilia.inventoryingapp.mapper.UserMapper;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -56,6 +57,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final UserService userService;
+    private final UserMapper userMapper;
     private final ItemSequenceService itemSequenceService;
     private final ItemMapper itemMapper;
     private final BuildPredicate buildPredicate;
@@ -63,7 +65,9 @@ public class ItemService {
     private PdfFont bold;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
-        Integer userId = userService.findUserByEmail(userDetails.getUsername()).getId();
+        Integer userId = userService.findUserByEmail(userDetails.getUsername())
+                .map(UserDto::getId)
+                .orElseThrow();
         Predicate predicate = QPredicates.builder()
                 .add(userId, item.createdBy.id::eq)
                 .buildAnd();
@@ -73,7 +77,7 @@ public class ItemService {
     }
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
@@ -100,7 +104,7 @@ public class ItemService {
 
         document.add(table);
 
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
         int totalPages = 0;
         int pageNumber = 0;
         long totalElements = 0;
@@ -164,8 +168,11 @@ public class ItemService {
         return new Cell(1, colspan).add(new Paragraph(text).setFont(font).setFontSize(8));
     }
 
-    public Optional<ItemDto> findById(Long id) {
-        return itemRepository.findById(id)
+    public Optional<ItemDto> findById(Long id, UserDetails userDetails) {
+        User user = userService.findUserByEmail(userDetails.getUsername())
+                .map(userMapper::toUser)
+                .orElseThrow();
+        return itemRepository.findItemByIdAndCreatedBy(id, user)
                 .map(itemMapper::toItemDto);
     }
 
@@ -175,8 +182,10 @@ public class ItemService {
 
         //TODO enable auditing
         item.setCreatedAt(LocalDateTime.now());
-        UserDto user = userService.findUserByEmail(userDetails.getUsername());
-        item.setCreatedBy(User.builder().id(user.getId()).build());
+        User user = userService.findUserByEmail(userDetails.getUsername())
+                .map(userMapper::toUser)
+                .orElseThrow();
+        item.setCreatedBy(user);
 
         item.setSerialNumber(itemSequenceService.nextval(user.getEmail()));
 

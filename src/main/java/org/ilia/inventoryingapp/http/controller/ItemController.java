@@ -88,8 +88,10 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model) {
-        ItemDto itemDto = itemService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public String findById(@PathVariable Long id,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           Model model) {
+        ItemDto itemDto = itemService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);
         model.addAttribute("units", Unit.values());
         return "item/item";

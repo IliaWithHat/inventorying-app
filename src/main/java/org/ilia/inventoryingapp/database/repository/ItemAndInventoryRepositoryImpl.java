@@ -29,7 +29,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("serialNumber"));
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
 
         List<Item> result = queryFactory
                 .select(item)
@@ -58,7 +58,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
 
         List<Tuple> result = queryFactory
                 .select(item, inventory)
@@ -84,7 +84,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
 
     @Override
     public List<Inventory> findExtraInventory(ItemFilter itemFilter, UserDetails userDetails) {
-        Predicate predicate = buildPredicate.buildPredicateByItemFilter(itemFilter, userDetails);
+        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
         return new JPAQuery<Inventory>(entityManager)
                 .select(inventory)
                 .from(item)

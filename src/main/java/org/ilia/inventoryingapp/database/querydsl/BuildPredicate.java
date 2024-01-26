@@ -22,7 +22,7 @@ public class BuildPredicate {
 
     private final UserRepository userRepository;
 
-    public Predicate buildPredicateByItemFilter(ItemFilter itemFilter, UserDetails userDetails) {
+    public Predicate buildPredicate(ItemFilter itemFilter, UserDetails userDetails) {
         Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
 
         LocalDateTime showItemCreated = null;
