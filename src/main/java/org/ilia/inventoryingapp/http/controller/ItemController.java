@@ -126,7 +126,7 @@ public class ItemController {
     @ResponseBody
     public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
                                               ItemFilter itemFilter) {
-        Resource file = generatePdf.generatePdfForExport(itemFilter, userDetails);
+        Resource file = generatePdf.generateStandardPdf(itemFilter, userDetails);
 
         if (file == null)
             return ResponseEntity.notFound().build();

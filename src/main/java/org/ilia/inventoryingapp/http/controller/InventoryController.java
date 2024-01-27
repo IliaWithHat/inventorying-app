@@ -95,7 +95,7 @@ public class InventoryController {
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
                                                   ItemFilter itemFilter,
                                                   SessionStatus sessionStatus) {
-        Resource file = generatePdf.generatePdfAfterInventory(itemFilter, userDetails);
+        Resource file = generatePdf.generateInventoryPdf(itemFilter, userDetails);
 
         sessionStatus.setComplete();
         inventoryService.deleteInventoryByUserDetails(userDetails);
