@@ -39,7 +39,7 @@ public class ItemDto {
 
     @NotNull(message = "Enter price")
     @PositiveOrZero(message = "Minimum item price is 0")
-    @Max(value = 9_999_999_999L, message = "Price must be less than 9_999_999_999")
+    @Max(value = 99_999_999L, message = "Price must be less than 99_999_999")
     BigDecimal pricePerUnit;
 
     BigDecimal sum;
