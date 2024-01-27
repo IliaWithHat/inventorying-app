@@ -75,7 +75,7 @@ public class GeneratePdf {
 
         Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
         do {
-            Table table = createTableAndStandardHeader();
+            Table table = createStandardTableAndHeader();
 
             Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("serialNumber"));
             Page<Item> items = itemRepository.findAll(predicate, pageable);
@@ -88,7 +88,7 @@ public class GeneratePdf {
             items.forEach(item -> {
                 BigDecimal sum = item.getQuantity().multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
 
-                table.addCell(createCell(item.getSerialNumber().toString()).setBorderLeft(new SolidBorder(borderWidth)));
+                table.addCell(createCell(item.getSerialNumber().toString(), true));
                 table.addCell(createCell(item.getName()));
                 table.addCell(createCell(item.getInventoryNumber()));
                 table.addCell(createCell(item.getStoredIn()));
@@ -96,14 +96,15 @@ public class GeneratePdf {
                 table.addCell(createCell(item.getPricePerUnit().toString()));
                 table.addCell(createCell(item.getQuantity().toString()));
                 table.addCell(createCell(sum.toString()));
-                table.addCell(createCell(item.getIsOwnedByEmployee() ? "Yes" : "No").setBorderRight(new SolidBorder(borderWidth)));
+                table.addCell(createCell(item.getIsOwnedByEmployee() ? "Yes" : "No", false));
 
                 quantityAndSum.set(0, quantityAndSum.get(0).add(item.getQuantity()));
                 quantityAndSum.set(1, quantityAndSum.get(1).add(sum));
             });
 
-            totalQuantityAndSum.set(0, totalQuantityAndSum.get(0).add(quantityAndSum.get(0)));
-            totalQuantityAndSum.set(1, totalQuantityAndSum.get(1).add(quantityAndSum.get(1)));
+            for (int i = 0; i < 2; i++) {
+                totalQuantityAndSum.set(i, totalQuantityAndSum.get(i).add(quantityAndSum.get(i)));
+            }
 
             if (pageNumber == totalPages && items.getNumberOfElements() < 20) {
                 for (int i = 0, numOfColumnZeroBased = 8; i < (20 - items.getNumberOfElements()) * 9; i++) {
@@ -124,7 +125,7 @@ public class GeneratePdf {
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         } while (pageNumber < totalPages);
 
-        Table table = createTableAndStandardHeader();
+        Table table = createStandardTableAndHeader();
         createStandardFooter(table, totalQuantityAndSum, totalElements);
 
         document.add(table);
@@ -133,7 +134,7 @@ public class GeneratePdf {
         return new UrlResource(pathToFile.toUri());
     }
 
-    private Table createTableAndStandardHeader() {
+    private Table createStandardTableAndHeader() {
         Table table = new Table(new float[]{2, 7, 3, 3, 1, 3, 3, 3, 3})
                 .setFixedLayout()
                 .setWidth(UnitValue.createPercentValue(100));
@@ -157,7 +158,7 @@ public class GeneratePdf {
     private void createStandardFooter(Table table, List<BigDecimal> numbers, boolean isFinal, int pageNumber, int numberOfElements, long totalElements) {
         table.addCell(createCell(isFinal ? "TOTAL" : "Total for page " + pageNumber, 6, bold, true)
                 .setBorder(new SolidBorder(borderWidth)));
-        for (int i = 0; i < numbers.size(); i++) {
+        for (int i = 0; i < 2; i++) {
             table.addCell(createCell(numbers.set(i, new BigDecimal(0)).toString(), 1, bold, true)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setBorder(new SolidBorder(borderWidth)));
@@ -182,41 +183,25 @@ public class GeneratePdf {
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
 
-        Table table = new Table(new float[]{2, 7, 4, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3}, true);
-        table.setWidth(UnitValue.createPercentValue(100));
-
-        List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit")
-                .forEach(s -> table.
-                        addHeaderCell(createCell(s, 2, 1, bold, true)
-                                .setBorder(new SolidBorder(borderWidth))
-                                .setTextAlignment(TextAlignment.CENTER)));
-
-        List.of("According to inventory", "Actual availability", "Surplus", "Shortage")
-                .forEach(s -> table.
-                        addHeaderCell(createCell(s, 2, bold, true)
-                                .setBorder(new SolidBorder(borderWidth))
-                                .setTextAlignment(TextAlignment.CENTER)));
-
-        List<String> qAndS = List.of("Quantity", "Sum");
-        for (int i = 0; i < 8; i++) {
-            table.addHeaderCell(createCell(qAndS.get(i % 2 == 0 ? 0 : 1), 1, bold, true)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setBorder(new SolidBorder(borderWidth)));
-        }
-
-        document.add(table);
-
         int totalPages = 0;
         int pageNumber = 0;
         long totalElements = 0;
+
         List<BigDecimal> quantityAndSum = new ArrayList<>(8);
         for (int i = 0; i < 8; i++) {
             quantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
         }
 
+        List<BigDecimal> totalQuantityAndSum = new ArrayList<>(8);
+        for (int i = 0; i < 8; i++) {
+            totalQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
+        }
+
         Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
         do {
-            Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
+            Table table = createInventoryTableAndHeader();
+
+            Pageable pageable = PageRequest.of(pageNumber, 18, Sort.by("serialNumber"));
             Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(predicate, pageable);
             if (pageNumber == 0) {
                 totalPages = itemsAndInventory.getTotalPages();
@@ -228,7 +213,7 @@ public class GeneratePdf {
                 Item item = tuple.get(0, Item.class);
                 Inventory inventory = tuple.get(1, Inventory.class);
 
-                table.addCell(createCell(item.getSerialNumber().toString()).setBorderLeft(new SolidBorder(borderWidth)));
+                table.addCell(createCell(item.getSerialNumber().toString(), true));
                 table.addCell(createCell(item.getName()));
                 table.addCell(createCell(item.getInventoryNumber()));
                 table.addCell(createCell(item.getStoredIn()));
@@ -264,7 +249,7 @@ public class GeneratePdf {
                     quantityAndSum.set(5, quantityAndSum.get(5).add(surplusSum));
 
                     table.addCell(createCell("0.000"));
-                    table.addCell(createCell("0.00").setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell("0.00", false));
                 } else if (quantity.compareTo(currentQuantity) > 0) {
                     table.addCell(createCell("0.000"));
                     table.addCell(createCell("0.00"));
@@ -273,7 +258,7 @@ public class GeneratePdf {
                     BigDecimal shortageSum = sum.subtract(currentSum);
 
                     table.addCell(createCell(shortageQuantity.toString()));
-                    table.addCell(createCell(shortageSum.toString()).setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell(shortageSum.toString(), false));
 
                     quantityAndSum.set(6, quantityAndSum.get(6).add(shortageQuantity));
                     quantityAndSum.set(7, quantityAndSum.get(7).add(shortageSum));
@@ -281,43 +266,52 @@ public class GeneratePdf {
                     table.addCell(createCell("0.000"));
                     table.addCell(createCell("0.00"));
                     table.addCell(createCell("0.000"));
-                    table.addCell(createCell("0.00").setBorderRight(new SolidBorder(borderWidth)));
+                    table.addCell(createCell("0.00", false));
                 }
             });
 
-            if (pageNumber % 5 == 0)
-                table.flush();
+            for (int i = 0; i < 8; i++) {
+                totalQuantityAndSum.set(i, totalQuantityAndSum.get(i).add(quantityAndSum.get(i)));
+            }
+
+            if (pageNumber == totalPages && itemsAndInventory.getNumberOfElements() < 18) {
+                for (int i = 0, numOfColumnZeroBased = 13; i < (18 - itemsAndInventory.getNumberOfElements()) * 14; i++) {
+                    if (i % 14 == 0) {
+                        table.addCell(createCell("", true));
+                    } else if (i % numOfColumnZeroBased == 0) {
+                        table.addCell(createCell("", false));
+                        numOfColumnZeroBased += 14;
+                    } else {
+                        table.addCell(createCell("", null));
+                    }
+                }
+            }
+
+            createInventoryFooter(table, quantityAndSum, pageNumber, itemsAndInventory.getNumberOfElements());
+
+            document.add(table);
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         } while (pageNumber < totalPages);
 
+        //TODO must return Tuple and full fill table
         List<Inventory> extraInventory = inventoryRepository.findExtraInventory(predicate);
         if (!extraInventory.isEmpty()) {
+            document.add(new Paragraph("Items that shouldn't be here")
+                    .setFont(bold)
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.CENTER));
+            Table table = createInventoryTableAndHeader();
             extraInventory.forEach(i -> {
-                addEmptyCellNTimes(1, 2, table, font, true);
-                addEmptyCellNTimes(1, 7, table, font);
-                table.addCell(createCell(i.getInventoryNumber()));
-                addEmptyCellNTimes(1, 3, table, font);
-                addEmptyCellNTimes(1, 2, table, font);
-                addEmptyCellNTimes(3, 3, table, font);
-                table.addCell(createCell(i.getCurrentQuantity().toString()));
-                quantityAndSum.set(2, i.getCurrentQuantity());
-                addEmptyCellNTimes(4, 3, table, font);
-                addEmptyCellNTimes(1, 3, table, font, false);
+                table.addCell(createCell("In work"));
             });
+            document.add(table);
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         }
 
-        table.addCell(createCell("Total", 6, bold, true).setBorder(new SolidBorder(borderWidth)));
-        for (int i = 0; i < 8; i++) {
-            table.addCell(createCell(quantityAndSum.get(i).toString(), 1, bold, true)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setBorder(new SolidBorder(borderWidth)));
-        }
+        Table table = createInventoryTableAndHeader();
+        createInventoryFooter(table, totalQuantityAndSum, totalElements);
 
-        table.addCell(createCell("Total items", 6, bold, true).setBorder(new SolidBorder(borderWidth)));
-        table.addCell(createCell(String.valueOf(totalElements), 8, bold, true)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setBorder(new SolidBorder(borderWidth)));
-
-        table.complete();
+        document.add(table);
         document.close();
 
         return new UrlResource(pathToFile.toUri());
@@ -335,6 +329,56 @@ public class GeneratePdf {
         return new Object[]{pathToFile, document};
     }
 
+    private Table createInventoryTableAndHeader() {
+        Table table = new Table(new float[]{2, 7, 4, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3})
+                .setFixedLayout()
+                .setWidth(UnitValue.createPercentValue(100));
+
+        List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit")
+                .forEach(s -> table.
+                        addHeaderCell(createCell(s, 2, 1, bold, true, null)
+                                .setBorder(new SolidBorder(borderWidth))
+                                .setTextAlignment(TextAlignment.CENTER)));
+
+        List.of("According to inventory", "Actual availability", "Surplus", "Shortage")
+                .forEach(s -> table.
+                        addHeaderCell(createCell(s, 2, bold, true)
+                                .setBorder(new SolidBorder(borderWidth))
+                                .setTextAlignment(TextAlignment.CENTER)));
+
+        List<String> qAndS = List.of("Quantity", "Sum");
+        for (int i = 0; i < 8; i++) {
+            table.addHeaderCell(createCell(qAndS.get(i % 2 == 0 ? 0 : 1), 1, bold, true)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBorder(new SolidBorder(borderWidth)));
+        }
+        return table;
+    }
+
+    private void createInventoryFooter(Table table, List<BigDecimal> numbers, int pageNumber, int numberOfElements) {
+        createInventoryFooter(table, numbers, false, pageNumber, numberOfElements, 0);
+    }
+
+    private void createInventoryFooter(Table table, List<BigDecimal> numbers, long totalElements) {
+        createInventoryFooter(table, numbers, true, 0, 0, totalElements);
+    }
+
+    private void createInventoryFooter(Table table, List<BigDecimal> numbers, boolean isFinal, int pageNumber, int numberOfElements, long totalElements) {
+        table.addCell(createCell(isFinal ? "TOTAL" : "Total for page " + pageNumber, 6, bold, true)
+                .setBorder(new SolidBorder(borderWidth)));
+        for (int i = 0; i < 8; i++) {
+            table.addCell(createCell(numbers.set(i, new BigDecimal(0)).toString(), 1, bold, true)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBorder(new SolidBorder(borderWidth)));
+        }
+
+        table.addCell(createCell(isFinal ? "TOTAL ITEMS" : "Total items on page " + pageNumber, 6, bold, true)
+                .setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 8, bold, true)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setBorder(new SolidBorder(borderWidth)));
+    }
+
     private Cell createCell(String text) {
         return createCell(text, 1, 1, font, false, null);
     }
@@ -347,14 +391,11 @@ public class GeneratePdf {
         return createCell(text, 1, colspan, font, isHeaderOrFooter, null);
     }
 
-    private Cell createCell(String text, int rowspan, int colspan, PdfFont font, boolean isHeaderOrFooter) {
-        return createCell(text, rowspan, colspan, font, isHeaderOrFooter, null);
-    }
-
     private Cell createCell(String text, int rowspan, int colspan, PdfFont font, boolean isHeaderOrFooter, Boolean isLeft) {
         Cell cell = new Cell(rowspan, colspan)
                 .add(new Paragraph(text).setFont(font).setFontSize(fontSize).setMultipliedLeading(1.1F))
                 .setMinHeight(isHeaderOrFooter ? 10 : 20);
+        //TODO setMinHeight() must die. Create method which calculate row height by text.
 
         if (isLeft == null)
             return cell;
@@ -363,23 +404,5 @@ public class GeneratePdf {
             return cell.setBorderLeft(new SolidBorder(borderWidth));
         else
             return cell.setBorderRight(new SolidBorder(borderWidth));
-    }
-
-    private void addEmptyCellNTimes(int n, int size, Table table, PdfFont font) {
-        addEmptyCellNTimes(n, size, table, font, null);
-    }
-
-    private void addEmptyCellNTimes(int n, int size, Table table, PdfFont font, Boolean isLeft) {
-        for (int i = 0; i < n; i++) {
-            Cell cell = new Cell().add(new Paragraph("-".repeat((int) (size * 6.9)))
-                    .setFont(font).setFontSize(fontSize)).setTextAlignment(TextAlignment.CENTER);
-
-            if (isLeft == null)
-                table.addCell(cell);
-            else if (isLeft)
-                table.addCell(cell.setBorderLeft(new SolidBorder(borderWidth)));
-            else
-                table.addCell(cell.setBorderRight(new SolidBorder(borderWidth)));
-        }
     }
 }

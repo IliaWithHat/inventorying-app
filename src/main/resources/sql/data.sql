@@ -1,5 +1,5 @@
 INSERT INTO users(email, password, first_name, last_name, phone, role, admin_id)
-VALUES ('test', '{noop}1234', 'Ilia', 'Rozhko', '123-123-12-12', 'ADMIN', null);
+VALUES ('test', '{noop}1234', 'Ilia', 'Rozhko', '096-873-77-76', 'ADMIN', null);
 
 INSERT INTO item_sequence(last_value, user_id)
 VALUES (21, 1);
