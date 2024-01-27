@@ -8,7 +8,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
-import org.ilia.inventoryingapp.database.querydsl.BuildPredicate;
+import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +21,7 @@ import static org.ilia.inventoryingapp.database.entity.QItem.item;
 @RequiredArgsConstructor
 public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepository {
 
-    private final BuildPredicate buildPredicate;
+    private final PredicateBuilder predicateBuilder;
     private final EntityManager entityManager;
 
     @Override
@@ -29,7 +29,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("serialNumber"));
-        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
 
         List<Item> result = queryFactory
                 .select(item)
@@ -54,11 +54,8 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     }
 
     @Override
-    public Page<Tuple> findItemsAndInventory(ItemFilter itemFilter, UserDetails userDetails, Integer pageNumber) {
+    public Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-        Pageable pageable = PageRequest.of(pageNumber, 50, Sort.by("serialNumber"));
-        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
 
         List<Tuple> result = queryFactory
                 .select(item, inventory)
@@ -83,8 +80,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     }
 
     @Override
-    public List<Inventory> findExtraInventory(ItemFilter itemFilter, UserDetails userDetails) {
-        Predicate predicate = buildPredicate.buildPredicate(itemFilter, userDetails);
+    public List<Inventory> findExtraInventory(Predicate predicate) {
         return new JPAQuery<Inventory>(entityManager)
                 .select(inventory)
                 .from(item)

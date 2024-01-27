@@ -18,7 +18,7 @@ import static org.ilia.inventoryingapp.filter.TimeDurationEnum.IGNORE;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BuildPredicate {
+public class PredicateBuilder {
 
     private final UserRepository userRepository;
 
