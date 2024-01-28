@@ -48,7 +48,7 @@ public class ItemController {
         model.addAttribute("itemDto", itemDto);
         model.addAttribute("saveField", saveField);
         model.addAttribute("units", Unit.values());
-        model.addAttribute("currval", itemSequenceService.currval(userDetails.getUsername()));
+        model.addAttribute("currval", itemSequenceService.currval(userDetails));
         return "item/items";
     }
 
@@ -102,22 +102,24 @@ public class ItemController {
     @PutMapping("/{id}")
     public String update(@Validated ItemDto itemDto,
                          BindingResult bindingResult,
+                         @AuthenticationPrincipal UserDetails userDetails,
                          @PathVariable Long id,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/items/{id}";
         }
-        itemService.update(itemDto, id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        itemService.update(itemDto, id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
         return "redirect:/items/{id}";
     }
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id,
+                         @AuthenticationPrincipal UserDetails userDetails) {
         //TODO add checkbox to bach delete
-        if (!itemService.delete(id))
+        if (!itemService.delete(id, userDetails))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return "<script>window.close();</script>";
     }

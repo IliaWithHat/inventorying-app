@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
-import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Slf4j
 @Service
@@ -26,26 +27,30 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
     private final ItemMapper itemMapper;
-    private final UserRepository userRepository;
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
         return inventoryRepository.findItemsThatWereNotInventoried(itemFilter, userDetails, page)
                 .map(itemMapper::toItemDto);
     }
 
-    public InventoryDto create(UserDetails userDetails, InventoryDto inventoryDto) {
+    public InventoryDto create(InventoryDto inventoryDto) {
         Inventory inventory = inventoryMapper.toInventory(inventoryDto);
-
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
-        inventory.setUser(User.builder().id(userId).build());
 
         Inventory savedInventory = inventoryRepository.save(inventory);
         return inventoryMapper.toInventoryDto(savedInventory);
     }
 
-    public void deleteInventoryByUserDetails(UserDetails userDetails) {
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
-        inventoryRepository.deleteInventoryByUserId(userId);
+    public void clearTableInventoryBeforeStartInventorying(UserDetails userDetails, Model model) {
+        Object firstTime = model.getAttribute("firstTime");
+        if (firstTime == null) {
+            model.addAttribute("firstTime", new Object());
+            deleteInventory(userDetails);
+        }
+    }
+
+    public void deleteInventory(UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        inventoryRepository.deleteInventoryByUser(user);
     }
 
     public InventoryDto saveStateOfFields(InventoryDto inventoryDto, SaveField saveField) {

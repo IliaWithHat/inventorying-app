@@ -23,7 +23,7 @@ public class UniqueInventoryNumberForEachUserImpl implements ConstraintValidator
     public boolean isValid(ItemDto itemDto, ConstraintValidatorContext context) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findUserByEmail(email).orElseThrow();
-        Optional<Item> item = itemRepository.findItemByInventoryNumberAndCreatedBy(itemDto.getInventoryNumber(), user);
+        Optional<Item> item = itemRepository.findItemByInventoryNumberAndUser(itemDto.getInventoryNumber(), user);
         return item.isEmpty() || item.get().getId().equals(itemDto.getId());
     }
 }

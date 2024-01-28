@@ -14,15 +14,17 @@ import java.math.RoundingMode;
 public interface ItemMapper {
 
     @Mapping(target = "sum", expression = "java(calculateSum(item))")
+    @Mapping(target = "userId", expression = "java(toInteger(item.getUser()))")
     @Mapping(target = "isOwnedByEmployee", expression = "java(toString(item.getIsOwnedByEmployee()))")
     ItemDto toItemDto(Item item);
 
+    @Mapping(target = "user", expression = "java(toUser(itemDto.getUserId()))")
     @Mapping(target = "isOwnedByEmployee", expression = "java(toBoolean(itemDto.getIsOwnedByEmployee()))")
     Item toItem(ItemDto itemDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "isOwnedByEmployee", expression = "java(toBoolean(itemDto.getIsOwnedByEmployee()))")
     Item copyItemDtoToItem(ItemDto itemDto, @MappingTarget Item item);
 

@@ -5,14 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
-import org.ilia.inventoryingapp.mapper.UserMapper;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
@@ -34,18 +32,14 @@ import static org.ilia.inventoryingapp.database.entity.QItem.item;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserService userService;
-    private final UserMapper userMapper;
     private final ItemSequenceService itemSequenceService;
     private final ItemMapper itemMapper;
     private final PredicateBuilder predicateBuilder;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
-        Integer userId = userService.findUserByEmail(userDetails.getUsername())
-                .map(UserDto::getId)
-                .orElseThrow();
+        User user = ((UserDetailsImpl) userDetails).getUser();
         Predicate predicate = QPredicates.builder()
-                .add(userId, item.createdBy.id::eq)
+                .add(user.getId(), item.user.id::eq)
                 .buildAnd();
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
         return itemRepository.findAll(predicate, pageable)
@@ -61,10 +55,8 @@ public class ItemService {
     }
 
     public Optional<ItemDto> findById(Long id, UserDetails userDetails) {
-        User user = userService.findUserByEmail(userDetails.getUsername())
-                .map(userMapper::toUser)
-                .orElseThrow();
-        return itemRepository.findItemByIdAndCreatedBy(id, user)
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        return itemRepository.findItemByIdAndUser(id, user)
                 .map(itemMapper::toItemDto);
     }
 
@@ -72,30 +64,25 @@ public class ItemService {
     public ItemDto create(UserDetails userDetails, ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
 
-        //TODO enable auditing
-        item.setCreatedAt(LocalDateTime.now());
-        User user = userService.findUserByEmail(userDetails.getUsername())
-                .map(userMapper::toUser)
-                .orElseThrow();
-        item.setCreatedBy(user);
-
-        item.setSerialNumber(itemSequenceService.nextval(user.getEmail()));
+        item.setSerialNumber(itemSequenceService.nextval(userDetails));
 
         Item savedItem = itemRepository.save(item);
         return itemMapper.toItemDto(savedItem);
     }
 
     @Transactional
-    public Optional<ItemDto> update(ItemDto itemDto, Long id) {
-        return itemRepository.findById(id)
+    public Optional<ItemDto> update(ItemDto itemDto, Long id, UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        return itemRepository.findItemByIdAndUser(id, user)
                 .map(item -> itemMapper.copyItemDtoToItem(itemDto, item))
                 .map(itemRepository::saveAndFlush)
                 .map(itemMapper::toItemDto);
     }
 
     @Transactional
-    public boolean delete(Long id) {
-        if (itemRepository.findById(id).isPresent()) {
+    public boolean delete(Long id, UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        if (itemRepository.findItemByIdAndUser(id, user).isPresent()) {
             itemRepository.deleteById(id);
             itemRepository.flush();
             return true;

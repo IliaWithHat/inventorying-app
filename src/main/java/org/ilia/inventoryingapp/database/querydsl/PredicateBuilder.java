@@ -1,9 +1,7 @@
 package org.ilia.inventoryingapp.database.querydsl;
 
 import com.querydsl.core.types.Predicate;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.ilia.inventoryingapp.database.repository.UserRepository;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,15 +13,11 @@ import java.util.function.Function;
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
 import static org.ilia.inventoryingapp.filter.TimeDurationEnum.IGNORE;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class PredicateBuilder {
 
-    private final UserRepository userRepository;
-
     public Predicate buildPredicate(ItemFilter itemFilter, UserDetails userDetails) {
-        Integer userId = userRepository.findUserIdByEmail(userDetails.getUsername());
+        Integer userId = ((UserDetailsImpl) userDetails).getUser().getId();
 
         LocalDateTime showItemCreated = null;
         if (itemFilter.getShowItemCreated() != null && !itemFilter.getShowItemCreated().equals(IGNORE)) {
@@ -57,7 +51,7 @@ public class PredicateBuilder {
         splitStringAndAddToQPredicates(itemFilter.getStoredIn(), qPredicates, item.storedIn::containsIgnoreCase);
 
         return qPredicates
-                .add(userId, item.createdBy.id::eq)
+                .add(userId, item.user.id::eq)
                 .add(itemFilter.getTimeIntervalStart() == null ? null : itemFilter.getTimeIntervalStart().atStartOfDay(), item.createdAt::goe)
                 .add(itemFilter.getTimeIntervalEnd() == null ? null : itemFilter.getTimeIntervalEnd().atTime(23, 59, 59), item.createdAt::loe)
                 .add(showItemCreated, item.createdAt::goe)

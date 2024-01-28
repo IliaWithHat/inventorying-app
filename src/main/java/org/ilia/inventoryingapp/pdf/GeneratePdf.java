@@ -310,6 +310,7 @@ public class GeneratePdf {
 
         Table table = createInventoryTableAndHeader();
         createInventoryFooter(table, totalQuantityAndSum, totalElements);
+        //TODO at the end of the table add info about inventory and user.
 
         document.add(table);
         document.close();

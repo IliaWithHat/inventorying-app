@@ -22,7 +22,7 @@ public class InventoryNumberExistImpl implements ConstraintValidator<InventoryNu
     public boolean isValid(String inventoryNumber, ConstraintValidatorContext context) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findUserByEmail(email).orElseThrow();
-        Optional<Item> item = itemRepository.findItemByInventoryNumberAndCreatedBy(inventoryNumber, user);
+        Optional<Item> item = itemRepository.findItemByInventoryNumberAndUser(inventoryNumber, user);
         return item.isPresent();
     }
 }

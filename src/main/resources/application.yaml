@@ -10,7 +10,7 @@ spring:
   jpa:
     open-in-view: true
     properties:
-      javax:
+      jakarta:
         persistence:
           sharedCache:
             #required - enable selective caching mode - only entities with @Cacheable annotation will use L2 cache.

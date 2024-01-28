@@ -48,5 +48,5 @@ public class ItemDto {
 
     LocalDateTime createdAt;
 
-    Integer createdBy;
+    Integer userId;
 }

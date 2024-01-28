@@ -22,8 +22,8 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
     Page<Item> findAll(Predicate predicate, Pageable pageable);
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
-    Optional<Item> findItemByIdAndCreatedBy(Long id, User user);
+    Optional<Item> findItemByIdAndUser(Long id, User user);
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
-    Optional<Item> findItemByInventoryNumberAndCreatedBy(String inventoryNumber, User user);
+    Optional<Item> findItemByInventoryNumberAndUser(String inventoryNumber, User user);
 }

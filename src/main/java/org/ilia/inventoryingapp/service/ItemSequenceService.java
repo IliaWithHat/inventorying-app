@@ -1,24 +1,20 @@
 package org.ilia.inventoryingapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.ItemSequence;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.ItemSequenceRepository;
-import org.ilia.inventoryingapp.dto.UserDto;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ItemSequenceService {
 
     private final ItemSequenceRepository itemSequenceRepository;
-    private final UserService userService;
-
-    public ItemSequenceService(ItemSequenceRepository itemSequenceRepository, @Lazy UserService userService) {
-        this.itemSequenceRepository = itemSequenceRepository;
-        this.userService = userService;
-    }
 
     public void createSequence(User user) {
         ItemSequence itemSequence = ItemSequence.builder()
@@ -28,15 +24,15 @@ public class ItemSequenceService {
         itemSequenceRepository.save(itemSequence);
     }
 
-    public Long nextval(String email) {
-        UserDto user = userService.findUserByEmail(email).orElseThrow();
+    public Long nextval(UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
         ItemSequence itemSequence = itemSequenceRepository.findItemSequenceByUserId(user.getId());
         itemSequence.setLastValue(itemSequence.getLastValue() + 1);
         return itemSequenceRepository.save(itemSequence).getLastValue();
     }
 
-    public Long currval(String email) {
-        UserDto user = userService.findUserByEmail(email).orElseThrow();
+    public Long currval(UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
         return itemSequenceRepository.findItemSequenceByUserId(user.getId()).getLastValue();
     }
 }

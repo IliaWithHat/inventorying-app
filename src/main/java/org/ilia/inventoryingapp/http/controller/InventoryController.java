@@ -36,7 +36,7 @@ public class InventoryController {
                                  InventoryDto inventoryDto,
                                  SaveField saveField,
                                  Model model) {
-        clearTableInventoryBeforeStartInventorying(userDetails, model);
+        inventoryService.clearTableInventoryBeforeStartInventorying(userDetails, model);
         model.addAttribute("inventoryDto", inventoryDto);
         model.addAttribute("saveField", saveField);
         return "inventory/blind";
@@ -47,23 +47,14 @@ public class InventoryController {
                                    Model model,
                                    ItemFilter itemFilter,
                                    @RequestParam(defaultValue = "0") Integer page) {
-        clearTableInventoryBeforeStartInventorying(userDetails, model);
+        inventoryService.clearTableInventoryBeforeStartInventorying(userDetails, model);
         Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilter, page);
         model.addAttribute("items", PageResponse.of(items));
         return "inventory/sighted";
     }
 
-    private void clearTableInventoryBeforeStartInventorying(UserDetails userDetails, Model model) {
-        Object firstTime = model.getAttribute("firstTime");
-        if (firstTime == null) {
-            model.addAttribute("firstTime", new Object());
-            inventoryService.deleteInventoryByUserDetails(userDetails);
-        }
-    }
-
     @PostMapping
-    public String create(@AuthenticationPrincipal UserDetails userDetails,
-                         String returnTo,
+    public String create(String returnTo,
                          @RequestParam(defaultValue = "0") Integer page,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
@@ -73,7 +64,7 @@ public class InventoryController {
             redirectAttributes.addFlashAttribute("inventoryDto", inventoryDto);
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
-            inventoryService.create(userDetails, inventoryDto);
+            inventoryService.create(inventoryDto);
             InventoryDto inventoryDtoWithSavedFields = inventoryService.saveStateOfFields(inventoryDto, saveField);
             redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
         }
@@ -87,7 +78,7 @@ public class InventoryController {
     public String cancelInventory(@AuthenticationPrincipal UserDetails userDetails,
                                   SessionStatus sessionStatus) {
         sessionStatus.setComplete();
-        inventoryService.deleteInventoryByUserDetails(userDetails);
+        inventoryService.deleteInventory(userDetails);
         return "redirect:/items/filter";
     }
 
@@ -98,7 +89,7 @@ public class InventoryController {
         Resource file = generatePdf.generateInventoryPdf(itemFilter, userDetails);
 
         sessionStatus.setComplete();
-        inventoryService.deleteInventoryByUserDetails(userDetails);
+        inventoryService.deleteInventory(userDetails);
 
         if (file == null)
             return ResponseEntity.notFound().build();

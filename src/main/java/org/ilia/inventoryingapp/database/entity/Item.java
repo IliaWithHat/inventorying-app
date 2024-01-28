@@ -4,17 +4,21 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@ToString(exclude = "createdBy")
+@ToString(exclude = "user")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Item {
@@ -40,10 +44,11 @@ public class Item {
 
     private Boolean isOwnedByEmployee;
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "created_by")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private User createdBy;
+    private User user;
 }

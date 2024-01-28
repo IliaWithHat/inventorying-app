@@ -37,5 +37,5 @@ CREATE TABLE item
     price_per_unit       NUMERIC(10, 2) NOT NULL,
     is_owned_by_employee BOOLEAN        NOT NULL,
     created_at           TIMESTAMP      NOT NULL,
-    created_by           INTEGER        NOT NULL REFERENCES users
+    user_id              INTEGER        NOT NULL REFERENCES users
 );

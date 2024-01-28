@@ -35,7 +35,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
                 .where(predicate, inventory.isNull())
                 .orderBy(item.serialNumber.asc())
                 .offset(pageable.getOffset())
@@ -46,7 +46,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
                 .where(predicate, inventory.isNull())
                 .fetchCount();
 
@@ -61,7 +61,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item, inventory)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
                 .where(predicate)
                 .orderBy(item.serialNumber.asc())
                 .offset(pageable.getOffset())
@@ -72,7 +72,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
                 .where(predicate)
                 .fetchCount();
 
@@ -85,7 +85,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(inventory)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.createdBy.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
                 .where(predicate.not(), inventory.isNotNull())
                 .orderBy(item.serialNumber.asc())
                 .fetch();
