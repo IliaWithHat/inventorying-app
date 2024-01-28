@@ -11,6 +11,7 @@ import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,12 +21,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/inventory")
-@SessionAttributes({"itemFilter", "firstTime"})
+@SessionAttributes({"itemFilter"})
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -33,10 +35,12 @@ public class InventoryController {
 
     @GetMapping("/blind")
     public String blindInventory(@AuthenticationPrincipal UserDetails userDetails,
+                                 @ModelAttribute("returnTo") String returnTo,
                                  InventoryDto inventoryDto,
                                  SaveField saveField,
                                  Model model) {
-        inventoryService.clearTableInventoryBeforeStartInventorying(userDetails, model);
+        if (!"blind".equals(returnTo))
+            inventoryService.deleteInventory(userDetails);
         model.addAttribute("inventoryDto", inventoryDto);
         model.addAttribute("saveField", saveField);
         return "inventory/blind";
@@ -44,34 +48,44 @@ public class InventoryController {
 
     @GetMapping("/sighted")
     public String sightedInventory(@AuthenticationPrincipal UserDetails userDetails,
-                                   Model model,
+                                   @RequestParam(defaultValue = "0") Integer page,
+                                   @ModelAttribute("returnTo") String returnTo,
                                    ItemFilter itemFilter,
-                                   @RequestParam(defaultValue = "0") Integer page) {
-        inventoryService.clearTableInventoryBeforeStartInventorying(userDetails, model);
+                                   Model model) {
+        if (!"sighted".equals(returnTo))
+            inventoryService.deleteInventory(userDetails);
         Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilter, page);
         model.addAttribute("items", PageResponse.of(items));
         return "inventory/sighted";
     }
 
     @PostMapping
-    public String create(String returnTo,
-                         @RequestParam(defaultValue = "0") Integer page,
+    public String create(@RequestParam(defaultValue = "0") Integer page,
+                         RedirectAttributes redirectAttributes,
                          @Validated InventoryDto inventoryDto,
                          BindingResult bindingResult,
                          SaveField saveField,
-                         RedirectAttributes redirectAttributes) {
+                         String returnTo) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("inventoryDto", inventoryDto);
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             inventoryService.create(inventoryDto);
-            InventoryDto inventoryDtoWithSavedFields = inventoryService.saveStateOfFields(inventoryDto, saveField);
-            redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
+
+            if (!saveField.equals(new SaveField())) {
+                InventoryDto inventoryDtoWithSavedFields = inventoryService.saveStateOfFields(inventoryDto, saveField);
+                redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
+            }
         }
-        redirectAttributes.addFlashAttribute(saveField);
+        redirectAttributes.addFlashAttribute("saveField", saveField);
+        redirectAttributes.addFlashAttribute("returnTo", returnTo);
+
         if ("sighted".equals(returnTo))
-            return String.format("redirect:/inventory/sighted?page=%d", page);
-        return "redirect:/inventory/blind";
+            return "redirect:/inventory/sighted?page=" + page;
+        else if ("blind".equals(returnTo))
+            return "redirect:/inventory/blind";
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/cancel")

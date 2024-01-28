@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 @Slf4j
 @Service
@@ -38,14 +37,6 @@ public class InventoryService {
 
         Inventory savedInventory = inventoryRepository.save(inventory);
         return inventoryMapper.toInventoryDto(savedInventory);
-    }
-
-    public void clearTableInventoryBeforeStartInventorying(UserDetails userDetails, Model model) {
-        Object firstTime = model.getAttribute("firstTime");
-        if (firstTime == null) {
-            model.addAttribute("firstTime", new Object());
-            deleteInventory(userDetails);
-        }
     }
 
     public void deleteInventory(UserDetails userDetails) {
