@@ -3,7 +3,6 @@ package org.ilia.inventoryingapp.database.repository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import jakarta.persistence.QueryHint;
-import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.springframework.data.domain.Page;
@@ -23,5 +22,5 @@ public interface ItemAndInventoryRepository {
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
     Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable);
 
-    List<Inventory> findExtraInventory(Predicate predicate);
+    List<Tuple> findExtraInventory(Predicate predicate);
 }

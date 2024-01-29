@@ -67,6 +67,7 @@
             </table>
             <div th:if="${items.metadata.page == items.metadata.totalPages - 1 or items.metadata.totalPages == 0}">
                 <form th:action="@{/inventory/export}" method="get">
+                    <input type="hidden" name="inventoryMethod" value="sighted">
                     <button type="submit" class="btn btn-success add-button">Finish inventory</button>
                 </form>
                 <br/>

@@ -98,9 +98,10 @@ public class InventoryController {
 
     @GetMapping("/export")
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
-                                                  ItemFilter itemFilter,
-                                                  SessionStatus sessionStatus) {
-        Resource file = generatePdf.generateInventoryPdf(itemFilter, userDetails);
+                                                  SessionStatus sessionStatus,
+                                                  String inventoryMethod,
+                                                  ItemFilter itemFilter) {
+        Resource file = generatePdf.generateInventoryPdf(itemFilter, userDetails, inventoryMethod);
 
         sessionStatus.setComplete();
         inventoryService.deleteInventory(userDetails);

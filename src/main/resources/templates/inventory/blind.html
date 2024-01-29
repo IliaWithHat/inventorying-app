@@ -62,6 +62,7 @@
             </form>
             <br/>
             <form th:action="@{/inventory/export}" method="get">
+                <input type="hidden" name="inventoryMethod" value="blind">
                 <button type="submit" class="btn btn-success add-button">Finish inventory</button>
             </form>
             <br/>

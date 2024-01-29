@@ -80,9 +80,9 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     }
 
     @Override
-    public List<Inventory> findExtraInventory(Predicate predicate) {
+    public List<Tuple> findExtraInventory(Predicate predicate) {
         return new JPAQuery<Inventory>(entityManager)
-                .select(inventory)
+                .select(item, inventory)
                 .from(item)
                 .leftJoin(inventory)
                 .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))

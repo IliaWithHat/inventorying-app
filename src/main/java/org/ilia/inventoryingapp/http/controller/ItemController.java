@@ -90,8 +90,8 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id,
-                           @AuthenticationPrincipal UserDetails userDetails,
+    public String findById(@AuthenticationPrincipal UserDetails userDetails,
+                           @PathVariable Long id,
                            Model model) {
         ItemDto itemDto = itemService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);
@@ -116,8 +116,8 @@ public class ItemController {
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public String delete(@PathVariable Long id,
-                         @AuthenticationPrincipal UserDetails userDetails) {
+    public String delete(@AuthenticationPrincipal UserDetails userDetails,
+                         @PathVariable Long id) {
         //TODO add checkbox to bach delete
         if (!itemService.delete(id, userDetails))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
