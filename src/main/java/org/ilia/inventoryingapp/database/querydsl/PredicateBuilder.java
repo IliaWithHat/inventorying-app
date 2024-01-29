@@ -31,7 +31,7 @@ public class PredicateBuilder {
                 case SIX_MONTHS -> showItemCreated = LocalDateTime.now().minusMonths(6);
                 case ONE_YEAR -> showItemCreated = LocalDateTime.now().minusYears(1);
             }
-            showItemCreated = showItemCreated.with(LocalTime.MIDNIGHT);
+            showItemCreated = showItemCreated.with(LocalTime.MIDNIGHT).plusDays(1);
             itemFilter.setTimeIntervalStart(null);
             itemFilter.setTimeIntervalEnd(null);
         }
