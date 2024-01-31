@@ -160,7 +160,7 @@
             </form>
             <br/>
             <br/>
-            <table th:if="${items.metadata.totalElements != 0}" id="datatable" class="table table-striped table-bordered">
+            <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                 <tr>
                     <th>Serial number</th>
@@ -189,13 +189,28 @@
                     <td th:text="*{sum}"></td>
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
-                    <td class="text-center">
+                    <td width="50" class="text-center">
                         <form th:action="@{'/items/' + ${item.id}}" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs" data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
                         </form>
                     </td>
+                </tr>
+
+                <tr th:if="${items.content.size() < 5}" style="height:2.7vw"
+                    th:each="i : ${#numbers.sequence(1, 5 - items.content.size())}">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td width="50"></td>
                 </tr>
                 </tbody>
             </table>

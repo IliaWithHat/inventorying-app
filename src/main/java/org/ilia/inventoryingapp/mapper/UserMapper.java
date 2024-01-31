@@ -24,9 +24,9 @@ public interface UserMapper {
     User toUser(UserDto userDto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "admin", ignore = true)
+    @Mapping(target = "password", expression = "java(encodePassword(userDto))")
     User copyUserDtoToUser(UserDto userDto, @MappingTarget User user);
 
     default String encodePassword(UserDto userDto) {

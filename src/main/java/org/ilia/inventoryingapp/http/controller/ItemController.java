@@ -108,11 +108,11 @@ public class ItemController {
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-            return "redirect:/items/{id}";
+        } else {
+            itemService.update(itemDto, id, userDetails)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
         }
-        itemService.update(itemDto, id, userDetails)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
         return "redirect:/items/{id}";
     }
 

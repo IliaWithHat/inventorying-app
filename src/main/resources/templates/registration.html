@@ -13,7 +13,7 @@
         <form class="register-form" th:action="@{/registration}" method="post" th:object="${user}">
             <label for="email">
                 <input id="email" type="text" name="email" th:value="*{email}"
-                       placeholder="Email">
+                       placeholder="Email" autofocus>
             </label>
             <label for="firstName">
                 <input id="firstName" type="text" name="firstName" th:value="*{firstName}"

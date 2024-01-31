@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adjust user</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{fragment/side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <br/>
+            <br/>
+            <form th:action="@{'/admin/users/' + ${user.id}}" th:method="put">
+                <table class="table table-borderless">
+                    <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Phone</th>
+                        <th>New password</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:object="${user}">
+                        <td>
+                            <label for="email">
+                                <input type="text" id="email" name="email" placeholder="Email"
+                                       th:value="*{email}" autofocus>
+                            </label>
+                        </td>
+                        <td>
+                            <label for="firstName">
+                                <input type="text" id="firstName" name="firstName" placeholder="First name"
+                                       th:value="*{firstName}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="lastName">
+                                <input type="text" id="lastName" name="lastName" placeholder="Last name"
+                                       th:value="*{lastName}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="phone">
+                                <input type="text" id="phone" name="phone" placeholder="Phone"
+                                       th:value="*{phone}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="password">
+                                <input type="password" id="password" name="password" placeholder="New password">
+                            </label>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${errors}">
+                    <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+                </div>
+                <b id="message" th:if="${saved}" th:text="${saved}"></b>
+                <br/>
+                <button type="submit" class="btn btn-primary add-button">Save</button>
+            </form>
+            <br/>
+            <form th:action="@{'/admin/users/' + ${user.id}}">
+                <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
+            </form>
+            <br/>
+            <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
+                <button type="submit" class="btn btn-danger add-button">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -34,7 +34,7 @@ public class RegistrationController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/registration";
         }
-        userService.create(user);
+        userService.create(null, user);
         return "redirect:/login";
     }
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inventorying app</title>
+    <title>Manage users</title>
 
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
     <link rel='stylesheet'
@@ -24,7 +24,8 @@
                     <th>First name</th>
                     <th>Last name</th>
                     <th>Phone</th>
-                    <th>Adjust</th>
+                    <th>Password</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
 
@@ -34,27 +35,63 @@
                     <td th:text="*{firstName}"></td>
                     <td th:text="*{lastName}"></td>
                     <td th:text="*{phone}"></td>
-                    <td width="1" class="text-center">
-                        <form th:action="@{'/admin/users/' + ${user.id}}" target="_blank">
-                            <button type="submit" th:action="@{'/admin/users/' + *{id}}" class="btn btn-primary btn-xs">
+                    <td>********</td>
+                    <td width="50" class="text-center">
+                        <form th:action="@{'/admin/users/' + *{id}}" target="_blank">
+                            <button type="submit" class="btn btn-primary btn-xs">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
                         </form>
                     </td>
                 </tr>
-                <tr style="height:45px" th:each="i : ${#numbers.sequence(1, 10 - users.size())}">
+
+                <tr th:if="${users.size() < 10}">
+                    <form th:action="@{/admin/users}" method="post">
+                        <td>
+                            <label for="email">
+                                <input type="text" id="email" name="email" placeholder="Email" autofocus>
+                            </label>
+                        </td>
+                        <td>
+                            <label for="firstName">
+                                <input type="text" id="firstName" name="firstName" placeholder="First name">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="lastName">
+                                <input type="text" id="lastName" name="lastName" placeholder="Last name">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="phone">
+                                <input type="text" id="phone" name="phone" placeholder="Phone">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="password">
+                                <input type="password" id="password" name="password" placeholder="Password">
+                            </label>
+                        </td>
+                        <td width="50" class="text-center">
+                            <input type="hidden" value="USER" name="role">
+                            <button type="submit" class="btn btn-success btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </td>
+                    </form>
+                </tr>
+
+                <tr th:if="${users.size() < 9}" style="height:2.7vw"
+                    th:each="i : ${#numbers.sequence(1, 9 - users.size())}">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td width="50"></td>
                 </tr>
                 </tbody>
             </table>
-            <br/>
-            <form th:action="@{/admin/users/create}">
-                <button class="btn btn-primary add-button" type="submit">Create new user</button>
-            </form>
         </div>
     </div>
 </div>
