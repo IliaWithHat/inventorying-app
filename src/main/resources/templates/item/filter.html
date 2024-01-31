@@ -15,8 +15,9 @@
 
     <div id="content">
         <div class="container-fluid">
+            <br/>
             <div th:if="${items.metadata.page == 0}">
-                <form th:action="@{/items/filter}" method="get" th:object="${itemFilter}">
+                <form th:action="@{/items/filter}" th:object="${itemFilter}">
                     <br/>
                     <table class="table table-borderless">
                         <thead>
@@ -96,18 +97,16 @@
                     <button type="submit" class="btn btn-danger add-button">Clear filter</button>
                 </form>
                 <br/>
-                <form th:if="${items.metadata.totalElements != 0}" th:action="@{/items/export}" method="get">
+                <form th:if="${items.metadata.totalElements != 0}" th:action="@{/items/export}">
                     <button type="submit" class="btn btn-success add-button">Export to PDF</button>
                 </form>
                 <br/>
                 <div th:if="${items.metadata.totalElements != 0}" style="display: flex; justify-content: space-between;">
-                    <form th:action="@{/inventory/sighted}" method="get"
-                          style="flex: 1;  margin-right: 8px;">
+                    <form th:action="@{/inventory/sighted}" style="flex: 1;  margin-right: 8px;">
                         <button type="submit" class="btn btn-warning add-button">Start "sighted" inventorying</button>
                     </form>
 
-                    <form th:action="@{/inventory/blind}" method="get"
-                          style="flex: 1; margin-left: 8px;">
+                    <form th:action="@{/inventory/blind}" style="flex: 1; margin-left: 8px;">
                         <button type="submit" class="btn btn-warning add-button">Start "blind" inventorying</button>
                     </form>
                 </div>
@@ -144,7 +143,7 @@
                     <td th:text="*{createdAt.toLocalDate()}"></td>
                     <td th:text="*{isOwnedByEmployee}"></td>
                     <td class="text-center">
-                        <form th:action="@{'/items/' + ${item.id}}" method="get" target="_blank">
+                        <form th:action="@{'/items/' + *{id}}" target="_blank">
                             <button type="submit" class="btn btn-primary btn-xs">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>

@@ -93,7 +93,8 @@ public class ItemController {
     public String findById(@AuthenticationPrincipal UserDetails userDetails,
                            @PathVariable Long id,
                            Model model) {
-        ItemDto itemDto = itemService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        ItemDto itemDto = itemService.findById(id, userDetails)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("itemDto", itemDto);
         model.addAttribute("units", Unit.values());
         return "item/item";
@@ -109,7 +110,8 @@ public class ItemController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/items/{id}";
         }
-        itemService.update(itemDto, id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        itemService.update(itemDto, id, userDetails)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
         return "redirect:/items/{id}";
     }
@@ -130,9 +132,9 @@ public class ItemController {
                                               ItemFilter itemFilter) {
         Resource file = generatePdf.generateStandardPdf(itemFilter, userDetails);
 
-        if (file == null)
+        if (file == null) {
             return ResponseEntity.notFound().build();
-
+        }
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"table.pdf\"").body(file);
     }

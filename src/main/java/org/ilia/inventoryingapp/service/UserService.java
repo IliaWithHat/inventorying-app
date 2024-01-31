@@ -25,14 +25,16 @@ public class UserService implements UserDetailsService {
     private final UserMapper userMapper;
     private final ItemSequenceService itemSequenceService;
 
-    public List<UserDto> findAll() {
-        return userRepository.findAll()
-                .stream().map(userMapper::toUserDto)
+    public List<UserDto> findAll(UserDetails userDetails) {
+        User admin = ((UserDetailsImpl) userDetails).getUser();
+        return userRepository.findUsersByAdmin(admin).stream()
+                .map(userMapper::toUserDto)
                 .toList();
     }
 
-    public Optional<UserDto> findById(Integer id) {
-        return userRepository.findById(id)
+    public Optional<UserDto> findById(Integer id, UserDetails userDetails) {
+        User admin = ((UserDetailsImpl) userDetails).getUser();
+        return userRepository.findUserByIdAndAdmin(id, admin)
                 .map(userMapper::toUserDto);
     }
 

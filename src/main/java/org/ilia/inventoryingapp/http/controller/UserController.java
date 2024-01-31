@@ -4,31 +4,38 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@Controller
+@RequestMapping("admin/users")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
-@RestController
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> findAll() {
-        return userService.findAll();
+    public String findAll(@AuthenticationPrincipal UserDetails userDetails,
+                          Model model) {
+        List<UserDto> users = userService.findAll(userDetails);
+        model.addAttribute("users", users);
+        return "user/users";
     }
 
     @GetMapping("/{id}")
-    public UserDto findById(@PathVariable Integer id) {
-        return userService.findById(id)
+    public UserDto findById(@AuthenticationPrincipal UserDetails userDetails,
+                            @PathVariable Integer id) {
+        return userService.findById(id, userDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@RequestBody UserDto userDto) {
         return userService.create(userDto);
     }
@@ -40,9 +47,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         if (!userService.delete(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }
+

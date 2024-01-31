@@ -101,7 +101,7 @@
                 <button type="submit" class="btn btn-primary add-button">Save</button>
             </form>
             <br/>
-            <form method="get" th:action="@{'/items/' + *{id}}">
+            <form th:action="@{'/items/' + *{id}}">
                 <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
             </form>
             <br/>

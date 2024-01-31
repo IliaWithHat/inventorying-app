@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventorying app</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css'>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="viewport">
+    <div th:insert="~{fragment/side-bar :: side-bar}"></div>
+
+    <div id="content">
+        <div class="container-fluid">
+            <br/>
+            <br/>
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Phone</th>
+                    <th>Adjust</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="user : ${users}" th:object="${user}">
+                    <td th:text="*{email}"></td>
+                    <td th:text="*{firstName}"></td>
+                    <td th:text="*{lastName}"></td>
+                    <td th:text="*{phone}"></td>
+                    <td width="1" class="text-center">
+                        <form th:action="@{'/admin/users/' + ${user.id}}" target="_blank">
+                            <button type="submit" th:action="@{'/admin/users/' + *{id}}" class="btn btn-primary btn-xs">
+                                <span class="glyphicon glyphicon-cog"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr style="height:45px" th:each="i : ${#numbers.sequence(1, 10 - users.size())}">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <br/>
+            <form th:action="@{/admin/users/create}">
+                <button class="btn btn-primary add-button" type="submit">Create new user</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
