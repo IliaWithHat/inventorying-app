@@ -5,23 +5,21 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
-import org.ilia.inventoryingapp.database.repository.UserRepository;
-import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumber;
+import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForInventory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UniqueInventoryNumberImpl implements ConstraintValidator<UniqueInventoryNumber, String> {
+public class UniqueInventoryNumberForInventoryImpl implements ConstraintValidator<UniqueInventoryNumberForInventory, String> {
 
     private final InventoryRepository inventoryRepository;
-    private final UserRepository userRepository;
 
     @Override
     public boolean isValid(String inventoryNumber, ConstraintValidatorContext context) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findUserByEmail(email).orElseThrow();
+        User user = ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         Optional<Inventory> inventory = inventoryRepository.findInventoryByInventoryNumberAndUser(inventoryNumber, user);
         return inventory.isEmpty();
     }

@@ -1,8 +1,10 @@
 package org.ilia.inventoryingapp.http.controller;
 
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.service.UserService;
+import org.ilia.inventoryingapp.validation.groups.CreateUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +28,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String createUser(@ModelAttribute("user") @Validated UserDto user,
+    public String createUser(@ModelAttribute("user") @Validated({Default.class, CreateUser.class}) UserDto user,
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {

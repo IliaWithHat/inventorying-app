@@ -14,7 +14,7 @@ CREATE TABLE item_sequence
 (
     id         SERIAL PRIMARY KEY,
     last_value BIGINT  NOT NULL,
-    user_id    INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
+    user_id    INTEGER NOT NULL REFERENCES users
 );
 
 CREATE TABLE inventory
@@ -37,5 +37,5 @@ CREATE TABLE item
     price_per_unit       NUMERIC(10, 2) NOT NULL,
     is_owned_by_employee BOOLEAN        NOT NULL,
     created_at           TIMESTAMP      NOT NULL,
-    user_id              INTEGER        NOT NULL REFERENCES users ON DELETE CASCADE
+    user_id              INTEGER        NOT NULL REFERENCES users
 );

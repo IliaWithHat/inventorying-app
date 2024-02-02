@@ -1,8 +1,11 @@
 package org.ilia.inventoryingapp.http.controller;
 
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.service.UserService;
+import org.ilia.inventoryingapp.validation.groups.CreateUser;
+import org.ilia.inventoryingapp.validation.groups.UpdateUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +46,7 @@ public class UserController {
 
     @PostMapping
     public String create(@AuthenticationPrincipal UserDetails userDetails,
-                         @Validated UserDto userDto,
+                         @Validated({Default.class, CreateUser.class}) UserDto userDto,
                          BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             userService.create(userDetails, userDto);
@@ -54,16 +57,15 @@ public class UserController {
     @PutMapping("/{id}")
     public String update(@AuthenticationPrincipal UserDetails userDetails,
                          @PathVariable Integer id,
-                         @Validated UserDto userDto,
+                         @Validated({Default.class, UpdateUser.class}) UserDto userDto,
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) {
-        //TODO fix validating user
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
             userService.update(userDto, id, userDetails)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-            redirectAttributes.addFlashAttribute("saved", "Item successfully updated!!!");
+            redirectAttributes.addFlashAttribute("saved", "User successfully updated!!!");
         }
         return "redirect:/admin/users/{id}";
     }

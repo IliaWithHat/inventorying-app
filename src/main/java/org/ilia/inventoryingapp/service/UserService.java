@@ -6,11 +6,14 @@ import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.UserRepository;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.mapper.UserMapper;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +30,7 @@ public class UserService implements UserDetailsService {
 
     public List<UserDto> findAll(UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
-        return userRepository.findUsersByAdmin(admin).stream()
+        return userRepository.findUsersByAdmin(admin, Sort.by("id")).stream()
                 .map(userMapper::toUserDto)
                 .toList();
     }
@@ -44,11 +47,20 @@ public class UserService implements UserDetailsService {
 
         if (userDetails != null) {
             User admin = ((UserDetailsImpl) userDetails).getUser();
-            user.setAdmin(admin);
+            long usersCount = userRepository.countByAdmin(admin);
+            if (usersCount < 10) {
+                user.setAdmin(admin);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
         }
+
         User savedUser = userRepository.save(user);
 
-        itemSequenceService.createSequence(savedUser);
+        if (userDetails == null) {
+            itemSequenceService.createSequence(savedUser);
+        }
+
         return userMapper.toUserDto(savedUser);
     }
 
