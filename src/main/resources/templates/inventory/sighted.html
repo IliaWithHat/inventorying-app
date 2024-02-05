@@ -45,10 +45,7 @@
                         <td th:text="*{quantity}"></td>
                         <td th:text="*{sum}"></td>
                         <td>
-                            <label for="inventoryNumber">
-                                <input type="hidden" id="inventoryNumber" name="inventoryNumber"
-                                       th:value="*{inventoryNumber}">
-                            </label>
+                            <input type="hidden" name="inventoryNumber" th:value="*{inventoryNumber}">
                             <label for="currentQuantity">
                                 <input type="number" id="currentQuantity" name="currentQuantity"
                                        th:value="*{quantity}" autofocus
