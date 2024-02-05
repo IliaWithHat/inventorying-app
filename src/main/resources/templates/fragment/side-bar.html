@@ -4,17 +4,17 @@
             <a href="/">Inventorying App</a>
         </header>
         <ul class="nav">
-            <li>
+            <li sec:authorize="hasAuthority('ADMIN')">
                 <a href="/items">
-                    <i class="zmdi zmdi-view-dashboard"></i> Items
+                    <i class="zmdi zmdi-plus"></i> Add items
                 </a>
             </li>
             <li>
                 <a href="/items/filter">
-                    <i class="zmdi zmdi-filter-list"></i> Filter
+                    <i class="zmdi zmdi-view-list-alt"></i> View items
                 </a>
             </li>
-            <li>
+            <li sec:authorize="hasAuthority('ADMIN')">
                 <a href="/admin/users">
                     <i class="zmdi zmdi-accounts-add"></i>Manage users
                 </a>
