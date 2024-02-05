@@ -1,9 +1,8 @@
 package org.ilia.inventoryingapp.database.querydsl;
 
 import com.querydsl.core.types.Predicate;
-import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
+import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.filter.ItemFilter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,13 +10,14 @@ import java.time.LocalTime;
 import java.util.function.Function;
 
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
+import static org.ilia.inventoryingapp.database.entity.Role.ADMIN;
 import static org.ilia.inventoryingapp.filter.TimeDurationEnum.IGNORE;
 
 @Component
 public class PredicateBuilder {
 
-    public Predicate buildPredicate(ItemFilter itemFilter, UserDetails userDetails) {
-        Integer userId = ((UserDetailsImpl) userDetails).getUser().getId();
+    public Predicate buildPredicate(ItemFilter itemFilter, User user) {
+        int userId = user.getRole() == ADMIN ? user.getId() : user.getAdmin().getId();
 
         LocalDateTime showItemCreated = null;
         if (itemFilter.getShowItemCreated() != null && !itemFilter.getShowItemCreated().equals(IGNORE)) {

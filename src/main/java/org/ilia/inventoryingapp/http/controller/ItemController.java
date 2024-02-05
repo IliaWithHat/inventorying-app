@@ -5,7 +5,6 @@ import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.filter.TimeDurationEnum;
-import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.service.ItemSequenceService;
 import org.ilia.inventoryingapp.service.ItemService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
@@ -36,7 +35,6 @@ public class ItemController {
 
     private final ItemService itemService;
     private final ItemSequenceService itemSequenceService;
-    private final GeneratePdf generatePdf;
 
     @GetMapping
     public String getFirstFiveItems(@AuthenticationPrincipal UserDetails userDetails,
@@ -130,7 +128,7 @@ public class ItemController {
     @ResponseBody
     public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
                                               ItemFilter itemFilter) {
-        Resource file = generatePdf.generateStandardPdf(itemFilter, userDetails);
+        Resource file = itemService.getPdf(itemFilter, userDetails);
 
         if (file == null) {
             return ResponseEntity.notFound().build();

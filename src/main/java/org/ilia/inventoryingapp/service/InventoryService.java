@@ -11,7 +11,9 @@ import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.InventoryMapper;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
+import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,11 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
     private final ItemMapper itemMapper;
+    private final GeneratePdf generatePdf;
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
-        return inventoryRepository.findItemsThatWereNotInventoried(itemFilter, userDetails, page)
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        return inventoryRepository.findItemsThatWereNotInventoried(itemFilter, user, page)
                 .map(itemMapper::toItemDto);
     }
 
@@ -49,5 +53,10 @@ public class InventoryService {
                 .inventoryNumber(saveField.getSaveInventoryNumber() == null ? null : inventoryDto.getInventoryNumber())
                 .currentQuantity(saveField.getSaveQuantity() == null ? null : inventoryDto.getCurrentQuantity())
                 .build();
+    }
+
+    public Resource getPdf(ItemFilter itemFilter, UserDetails userDetails, String inventoryMethod) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        return generatePdf.generateInventoryPdf(itemFilter, user, inventoryMethod);
     }
 }

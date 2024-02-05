@@ -23,7 +23,6 @@ import org.hibernate.Session;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
@@ -34,7 +33,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -49,6 +47,7 @@ import java.util.List;
 @Component
 public class GeneratePdf {
 
+    //TODO rework this
     private final Session session;
     private final ItemRepository itemRepository;
     private final InventoryRepository inventoryRepository;
@@ -71,7 +70,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateStandardPdf(ItemFilter itemFilter, UserDetails userDetails) {
+    public Resource generateStandardPdf(ItemFilter itemFilter, User user) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -90,7 +89,7 @@ public class GeneratePdf {
             totalQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
         }
 
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
         do {
             Table table = createStandardTableAndHeader();
 
@@ -132,7 +131,6 @@ public class GeneratePdf {
 
         document.add(table);
 
-        User user = ((UserDetailsImpl) userDetails).getUser();
         String text = String.format("The export was made on %1$tF %1$tR by %2$s %3$s.",
                 LocalDateTime.now(), user.getFirstName(), user.getLastName());
         document.add(new Paragraph(text).setFont(font).setFontSize(fontSize + 2));
@@ -205,7 +203,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateInventoryPdf(ItemFilter itemFilter, UserDetails userDetails, String inventoryMethod) {
+    public Resource generateInventoryPdf(ItemFilter itemFilter, User user, String inventoryMethod) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -224,7 +222,7 @@ public class GeneratePdf {
             totalQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
         }
 
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
         do {
             Table table = createInventoryTableAndHeader();
 
@@ -299,7 +297,6 @@ public class GeneratePdf {
 
         document.add(table);
 
-        User user = ((UserDetailsImpl) userDetails).getUser();
         String text = String.format("The inventory was carried out by %s %s using the \"%s\" method on %4$tF %4$tR.",
                 user.getFirstName(), user.getLastName(), inventoryMethod, LocalDateTime.now());
         document.add(new Paragraph(text).setFont(font).setFontSize(fontSize + 2));

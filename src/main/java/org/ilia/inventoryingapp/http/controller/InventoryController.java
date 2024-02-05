@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
-import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.service.InventoryService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
@@ -31,7 +30,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class InventoryController {
 
     private final InventoryService inventoryService;
-    private final GeneratePdf generatePdf;
 
     @GetMapping("/blind")
     public String blindInventory(@AuthenticationPrincipal UserDetails userDetails,
@@ -101,7 +99,7 @@ public class InventoryController {
                                                   SessionStatus sessionStatus,
                                                   String inventoryMethod,
                                                   ItemFilter itemFilter) {
-        Resource file = generatePdf.generateInventoryPdf(itemFilter, userDetails, inventoryMethod);
+        Resource file = inventoryService.getPdf(itemFilter, userDetails, inventoryMethod);
 
         sessionStatus.setComplete();
         inventoryService.deleteInventory(userDetails);

@@ -8,10 +8,10 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
+import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -25,11 +25,11 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     private final EntityManager entityManager;
 
     @Override
-    public Page<Item> findItemsThatWereNotInventoried(ItemFilter itemFilter, UserDetails userDetails, Integer pageNumber) {
+    public Page<Item> findItemsThatWereNotInventoried(ItemFilter itemFilter, User user, Integer pageNumber) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("serialNumber"));
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
 
         List<Item> result = queryFactory
                 .select(item)

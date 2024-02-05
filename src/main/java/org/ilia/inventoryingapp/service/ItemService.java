@@ -12,7 +12,9 @@ import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilter;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
+import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ public class ItemService {
     private final ItemSequenceService itemSequenceService;
     private final ItemMapper itemMapper;
     private final PredicateBuilder predicateBuilder;
+    private final GeneratePdf generatePdf;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
@@ -47,7 +50,8 @@ public class ItemService {
     }
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, userDetails);
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
@@ -88,6 +92,11 @@ public class ItemService {
             return true;
         }
         return false;
+    }
+
+    public Resource getPdf(ItemFilter itemFilter, UserDetails userDetails) {
+        User user = ((UserDetailsImpl) userDetails).getUser();
+        return generatePdf.generateStandardPdf(itemFilter, user);
     }
 
     public ItemDto saveStateOfFields(ItemDto itemDto, SaveField saveField) {
