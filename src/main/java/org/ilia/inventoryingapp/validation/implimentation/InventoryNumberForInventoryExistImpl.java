@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
-import org.ilia.inventoryingapp.validation.annotation.InventoryNumberExist;
+import org.ilia.inventoryingapp.validation.annotation.InventoryNumberForInventoryExist;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
-public class InventoryNumberExistImpl implements ConstraintValidator<InventoryNumberExist, String> {
+public class InventoryNumberForInventoryExistImpl implements ConstraintValidator<InventoryNumberForInventoryExist, String> {
 
     private final ItemRepository itemRepository;
 
