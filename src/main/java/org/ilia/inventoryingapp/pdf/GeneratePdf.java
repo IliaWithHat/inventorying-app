@@ -184,7 +184,7 @@ public class GeneratePdf {
         table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, bold, true)
                 .setBorder(new SolidBorder(borderWidth)));
         for (int i = 0; i < 2; i++) {
-            table.addCell(createCell(numbers.set(i, new BigDecimal(0)).toString(), 1, bold, true)
+            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, bold, true)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setBorder(new SolidBorder(borderWidth)));
         }
@@ -227,7 +227,7 @@ public class GeneratePdf {
             Table table = createInventoryTableAndHeader();
 
             Pageable pageable = PageRequest.of(pageNumber, 18, Sort.by("serialNumber"));
-            Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(predicate, pageable);
+            Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(predicate, pageable, user);
             if (pageNumber == 0) {
                 totalPages = itemsAndInventory.getTotalPages();
                 totalElements = itemsAndInventory.getTotalElements();
@@ -259,7 +259,7 @@ public class GeneratePdf {
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         } while (pageNumber < totalPages);
 
-        List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicate);
+        List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicate, user);
         if (!extraInventory.isEmpty()) {
             document.add(new Paragraph("Items that shouldn't be here")
                     .setFont(bold)
@@ -268,7 +268,7 @@ public class GeneratePdf {
 
             List<BigDecimal> extraQuantityAndSum = new ArrayList<>(2);
             for (int i = 0; i < 2; i++) {
-                extraQuantityAndSum.add(new BigDecimal(0));
+                extraQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
             }
 
             Table table = createStandardTableAndHeader();
@@ -405,7 +405,7 @@ public class GeneratePdf {
         table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, bold, true)
                 .setBorder(new SolidBorder(borderWidth)));
         for (int i = 0; i < 8; i++) {
-            table.addCell(createCell(numbers.set(i, new BigDecimal(0)).toString(), 1, bold, true)
+            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, bold, true)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setBorder(new SolidBorder(borderWidth)));
         }

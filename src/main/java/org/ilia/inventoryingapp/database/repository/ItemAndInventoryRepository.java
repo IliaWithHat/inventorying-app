@@ -20,8 +20,8 @@ public interface ItemAndInventoryRepository {
     Page<Item> findItemsThatWereNotInventoried(ItemFilter itemFilter, User user, Integer pageNumber);
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
-    Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable);
+    Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable, User user);
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
-    List<Tuple> findExtraInventory(Predicate predicate);
+    List<Tuple> findExtraInventory(Predicate predicate, User user);
 }

@@ -35,7 +35,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(inventory.user.id.eq(user.getId())))
                 .where(predicate, inventory.isNull())
                 .orderBy(item.serialNumber.asc())
                 .offset(pageable.getOffset())
@@ -46,7 +46,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(inventory.user.id.eq(user.getId())))
                 .where(predicate, inventory.isNull())
                 .fetchCount();
 
@@ -54,14 +54,14 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     }
 
     @Override
-    public Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable) {
+    public Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable, User user) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         List<Tuple> result = queryFactory
                 .select(item, inventory)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(inventory.user.id.eq(user.getId())))
                 .where(predicate)
                 .orderBy(item.serialNumber.asc())
                 .offset(pageable.getOffset())
@@ -72,7 +72,7 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
                 .select(item)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(inventory.user.id.eq(user.getId())))
                 .where(predicate)
                 .fetchCount();
 
@@ -80,12 +80,12 @@ public class ItemAndInventoryRepositoryImpl implements ItemAndInventoryRepositor
     }
 
     @Override
-    public List<Tuple> findExtraInventory(Predicate predicate) {
+    public List<Tuple> findExtraInventory(Predicate predicate, User user) {
         return new JPAQuery<Inventory>(entityManager)
                 .select(item, inventory)
                 .from(item)
                 .leftJoin(inventory)
-                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(item.user.id.eq(inventory.user.id)))
+                .on(item.inventoryNumber.eq(inventory.inventoryNumber).and(inventory.user.id.eq(user.getId())))
                 .where(predicate.not(), inventory.isNotNull())
                 .orderBy(item.serialNumber.asc())
                 .fetch();
