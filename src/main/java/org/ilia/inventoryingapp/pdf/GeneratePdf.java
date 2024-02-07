@@ -19,7 +19,6 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.hibernate.Session;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
@@ -47,8 +46,6 @@ import java.util.List;
 @Component
 public class GeneratePdf {
 
-    //TODO rework this
-    private final Session session;
     private final ItemRepository itemRepository;
     private final InventoryRepository inventoryRepository;
     private final PredicateBuilder predicateBuilder;
@@ -69,6 +66,14 @@ public class GeneratePdf {
         return new Object[]{pathToFile, document};
     }
 
+    private List<BigDecimal> initializeList(int capacity) {
+        List<BigDecimal> list = new ArrayList<>(capacity);
+        for (int i = 0; i < capacity; i++) {
+            list.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
+        }
+        return list;
+    }
+
     @SneakyThrows
     public Resource generateStandardPdf(ItemFilter itemFilter, User user) {
         Object[] pathAndDocument = prepareDocument();
@@ -79,15 +84,8 @@ public class GeneratePdf {
         int pageNumber = 0;
         long totalElements = 0;
 
-        List<BigDecimal> quantityAndSum = new ArrayList<>(2);
-        for (int i = 0; i < 2; i++) {
-            quantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
-        }
-
-        List<BigDecimal> totalQuantityAndSum = new ArrayList<>(2);
-        for (int i = 0; i < 2; i++) {
-            totalQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
-        }
+        List<BigDecimal> quantityAndSum = initializeList(2);
+        List<BigDecimal> totalQuantityAndSum = initializeList(2);
 
         Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
         do {
@@ -108,16 +106,7 @@ public class GeneratePdf {
             }
 
             if (pageNumber == totalPages && items.getNumberOfElements() < 20) {
-                for (int i = 0, numOfColumnZeroBased = 8; i < (20 - items.getNumberOfElements()) * 9; i++) {
-                    if (i % 9 == 0) {
-                        table.addCell(createCell("", true));
-                    } else if (i % numOfColumnZeroBased == 0) {
-                        table.addCell(createCell("", false));
-                        numOfColumnZeroBased += 9;
-                    } else {
-                        table.addCell(createCell("", null));
-                    }
-                }
+                addEmptyRows(table, 9, 20, items.getNumberOfElements());
             }
 
             createStandardFooter(table, quantityAndSum, pageNumber, items.getNumberOfElements());
@@ -154,6 +143,10 @@ public class GeneratePdf {
     }
 
     private void addDataToStandardTable(Table table, Item item, List<BigDecimal> quantityAndSum) {
+        addDataToStandardTable(table, item, null, quantityAndSum);
+    }
+
+    private void addDataToStandardTable(Table table, Item item, Inventory inventory, List<BigDecimal> quantityAndSum) {
         BigDecimal sum = item.getQuantity().multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
 
         table.addCell(createCell(item.getSerialNumber().toString(), true));
@@ -162,7 +155,13 @@ public class GeneratePdf {
         table.addCell(createCell(item.getStoredIn()));
         table.addCell(createCell(item.getUnit().toString()));
         table.addCell(createCell(item.getPricePerUnit().toString()));
-        table.addCell(createCell(item.getQuantity().toString()));
+
+        if (inventory == null) {
+            table.addCell(createCell(item.getQuantity().toString()));
+        } else {
+            table.addCell(createCell(inventory.getCurrentQuantity().toString()));
+        }
+
         table.addCell(createCell(sum.toString()));
         table.addCell(createCell(item.getIsOwnedByEmployee() ? "Yes" : "No", false));
 
@@ -212,15 +211,8 @@ public class GeneratePdf {
         int pageNumber = 0;
         long totalElements = 0;
 
-        List<BigDecimal> quantityAndSum = new ArrayList<>(8);
-        for (int i = 0; i < 8; i++) {
-            quantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
-        }
-
-        List<BigDecimal> totalQuantityAndSum = new ArrayList<>(8);
-        for (int i = 0; i < 8; i++) {
-            totalQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
-        }
+        List<BigDecimal> quantityAndSum = initializeList(8);
+        List<BigDecimal> totalQuantityAndSum = initializeList(8);
 
         Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
         do {
@@ -241,16 +233,7 @@ public class GeneratePdf {
             }
 
             if (pageNumber == totalPages && itemsAndInventory.getNumberOfElements() < 18) {
-                for (int i = 0, numOfColumnZeroBased = 13; i < (18 - itemsAndInventory.getNumberOfElements()) * 14; i++) {
-                    if (i % 14 == 0) {
-                        table.addCell(createCell("", true));
-                    } else if (i % numOfColumnZeroBased == 0) {
-                        table.addCell(createCell("", false));
-                        numOfColumnZeroBased += 14;
-                    } else {
-                        table.addCell(createCell("", null));
-                    }
-                }
+                addEmptyRows(table, 14, 18, itemsAndInventory.getNumberOfElements());
             }
 
             createInventoryFooter(table, quantityAndSum, pageNumber, itemsAndInventory.getNumberOfElements());
@@ -261,35 +244,7 @@ public class GeneratePdf {
 
         List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicate, user);
         if (!extraInventory.isEmpty()) {
-            document.add(new Paragraph("Items that shouldn't be here")
-                    .setFont(bold)
-                    .setFontSize(20)
-                    .setTextAlignment(TextAlignment.CENTER));
-
-            List<BigDecimal> extraQuantityAndSum = new ArrayList<>(2);
-            for (int i = 0; i < 2; i++) {
-                extraQuantityAndSum.add(new BigDecimal(i % 2 == 0 ? "0.000" : "0.00"));
-            }
-
-            Table table = createStandardTableAndHeader();
-            extraInventory.forEach(tuple -> {
-                Item item = tuple.get(0, Item.class);
-                Inventory inventory = tuple.get(1, Inventory.class);
-
-                session.evict(item);
-                item.setQuantity(inventory.getCurrentQuantity());
-
-                addDataToStandardTable(table, item, extraQuantityAndSum);
-            });
-
-            totalQuantityAndSum.set(2, totalQuantityAndSum.get(2).add(extraQuantityAndSum.get(0)));
-            totalQuantityAndSum.set(3, totalQuantityAndSum.get(3).add(extraQuantityAndSum.get(1)));
-            totalElements += extraInventory.size();
-
-            createStandardFooter(table, extraQuantityAndSum, extraInventory.size());
-
-            document.add(table);
-            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            totalElements = addExtraInventoryToTheTable(document, extraInventory, totalQuantityAndSum, totalElements);
         }
 
         Table table = createInventoryTableAndHeader();
@@ -393,6 +348,33 @@ public class GeneratePdf {
         }
     }
 
+    private long addExtraInventoryToTheTable(Document document, List<Tuple> extraInventory, List<BigDecimal> totalQuantityAndSum, long totalElements) {
+        document.add(new Paragraph("Items that shouldn't be here")
+                .setFont(bold)
+                .setFontSize(20)
+                .setTextAlignment(TextAlignment.CENTER));
+
+        List<BigDecimal> extraQuantityAndSum = initializeList(2);
+
+        Table table = createStandardTableAndHeader();
+        extraInventory.forEach(tuple -> {
+            Item item = tuple.get(0, Item.class);
+            Inventory inventory = tuple.get(1, Inventory.class);
+            addDataToStandardTable(table, item, inventory, extraQuantityAndSum);
+        });
+
+        totalQuantityAndSum.set(2, totalQuantityAndSum.get(2).add(extraQuantityAndSum.get(0)));
+        totalQuantityAndSum.set(3, totalQuantityAndSum.get(3).add(extraQuantityAndSum.get(1)));
+        totalElements += extraInventory.size();
+
+        createStandardFooter(table, extraQuantityAndSum, extraInventory.size());
+
+        document.add(table);
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+        return totalElements;
+    }
+
     private void createInventoryFooter(Table table, List<BigDecimal> numbers, int pageNumber, int numberOfElements) {
         createInventoryFooter(table, numbers, false, pageNumber, numberOfElements, 0);
     }
@@ -415,6 +397,19 @@ public class GeneratePdf {
         table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 8, bold, true)
                 .setTextAlignment(TextAlignment.CENTER)
                 .setBorder(new SolidBorder(borderWidth)));
+    }
+
+    private void addEmptyRows(Table table, int numOfColum, int itemsOnPage, int numberOfElements) {
+        for (int i = 0, numOfColumnZeroBased = numOfColum - 1; i < (itemsOnPage - numberOfElements) * numOfColum; i++) {
+            if (i % numOfColum == 0) {
+                table.addCell(createCell("", true));
+            } else if (i % numOfColumnZeroBased == 0) {
+                table.addCell(createCell("", false));
+                numOfColumnZeroBased += numOfColum;
+            } else {
+                table.addCell(createCell("", null));
+            }
+        }
     }
 
     private Cell createCell(String text) {
