@@ -37,8 +37,13 @@ public class UserService implements UserDetailsService {
 
     public Optional<UserDto> findById(Integer id, UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
-        return userRepository.findUserByIdAndAdmin(id, admin)
-                .map(userMapper::toUserDto);
+        Optional<User> user;
+        if (admin.getId().equals(id)) {
+            user = Optional.of(admin);
+        } else {
+            user = userRepository.findUserByIdAndAdmin(id, admin);
+        }
+        return user.map(userMapper::toUserDto);
     }
 
     @Transactional
@@ -67,8 +72,14 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<UserDto> update(UserDto userDto, Integer id, UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
-        return userRepository.findUserByIdAndAdmin(id, admin)
-                .map(user -> userMapper.copyUserDtoToUser(userDto, user))
+        Optional<User> user;
+        if (admin.getId().equals(id)) {
+            user = Optional.of(admin);
+        } else {
+            user = userRepository.findUserByIdAndAdmin(id, admin);
+        }
+        return user
+                .map(u -> userMapper.copyUserDtoToUser(userDto, u))
                 .map(userRepository::saveAndFlush)
                 .map(userMapper::toUserDto);
     }

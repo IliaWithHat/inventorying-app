@@ -24,7 +24,8 @@ public class SecurityConfiguration {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("items/filter", "items/export", "inventory/**").hasAnyAuthority(ADMIN.getAuthority(), USER.getAuthority())
                 .requestMatchers("/items/**", "/inventory/**", "/admin/**").hasAuthority(ADMIN.getAuthority())
-                .anyRequest().denyAll()
+//                .anyRequest().denyAll()
+                .anyRequest().authenticated()
         );
         http.logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
