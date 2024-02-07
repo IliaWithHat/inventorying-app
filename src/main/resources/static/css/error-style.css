@@ -1,0 +1,15 @@
+h1 {
+    font-family: Bahnschrift, serif;
+    font-weight: bold;
+    font-size: 16vw;
+}
+
+body, html {
+    height: 80%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

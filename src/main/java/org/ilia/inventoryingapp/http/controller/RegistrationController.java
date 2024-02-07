@@ -24,7 +24,7 @@ public class RegistrationController {
     public String registration(@ModelAttribute("user") UserDto user,
                                Model model) {
         model.addAttribute("user", user);
-        return "registration";
+        return "user/registration";
     }
 
     @PostMapping("/registration")
