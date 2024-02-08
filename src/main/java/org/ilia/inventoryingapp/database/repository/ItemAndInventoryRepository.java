@@ -5,7 +5,7 @@ import com.querydsl.core.types.Predicate;
 import jakarta.persistence.QueryHint;
 import org.ilia.inventoryingapp.database.entity.Item;
 import org.ilia.inventoryingapp.database.entity.User;
-import org.ilia.inventoryingapp.filter.ItemFilter;
+import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -17,7 +17,7 @@ import static org.hibernate.annotations.QueryHints.CACHEABLE;
 public interface ItemAndInventoryRepository {
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
-    Page<Item> findItemsThatWereNotInventoried(ItemFilter itemFilter, User user, Integer pageNumber);
+    Page<Item> findItemsThatWereNotInventoried(ItemFilterForAdmin itemFilterForAdmin, User user, Integer pageNumber);
 
     @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
     Page<Tuple> findItemsAndInventory(Predicate predicate, Pageable pageable, User user);

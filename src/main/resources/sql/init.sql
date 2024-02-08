@@ -10,6 +10,14 @@ CREATE TABLE users
     admin_id   INTEGER REFERENCES users
 );
 
+CREATE TABLE item_filter
+(
+    id                   SERIAL PRIMARY KEY,
+    stored_in            VARCHAR(64),
+    is_owned_by_employee BOOLEAN,
+    user_id              INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
+);
+
 CREATE TABLE item_sequence
 (
     id         SERIAL PRIMARY KEY,

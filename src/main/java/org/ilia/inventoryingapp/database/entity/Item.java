@@ -48,7 +48,7 @@ public class Item {
     private LocalDateTime createdAt;
 
     @CreatedBy
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private User user;
 }

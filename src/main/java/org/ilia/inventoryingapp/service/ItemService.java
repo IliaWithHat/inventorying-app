@@ -10,7 +10,7 @@ import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.filter.ItemFilter;
+import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
@@ -49,9 +49,9 @@ public class ItemService {
                 .map(itemMapper::toItemDto);
     }
 
-    public Page<ItemDto> findAll(UserDetails userDetails, ItemFilter itemFilter, Integer page) {
+    public Page<ItemDto> findAll(UserDetails userDetails, ItemFilterForAdmin itemFilterForAdmin, Integer page) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilter, user);
+        Predicate predicate = predicateBuilder.buildPredicate(itemFilterForAdmin, user);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
@@ -94,9 +94,9 @@ public class ItemService {
         return false;
     }
 
-    public Resource getPdf(ItemFilter itemFilter, UserDetails userDetails) {
+    public Resource getPdf(ItemFilterForAdmin itemFilterForAdmin, UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        return generatePdf.generateStandardPdf(itemFilter, user);
+        return generatePdf.generateStandardPdf(itemFilterForAdmin, user);
     }
 
     public ItemDto saveStateOfFields(ItemDto itemDto, SaveField saveField) {

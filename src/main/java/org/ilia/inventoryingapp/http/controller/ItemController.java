@@ -3,7 +3,7 @@ package org.ilia.inventoryingapp.http.controller;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.filter.ItemFilter;
+import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.ilia.inventoryingapp.filter.TimeDurationEnum;
 import org.ilia.inventoryingapp.service.ItemSequenceService;
 import org.ilia.inventoryingapp.service.ItemService;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 @Controller
-@SessionAttributes("itemFilter")
+@SessionAttributes("itemFilterForAdmin")
 public class ItemController {
 
     private final ItemService itemService;
@@ -52,12 +52,12 @@ public class ItemController {
 
     @GetMapping("/filter")
     public String filterItems(@AuthenticationPrincipal UserDetails userDetails,
-                              ItemFilter itemFilter,
+                              ItemFilterForAdmin itemFilterForAdmin,
                               @RequestParam(defaultValue = "0") Integer page,
                               Model model) {
-        Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilter, page);
+        Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilterForAdmin, page);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
-        model.addAttribute("itemFilter", itemFilter);
+        model.addAttribute("itemFilterForAdmin", itemFilterForAdmin);
         model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
         model.addAttribute("optionsForShowItemCreated", TimeDurationEnum.values());
         return "item/filter";
@@ -127,8 +127,8 @@ public class ItemController {
     @GetMapping("/export")
     @ResponseBody
     public ResponseEntity<Resource> exportPdf(@AuthenticationPrincipal UserDetails userDetails,
-                                              ItemFilter itemFilter) {
-        Resource file = itemService.getPdf(itemFilter, userDetails);
+                                              ItemFilterForAdmin itemFilterForAdmin) {
+        Resource file = itemService.getPdf(itemFilterForAdmin, userDetails);
 
         if (file == null) {
             return ResponseEntity.notFound().build();

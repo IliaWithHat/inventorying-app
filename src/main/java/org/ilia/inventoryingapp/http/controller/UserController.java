@@ -2,7 +2,9 @@ package org.ilia.inventoryingapp.http.controller;
 
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.dto.UserDto;
+import org.ilia.inventoryingapp.service.ItemFilterService;
 import org.ilia.inventoryingapp.service.UserService;
 import org.ilia.inventoryingapp.validation.groups.CreateUser;
 import org.ilia.inventoryingapp.validation.groups.UpdateUser;
@@ -25,6 +27,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ItemFilterService itemFilterService;
 
     @GetMapping
     public String findAll(@AuthenticationPrincipal UserDetails userDetails,
@@ -41,6 +44,13 @@ public class UserController {
         UserDto userDto = userService.findById(id, userDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("user", userDto);
+
+        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(id, userDetails);
+        model.addAttribute("itemFilter", itemFilterDto);
+
+        if (userDto.getAdminId() == null)
+            model.addAttribute("showItemFilter", new Object());
+
         return "user/user";
     }
 
@@ -65,7 +75,7 @@ public class UserController {
         } else {
             userService.update(userDto, id, userDetails)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-            redirectAttributes.addFlashAttribute("saved", "User successfully updated!!!");
+            redirectAttributes.addFlashAttribute("savedUser", "User successfully updated!!!");
         }
         return "redirect:/admin/users/{id}";
     }

@@ -223,3 +223,7 @@ body {
 .table-borderless > thead > tr > th {
     border: none;
 }
+
+.table-filter {
+    width: 25vw;
+}

@@ -3,7 +3,7 @@ package org.ilia.inventoryingapp.http.controller;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.filter.ItemFilter;
+import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.ilia.inventoryingapp.service.InventoryService;
 import org.ilia.inventoryingapp.viewUtils.PageResponse;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/inventory")
-@SessionAttributes({"itemFilter"})
+@SessionAttributes({"itemFilterForAdmin"})
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -48,11 +48,11 @@ public class InventoryController {
     public String sightedInventory(@AuthenticationPrincipal UserDetails userDetails,
                                    @RequestParam(defaultValue = "0") Integer page,
                                    @ModelAttribute("returnTo") String returnTo,
-                                   ItemFilter itemFilter,
+                                   ItemFilterForAdmin itemFilterForAdmin,
                                    Model model) {
         if (!"sighted".equals(returnTo))
             inventoryService.deleteInventory(userDetails);
-        Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilter, page);
+        Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilterForAdmin, page);
         model.addAttribute("items", PageResponse.of(items));
         return "inventory/sighted";
     }
@@ -98,8 +98,8 @@ public class InventoryController {
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
                                                   SessionStatus sessionStatus,
                                                   String inventoryMethod,
-                                                  ItemFilter itemFilter) {
-        Resource file = inventoryService.getPdf(itemFilter, userDetails, inventoryMethod);
+                                                  ItemFilterForAdmin itemFilterForAdmin) {
+        Resource file = inventoryService.getPdf(itemFilterForAdmin, userDetails, inventoryMethod);
 
         sessionStatus.setComplete();
         inventoryService.deleteInventory(userDetails);

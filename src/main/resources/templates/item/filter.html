@@ -19,7 +19,7 @@
             <br/>
             <div th:if="${items.metadata.page == 0}">
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <form th:action="@{/items/filter}" th:object="${itemFilter}">
+                    <form th:action="@{/items/filter}" th:object="${itemFilterForAdmin}">
                         <br/>
                         <table class="table table-borderless">
                             <thead>
@@ -73,7 +73,7 @@
                                             <option th:each="option : ${optionsForShowItemCreated}"
                                                     th:value="${option.name()}"
                                                     th:text="${option}"
-                                                    th:selected="${itemFilter.showItemCreated != null && itemFilter.showItemCreated == option}">
+                                                    th:selected="${itemFilterForAdmin.showItemCreated != null && itemFilterForAdmin.showItemCreated == option}">
                                             </option>
                                         </select>
                                     </label>
@@ -84,7 +84,7 @@
                                             <option th:each="option : ${optionsForIsOwnedByEmployee}"
                                                     th:value="${option}"
                                                     th:text="${option}"
-                                                    th:selected="${itemFilter.isOwnedByEmployee != null && itemFilter.isOwnedByEmployee == option}">
+                                                    th:selected="${itemFilterForAdmin.isOwnedByEmployee != null && itemFilterForAdmin.isOwnedByEmployee == option}">
                                             </option>
                                         </select>
                                     </label>
