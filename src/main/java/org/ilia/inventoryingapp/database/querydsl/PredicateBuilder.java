@@ -2,6 +2,7 @@ package org.ilia.inventoryingapp.database.querydsl;
 
 import com.querydsl.core.types.Predicate;
 import org.ilia.inventoryingapp.database.entity.User;
+import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +11,37 @@ import java.time.LocalTime;
 import java.util.function.Function;
 
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
-import static org.ilia.inventoryingapp.database.entity.Role.ADMIN;
 import static org.ilia.inventoryingapp.filter.TimeDurationEnum.IGNORE;
 
 @Component
 public class PredicateBuilder {
 
-    public Predicate buildPredicate(ItemFilterForAdmin itemFilterForAdmin, User user) {
-        int userId = user.getRole() == ADMIN ? user.getId() : user.getAdmin().getId();
+    public Predicate buildPredicate(User user, ItemFilterDto itemFilterDto, ItemFilterForAdmin itemFilterForAdmin) {
+        Predicate predicate;
+        if (user.getAdmin() == null) {
+            predicate = buildPredicateForAdmin(itemFilterForAdmin, user);
+        } else {
+            predicate = buildPredicateForUser(itemFilterDto, user);
+        }
+        return predicate;
+    }
 
+    private Predicate buildPredicateForUser(ItemFilterDto itemFilterDto, User user) {
+        Boolean isOwnedByEmployee;
+        switch (itemFilterDto.getIsOwnedByEmployee()) {
+            case YES -> isOwnedByEmployee = true;
+            case NO -> isOwnedByEmployee = false;
+            default -> isOwnedByEmployee = null;
+        }
+
+        return QPredicates.builder()
+                .add(user.getAdmin().getId(), item.user.id::eq)
+                .add(itemFilterDto.getStoredIn(), item.storedIn::eq)
+                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
+                .buildAnd();
+    }
+
+    private Predicate buildPredicateForAdmin(ItemFilterForAdmin itemFilterForAdmin, User user) {
         LocalDateTime showItemCreated = null;
         if (itemFilterForAdmin.getShowItemCreated() != null && !itemFilterForAdmin.getShowItemCreated().equals(IGNORE)) {
             switch (itemFilterForAdmin.getShowItemCreated()) {
@@ -39,8 +62,8 @@ public class PredicateBuilder {
         Boolean isOwnedByEmployee = null;
         if (itemFilterForAdmin.getIsOwnedByEmployee() != null) {
             switch (itemFilterForAdmin.getIsOwnedByEmployee()) {
-                case "Yes" -> isOwnedByEmployee = true;
-                case "No" -> isOwnedByEmployee = false;
+                case YES -> isOwnedByEmployee = true;
+                case NO -> isOwnedByEmployee = false;
             }
         }
 
@@ -51,7 +74,7 @@ public class PredicateBuilder {
         splitStringAndAddToQPredicates(itemFilterForAdmin.getStoredIn(), qPredicates, item.storedIn::containsIgnoreCase);
 
         return qPredicates
-                .add(userId, item.user.id::eq)
+                .add(user.getId(), item.user.id::eq)
                 .add(itemFilterForAdmin.getTimeIntervalStart() == null ? null : itemFilterForAdmin.getTimeIntervalStart().atStartOfDay(), item.createdAt::goe)
                 .add(itemFilterForAdmin.getTimeIntervalEnd() == null ? null : itemFilterForAdmin.getTimeIntervalEnd().atTime(23, 59, 59), item.createdAt::loe)
                 .add(showItemCreated, item.createdAt::goe)

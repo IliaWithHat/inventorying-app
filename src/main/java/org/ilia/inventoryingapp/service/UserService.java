@@ -86,6 +86,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public boolean delete(Integer id, UserDetails userDetails) {
+        //TODO ADMIN can delete yourself
         User admin = ((UserDetailsImpl) userDetails).getUser();
         if (userRepository.findUserByIdAndAdmin(id, admin).isPresent()) {
             userRepository.deleteById(id);

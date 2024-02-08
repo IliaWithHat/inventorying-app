@@ -10,6 +10,7 @@ import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.querydsl.QPredicates;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
+import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
 import org.ilia.inventoryingapp.pdf.GeneratePdf;
@@ -37,21 +38,26 @@ public class ItemService {
     private final ItemSequenceService itemSequenceService;
     private final ItemMapper itemMapper;
     private final PredicateBuilder predicateBuilder;
+    private final ItemFilterService itemFilterService;
     private final GeneratePdf generatePdf;
 
     public Page<ItemDto> findLastFiveItems(UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
+
         Predicate predicate = QPredicates.builder()
                 .add(user.getId(), item.user.id::eq)
                 .buildAnd();
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
+
         return itemRepository.findAll(predicate, pageable)
                 .map(itemMapper::toItemDto);
     }
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilterForAdmin itemFilterForAdmin, Integer page) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilterForAdmin, user);
+
+        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(user.getId());
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterDto, itemFilterForAdmin);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
@@ -96,7 +102,8 @@ public class ItemService {
 
     public Resource getPdf(ItemFilterForAdmin itemFilterForAdmin, UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        return generatePdf.generateStandardPdf(itemFilterForAdmin, user);
+        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(user.getId());
+        return generatePdf.generateStandardPdf(itemFilterForAdmin, itemFilterDto, user);
     }
 
     public ItemDto saveStateOfFields(ItemDto itemDto, SaveField saveField) {

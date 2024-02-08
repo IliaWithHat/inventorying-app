@@ -19,5 +19,5 @@ public class ItemFilterForAdmin {
     private LocalDate timeIntervalStart;
     private LocalDate timeIntervalEnd;
     private TimeDurationEnum showItemCreated;
-    private String isOwnedByEmployee;
+    private OptionsForIsOwnedByEmployee isOwnedByEmployee;
 }

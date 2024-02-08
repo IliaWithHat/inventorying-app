@@ -25,6 +25,7 @@ import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
+import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -75,7 +76,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateStandardPdf(ItemFilterForAdmin itemFilterForAdmin, User user) {
+    public Resource generateStandardPdf(ItemFilterForAdmin itemFilterForAdmin, ItemFilterDto itemFilterDto, User user) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -87,7 +88,7 @@ public class GeneratePdf {
         List<BigDecimal> quantityAndSum = initializeList(2);
         List<BigDecimal> totalQuantityAndSum = initializeList(2);
 
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilterForAdmin, user);
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterDto, itemFilterForAdmin);
         do {
             Table table = createStandardTableAndHeader();
 
@@ -146,8 +147,19 @@ public class GeneratePdf {
         addDataToStandardTable(table, item, null, quantityAndSum);
     }
 
+    private void addDataToStandardTable(Table table, Tuple tuple, List<BigDecimal> quantityAndSum) {
+        Item item = tuple.get(0, Item.class);
+        Inventory inventory = tuple.get(1, Inventory.class);
+        addDataToStandardTable(table, item, inventory, quantityAndSum);
+    }
+
     private void addDataToStandardTable(Table table, Item item, Inventory inventory, List<BigDecimal> quantityAndSum) {
-        BigDecimal sum = item.getQuantity().multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal sum;
+        if (inventory == null) {
+            sum = item.getQuantity().multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            sum = inventory.getCurrentQuantity().multiply(item.getPricePerUnit()).setScale(2, RoundingMode.HALF_UP);
+        }
 
         table.addCell(createCell(item.getSerialNumber().toString(), true));
         table.addCell(createCell(item.getName()));
@@ -165,10 +177,12 @@ public class GeneratePdf {
         table.addCell(createCell(sum.toString()));
         table.addCell(createCell(item.getIsOwnedByEmployee() ? "Yes" : "No", false));
 
-        if (quantityAndSum != null) {
+        if (inventory == null) {
             quantityAndSum.set(0, quantityAndSum.get(0).add(item.getQuantity()));
-            quantityAndSum.set(1, quantityAndSum.get(1).add(sum));
+        } else {
+            quantityAndSum.set(0, quantityAndSum.get(0).add(inventory.getCurrentQuantity()));
         }
+        quantityAndSum.set(1, quantityAndSum.get(1).add(sum));
     }
 
     private void createStandardFooter(Table table, List<BigDecimal> numbers, int pageNumber, int numberOfElements) {
@@ -202,7 +216,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateInventoryPdf(ItemFilterForAdmin itemFilterForAdmin, User user, String inventoryMethod) {
+    public Resource generateInventoryPdf(ItemFilterForAdmin itemFilterForAdmin, ItemFilterDto itemFilterDto, User user, String inventoryMethod) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -214,7 +228,7 @@ public class GeneratePdf {
         List<BigDecimal> quantityAndSum = initializeList(8);
         List<BigDecimal> totalQuantityAndSum = initializeList(8);
 
-        Predicate predicate = predicateBuilder.buildPredicate(itemFilterForAdmin, user);
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterDto, itemFilterForAdmin);
         do {
             Table table = createInventoryTableAndHeader();
 
@@ -357,11 +371,7 @@ public class GeneratePdf {
         List<BigDecimal> extraQuantityAndSum = initializeList(2);
 
         Table table = createStandardTableAndHeader();
-        extraInventory.forEach(tuple -> {
-            Item item = tuple.get(0, Item.class);
-            Inventory inventory = tuple.get(1, Inventory.class);
-            addDataToStandardTable(table, item, inventory, extraQuantityAndSum);
-        });
+        extraInventory.forEach(tuple -> addDataToStandardTable(table, tuple, extraQuantityAndSum));
 
         totalQuantityAndSum.set(2, totalQuantityAndSum.get(2).add(extraQuantityAndSum.get(0)));
         totalQuantityAndSum.set(3, totalQuantityAndSum.get(3).add(extraQuantityAndSum.get(1)));

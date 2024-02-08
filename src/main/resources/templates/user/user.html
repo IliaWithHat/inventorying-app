@@ -76,12 +76,14 @@
                 <form th:action="@{'/admin/users/' + ${user.id}}">
                     <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
                 </form>
-                <br/>
-                <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
-                    <button type="submit" class="btn btn-danger add-button">Delete</button>
-                </form>
+                <div th:if="${admin == null}">
+                    <br/>
+                    <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
+                        <button type="submit" class="btn btn-danger add-button">Delete</button>
+                    </form>
+                </div>
             </div>
-            <div th:if="${showItemFilter == null}">
+            <div th:if="${admin == null}">
                 <br/>
                 <br/>
                 <form th:action="@{'/admin/filter/' + ${user.id}}" method="post">
@@ -103,18 +105,22 @@
                             </td>
                             <td>
                                 <label for="isOwnedByEmployee">
-                                    <input class="form-check-input" type="checkbox" id="isOwnedByEmployee"
-                                           name="isOwnedByEmployee"
-                                           th:checked="*{isOwnedByEmployee.equals('Yes')}">
+                                    <select id="isOwnedByEmployee" name="isOwnedByEmployee">
+                                        <option th:each="option : ${optionsForIsOwnedByEmployee}"
+                                                th:value="${option.name()}"
+                                                th:text="${option}"
+                                                th:selected="${itemFilter.isOwnedByEmployee != null && itemFilter.isOwnedByEmployee == option}">
+                                        </option>
+                                    </select>
                                 </label>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <div th:if="${errors}">
-                        <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+                    <div th:if="${filterErrors}">
+                        <p class="error" th:each="error : ${filterErrors}" th:text="${error.getDefaultMessage()}"/>
                     </div>
-                    <!--                    <b id="message" th:if="${savedItemFilter}" th:text="${savedItemFilter}"></b>-->
+                    <b id="message" th:if="${savedItemFilter}" th:text="${savedItemFilter}"></b>
                     <br/>
                     <input type="hidden" name="userId" th:value="${user.id}">
                     <button type="submit" class="btn btn-primary add-button">Save</button>

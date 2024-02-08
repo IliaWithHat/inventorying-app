@@ -14,18 +14,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static org.hibernate.annotations.QueryHints.CACHEABLE;
+import static org.hibernate.jpa.HibernateHints.HINT_CACHEABLE;
+
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item> {
 
-    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = HINT_CACHEABLE, value = "true"))
     Page<Item> findAll(Predicate predicate, Pageable pageable);
 
-    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = HINT_CACHEABLE, value = "true"))
     Optional<Item> findItemByIdAndUser(Long id, User user);
 
-    @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = HINT_CACHEABLE, value = "true"))
     @Query("from Item i where i.inventoryNumber = :inventoryNumber and (i.user = :user or i.user = (select u.admin from User u where u = :user))")
     Optional<Item> findItemByInventoryNumberAndUser(String inventoryNumber, User user);
 }

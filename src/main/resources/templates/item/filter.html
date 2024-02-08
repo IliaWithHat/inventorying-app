@@ -82,7 +82,7 @@
                                     <label for="isOwnedByEmployee">
                                         <select id="isOwnedByEmployee" name="isOwnedByEmployee">
                                             <option th:each="option : ${optionsForIsOwnedByEmployee}"
-                                                    th:value="${option}"
+                                                    th:value="${option.name()}"
                                                     th:text="${option}"
                                                     th:selected="${itemFilterForAdmin.isOwnedByEmployee != null && itemFilterForAdmin.isOwnedByEmployee == option}">
                                             </option>

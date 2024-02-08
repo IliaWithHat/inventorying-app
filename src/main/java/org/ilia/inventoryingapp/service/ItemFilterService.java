@@ -13,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee.IGNORE;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,35 +24,36 @@ public class ItemFilterService {
     private final ItemFilterMapper itemFilterMapper;
     private final UserService userService;
 
-    public ItemFilterDto saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) {
+    public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) {
         userService.findById(id, userDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Optional<ItemFilter> maybeItemFilter = itemFilterRepository.findItemFilterByUserId(id);
         if (maybeItemFilter.isEmpty()) {
-            return Optional.of(itemFilterDto)
+            Optional.of(itemFilterDto)
                     .map(itemFilterMapper::toItemFilter)
-                    .map(itemFilterRepository::saveAndFlush)
-                    .map(itemFilterMapper::toItemFilterDto)
-                    .get();
+                    .map(itemFilterRepository::saveAndFlush);
         } else {
-            return maybeItemFilter
+            maybeItemFilter
                     .map(i -> itemFilterMapper.copyItemFilterDtoToItemFilter(itemFilterDto, i))
-                    .map(itemFilterRepository::saveAndFlush)
-                    .map(itemFilterMapper::toItemFilterDto)
-                    .get();
+                    .map(itemFilterRepository::saveAndFlush);
         }
     }
 
+    public ItemFilterDto findByUserId(Integer id) {
+        return findByUserId(id, null);
+    }
+
     public ItemFilterDto findByUserId(Integer id, UserDetails userDetails) {
-        userService.findById(id, userDetails)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (userDetails != null) {
+            userService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        }
         return itemFilterRepository.findItemFilterByUserId(id)
                 .map(itemFilterMapper::toItemFilterDto)
                 .orElse(emptyItemFilterDto());
     }
 
     private ItemFilterDto emptyItemFilterDto() {
-        return ItemFilterDto.builder().storedIn("").isOwnedByEmployee("No").build();
+        return ItemFilterDto.builder().storedIn(null).isOwnedByEmployee(IGNORE).build();
     }
 
     public boolean delete(Integer id, UserDetails userDetails) {

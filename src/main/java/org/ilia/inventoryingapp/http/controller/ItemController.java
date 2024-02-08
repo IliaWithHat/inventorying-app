@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
+import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.filter.TimeDurationEnum;
 import org.ilia.inventoryingapp.service.ItemSequenceService;
 import org.ilia.inventoryingapp.service.ItemService;
@@ -24,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -58,7 +57,7 @@ public class ItemController {
         Page<ItemDto> itemDtoPage = itemService.findAll(userDetails, itemFilterForAdmin, page);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemFilterForAdmin", itemFilterForAdmin);
-        model.addAttribute("optionsForIsOwnedByEmployee", List.of("Ignore", "Yes", "No"));
+        model.addAttribute("optionsForIsOwnedByEmployee", OptionsForIsOwnedByEmployee.values());
         model.addAttribute("optionsForShowItemCreated", TimeDurationEnum.values());
         return "item/filter";
     }

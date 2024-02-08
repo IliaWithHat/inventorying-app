@@ -2,6 +2,7 @@ package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 
 @Data
 @ToString(exclude = "user")
@@ -18,7 +19,8 @@ public class ItemFilter {
 
     private String storedIn;
 
-    private Boolean isOwnedByEmployee;
+    @Enumerated(EnumType.STRING)
+    private OptionsForIsOwnedByEmployee isOwnedByEmployee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

@@ -4,6 +4,7 @@ import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.dto.UserDto;
+import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.service.ItemFilterService;
 import org.ilia.inventoryingapp.service.UserService;
 import org.ilia.inventoryingapp.validation.groups.CreateUser;
@@ -47,9 +48,10 @@ public class UserController {
 
         ItemFilterDto itemFilterDto = itemFilterService.findByUserId(id, userDetails);
         model.addAttribute("itemFilter", itemFilterDto);
+        model.addAttribute("optionsForIsOwnedByEmployee", OptionsForIsOwnedByEmployee.values());
 
         if (userDto.getAdminId() == null)
-            model.addAttribute("showItemFilter", new Object());
+            model.addAttribute("admin", new Object());
 
         return "user/user";
     }

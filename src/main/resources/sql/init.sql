@@ -14,7 +14,7 @@ CREATE TABLE item_filter
 (
     id                   SERIAL PRIMARY KEY,
     stored_in            VARCHAR(64),
-    is_owned_by_employee BOOLEAN,
+    is_owned_by_employee VARCHAR(12),
     user_id              INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
 );
 

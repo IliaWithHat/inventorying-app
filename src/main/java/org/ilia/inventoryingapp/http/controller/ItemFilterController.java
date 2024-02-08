@@ -28,10 +28,10 @@ public class ItemFilterController {
                         RedirectAttributes redirectAttributes,
                         @PathVariable Integer id) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("filterErrors", bindingResult.getAllErrors());
         } else {
             itemFilterService.saveOrUpdate(id, userDetails, itemFilterDto);
-            redirectAttributes.addFlashAttribute("savedItemFilter", "User successfully updated!!!");
+            redirectAttributes.addFlashAttribute("savedItemFilter", "Filter set successfully!!!");
         }
         return "redirect:/admin/users/{id}";
     }
