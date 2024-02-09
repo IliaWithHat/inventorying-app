@@ -8,7 +8,6 @@ import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.ilia.inventoryingapp.mapper.InventoryMapper;
 import org.ilia.inventoryingapp.mapper.ItemMapper;
@@ -28,14 +27,12 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
-    private final ItemFilterService itemFilterService;
     private final ItemMapper itemMapper;
     private final GeneratePdf generatePdf;
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilterForAdmin itemFilterForAdmin, Integer page) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(user.getId());
-        return inventoryRepository.findItemsThatWereNotInventoried(itemFilterForAdmin, itemFilterDto, user, page)
+        return inventoryRepository.findItemsThatWereNotInventoried(itemFilterForAdmin, user, page)
                 .map(itemMapper::toItemDto);
     }
 
@@ -60,7 +57,6 @@ public class InventoryService {
 
     public Resource getPdf(ItemFilterForAdmin itemFilterForAdmin, UserDetails userDetails, String inventoryMethod) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(user.getId());
-        return generatePdf.generateInventoryPdf(itemFilterForAdmin, itemFilterDto, user, inventoryMethod);
+        return generatePdf.generateInventoryPdf(itemFilterForAdmin, user, inventoryMethod);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.hibernate.jpa.HibernateHints.HINT_CACHEABLE;
 
@@ -16,7 +16,7 @@ import static org.hibernate.jpa.HibernateHints.HINT_CACHEABLE;
 public interface ItemFilterRepository extends JpaRepository<ItemFilter, Integer>, QuerydslPredicateExecutor<ItemFilter> {
 
     @QueryHints(@QueryHint(name = HINT_CACHEABLE, value = "true"))
-    Optional<ItemFilter> findItemFilterByUserId(Integer userId);
+    List<ItemFilter> findItemFilterByUserId(Integer userId);
 
     @Modifying
     void deleteByUserId(Integer userId);

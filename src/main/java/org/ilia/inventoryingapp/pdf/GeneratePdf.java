@@ -25,7 +25,6 @@ import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
-import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -76,7 +75,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateStandardPdf(ItemFilterForAdmin itemFilterForAdmin, ItemFilterDto itemFilterDto, User user) {
+    public Resource generateStandardPdf(ItemFilterForAdmin itemFilterForAdmin, User user) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -88,7 +87,7 @@ public class GeneratePdf {
         List<BigDecimal> quantityAndSum = initializeList(2);
         List<BigDecimal> totalQuantityAndSum = initializeList(2);
 
-        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterDto, itemFilterForAdmin);
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterForAdmin);
         do {
             Table table = createStandardTableAndHeader();
 
@@ -216,7 +215,7 @@ public class GeneratePdf {
     }
 
     @SneakyThrows
-    public Resource generateInventoryPdf(ItemFilterForAdmin itemFilterForAdmin, ItemFilterDto itemFilterDto, User user, String inventoryMethod) {
+    public Resource generateInventoryPdf(ItemFilterForAdmin itemFilterForAdmin, User user, String inventoryMethod) {
         Object[] pathAndDocument = prepareDocument();
         Path pathToFile = (Path) pathAndDocument[0];
         Document document = (Document) pathAndDocument[1];
@@ -228,7 +227,7 @@ public class GeneratePdf {
         List<BigDecimal> quantityAndSum = initializeList(8);
         List<BigDecimal> totalQuantityAndSum = initializeList(8);
 
-        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterDto, itemFilterForAdmin);
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterForAdmin);
         do {
             Table table = createInventoryTableAndHeader();
 

@@ -1,42 +1,52 @@
 package org.ilia.inventoryingapp.database.querydsl;
 
 import com.querydsl.core.types.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
+import org.ilia.inventoryingapp.service.ItemFilterService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.ilia.inventoryingapp.database.entity.QItem.item;
 import static org.ilia.inventoryingapp.filter.TimeDurationEnum.IGNORE;
 
 @Component
+@RequiredArgsConstructor
 public class PredicateBuilder {
 
-    public Predicate buildPredicate(User user, ItemFilterDto itemFilterDto, ItemFilterForAdmin itemFilterForAdmin) {
+    private final ItemFilterService itemFilterService;
+
+    public Predicate buildPredicate(User user, ItemFilterForAdmin itemFilterForAdmin) {
         Predicate predicate;
         if (user.getAdmin() == null) {
             predicate = buildPredicateForAdmin(itemFilterForAdmin, user);
         } else {
-            predicate = buildPredicateForUser(itemFilterDto, user);
+            predicate = buildPredicateForUser(itemFilterService.findByUserId(user.getId()), user);
         }
         return predicate;
     }
 
-    private Predicate buildPredicateForUser(ItemFilterDto itemFilterDto, User user) {
+    private Predicate buildPredicateForUser(List<ItemFilterDto> itemFilterDto, User user) {
         Boolean isOwnedByEmployee;
-        switch (itemFilterDto.getIsOwnedByEmployee()) {
+        switch (itemFilterDto.getFirst().getIsOwnedByEmployee()) {
             case YES -> isOwnedByEmployee = true;
             case NO -> isOwnedByEmployee = false;
             default -> isOwnedByEmployee = null;
         }
 
+        QPredicates builder = QPredicates.builder();
+        itemFilterDto.forEach(i -> builder.add(i.getStoredIn(), item.storedIn::eq));
+        Predicate predicate = builder.buildOr();
+
         return QPredicates.builder()
                 .add(user.getAdmin().getId(), item.user.id::eq)
-                .add(itemFilterDto.getStoredIn(), item.storedIn::eq)
+                .add(predicate)
                 .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
                 .buildAnd();
     }

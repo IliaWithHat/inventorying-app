@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee.IGNORE;
 
@@ -27,39 +30,62 @@ public class ItemFilterService {
     public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) {
         userService.findById(id, userDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Optional<ItemFilter> maybeItemFilter = itemFilterRepository.findItemFilterByUserId(id);
-        if (maybeItemFilter.isEmpty()) {
-            Optional.of(itemFilterDto)
-                    .map(itemFilterMapper::toItemFilter)
-                    .map(itemFilterRepository::saveAndFlush);
-        } else {
-            maybeItemFilter
-                    .map(i -> itemFilterMapper.copyItemFilterDtoToItemFilter(itemFilterDto, i))
-                    .map(itemFilterRepository::saveAndFlush);
+        List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
+
+        if (!ItemFilterList.isEmpty()) {
+            delete(id, userDetails);
         }
+
+        Arrays.stream(itemFilterDto.getStoredIn().split(";"))
+                .map(s -> ItemFilterDto.builder()
+                        .storedIn(s)
+                        .isOwnedByEmployee(itemFilterDto.getIsOwnedByEmployee())
+                        .userId(itemFilterDto.getUserId())
+                        .build())
+                .map(itemFilterMapper::toItemFilter)
+                .toList()
+                .forEach(itemFilterRepository::saveAndFlush);
     }
 
-    public ItemFilterDto findByUserId(Integer id) {
-        return findByUserId(id, null);
+    public List<ItemFilterDto> findByUserId(Integer id) {
+        List<ItemFilter> itemFilterList = itemFilterRepository.findItemFilterByUserId(id);
+        if (itemFilterList.isEmpty()) {
+            return Collections.singletonList(emptyItemFilterDto());
+        }
+        return itemFilterList.stream()
+                .map(itemFilterMapper::toItemFilterDto)
+                .toList();
     }
 
     public ItemFilterDto findByUserId(Integer id, UserDetails userDetails) {
         if (userDetails != null) {
             userService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
-        return itemFilterRepository.findItemFilterByUserId(id)
-                .map(itemFilterMapper::toItemFilterDto)
-                .orElse(emptyItemFilterDto());
+
+        List<ItemFilter> itemFilterList = itemFilterRepository.findItemFilterByUserId(id);
+
+        if (itemFilterList.isEmpty()) {
+            return emptyItemFilterDto();
+        }
+
+        String storedIn = itemFilterList.stream()
+                .map(ItemFilter::getStoredIn)
+                .collect(Collectors.joining(";"));
+        return ItemFilterDto.builder()
+                .storedIn(storedIn)
+                .isOwnedByEmployee(itemFilterList.getFirst().getIsOwnedByEmployee())
+                .userId(itemFilterList.getFirst().getUser().getId())
+                .build();
     }
 
     private ItemFilterDto emptyItemFilterDto() {
-        return ItemFilterDto.builder().storedIn(null).isOwnedByEmployee(IGNORE).build();
+        return ItemFilterDto.builder().storedIn("").isOwnedByEmployee(IGNORE).build();
     }
 
     public boolean delete(Integer id, UserDetails userDetails) {
         userService.findById(id, userDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (itemFilterRepository.findItemFilterByUserId(id).isPresent()) {
+        if (!itemFilterRepository.findItemFilterByUserId(id).isEmpty()) {
             itemFilterRepository.deleteByUserId(id);
             itemFilterRepository.flush();
             return true;
