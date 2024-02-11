@@ -20,9 +20,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(Customizer.withDefaults());
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/login/**", "/registration").permitAll()
+                .requestMatchers("/", "/login", "/registration").permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .requestMatchers("items/filter", "items/export", "inventory/**").hasAnyAuthority(ADMIN.getAuthority(), USER.getAuthority())
+                .requestMatchers("/login/redirect", "items/filter", "items/export", "inventory/**").hasAnyAuthority(ADMIN.getAuthority(), USER.getAuthority())
                 .requestMatchers("/items/**", "/admin/**").hasAuthority(ADMIN.getAuthority())
                 .anyRequest().denyAll());
         http.logout(logout -> logout

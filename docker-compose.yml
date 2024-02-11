@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16.1
+    container_name: postgres
+    ports:
+      - "5555:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventorying_repository
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./src/main/resources/sql:/docker-entrypoint-initdb.d
+      - inventorying-repository-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+  app:
+    build: .
+    image: inventorying-app-image
+    container_name: inventorying-app
+    depends_on:
+      - postgres
+    ports:
+      - "8888:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventorying_repository
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+
+volumes:
+  inventorying-repository-data:
+    name: inventorying-repository-data

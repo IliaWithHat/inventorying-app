@@ -13,7 +13,7 @@ spring:
       jakarta:
         persistence:
           sharedCache:
-            #required - enable selective caching mode - only entities with @Cacheable annotation will use L2 cache.
+            #only entities with @Cacheable annotation will use L2 cache.
             mode: ENABLE_SELECTIVE
       hibernate:
 #        show_sql: true
@@ -27,5 +27,3 @@ spring:
         javax:
           cache:
             missing_cache_strategy: create
-server:
-  address: 192.168.1.5

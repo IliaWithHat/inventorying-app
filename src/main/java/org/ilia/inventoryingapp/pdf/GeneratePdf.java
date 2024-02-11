@@ -61,8 +61,8 @@ public class GeneratePdf {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf, PageSize.A4.rotate());
         document.setMargins(20, 20, 20, 20);
-        font = PdfFontFactory.createFont("src/main/resources/font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
-        bold = PdfFontFactory.createFont("src/main/resources/font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
+        font = PdfFontFactory.createFont("classpath:font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
+        bold = PdfFontFactory.createFont("classpath:font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
         return new Object[]{pathToFile, document};
     }
 
