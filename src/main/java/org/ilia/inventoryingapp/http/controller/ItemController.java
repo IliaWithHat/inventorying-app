@@ -117,7 +117,6 @@ public class ItemController {
     @ResponseBody
     public String delete(@AuthenticationPrincipal UserDetails userDetails,
                          @PathVariable Long id) {
-        //TODO add checkbox to bach delete
         if (!itemService.delete(id, userDetails))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return "<script>window.close();</script>";
