@@ -85,15 +85,16 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public boolean delete(Integer id, UserDetails userDetails) {
-        //TODO ADMIN can delete yourself
+    public Optional<UserDto> delete(Integer id, UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
-        if (userRepository.findUserByIdAndAdmin(id, admin).isPresent()) {
+        boolean isAdmin = id.equals(admin.getId());
+        Optional<User> user = isAdmin ? Optional.of(admin) : userRepository.findUserByIdAndAdmin(id, admin);
+        if (user.isPresent()) {
             userRepository.deleteById(id);
             userRepository.flush();
-            return true;
+            return user.map(userMapper::toUserDto);
         }
-        return false;
+        return Optional.empty();
     }
 
     @Override

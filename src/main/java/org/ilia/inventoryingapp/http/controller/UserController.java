@@ -1,5 +1,7 @@
 package org.ilia.inventoryingapp.http.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
@@ -11,7 +13,10 @@ import org.ilia.inventoryingapp.validation.groups.CreateUser;
 import org.ilia.inventoryingapp.validation.groups.UpdateUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("admin/users")
@@ -85,9 +91,18 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public String delete(@AuthenticationPrincipal UserDetails userDetails,
-                         @PathVariable Integer id) {
-        if (!userService.delete(id, userDetails))
+                         @PathVariable Integer id,
+                         HttpServletRequest httpServletRequest,
+                         HttpServletResponse httpServletResponse,
+                         @CurrentSecurityContext SecurityContext securityContext) {
+        Optional<UserDto> user = userService.delete(id, userDetails);
+        if (user.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        if (user.get().getAdminId() == null) {
+            new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, securityContext.getAuthentication());
+            return "<script>window.location.replace('/login');</script>";
+        }
         return "<script>window.close();</script>";
     }
 }

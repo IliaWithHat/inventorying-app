@@ -75,12 +75,10 @@
             <form th:action="@{'/admin/users/' + ${user.id}}">
                 <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
             </form>
-            <div th:if="${admin == null}">
-                <br/>
-                <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
-                    <button type="submit" class="btn btn-danger add-button">Delete</button>
-                </form>
-            </div>
+            <br/>
+            <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
+                <button type="submit" class="btn btn-danger add-button">Delete</button>
+            </form>
             <div th:if="${admin == null}">
                 <br/>
                 <h4>Edit filter for user</h4>

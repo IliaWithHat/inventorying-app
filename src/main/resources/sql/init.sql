@@ -7,7 +7,7 @@ CREATE TABLE users
     last_name  VARCHAR(64)  NOT NULL,
     phone      VARCHAR(64)  NOT NULL,
     role       VARCHAR(12)  NOT NULL,
-    admin_id   INTEGER REFERENCES users
+    admin_id   INTEGER REFERENCES users ON DELETE CASCADE
 );
 
 CREATE TABLE item_filter
@@ -22,7 +22,7 @@ CREATE TABLE item_sequence
 (
     id         SERIAL PRIMARY KEY,
     last_value BIGINT  NOT NULL,
-    user_id    INTEGER NOT NULL REFERENCES users
+    user_id    INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
 );
 
 CREATE TABLE inventory
@@ -45,7 +45,7 @@ CREATE TABLE item
     price_per_unit       NUMERIC(10, 2) NOT NULL,
     is_owned_by_employee BOOLEAN        NOT NULL,
     created_at           TIMESTAMP      NOT NULL,
-    user_id              INTEGER        NOT NULL REFERENCES users
+    user_id              INTEGER        NOT NULL REFERENCES users ON DELETE CASCADE
 );
 
 
