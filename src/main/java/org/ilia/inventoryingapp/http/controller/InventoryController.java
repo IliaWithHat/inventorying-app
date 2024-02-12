@@ -95,6 +95,7 @@ public class InventoryController {
     }
 
     @GetMapping("/export")
+    @ResponseBody
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
                                                   SessionStatus sessionStatus,
                                                   String inventoryMethod,
@@ -104,11 +105,11 @@ public class InventoryController {
         sessionStatus.setComplete();
         inventoryService.deleteInventory(userDetails);
 
-        if (file == null) {
+        if (file == null)
             return ResponseEntity.notFound().build();
-        }
-        //TODO after sending file make redirect to /items/filter
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"table.pdf\"").body(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"table.pdf\"")
+                .body(file);
     }
 }

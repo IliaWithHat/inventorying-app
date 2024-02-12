@@ -129,10 +129,11 @@ public class ItemController {
                                               ItemFilterForAdmin itemFilterForAdmin) {
         Resource file = itemService.getPdf(itemFilterForAdmin, userDetails);
 
-        if (file == null) {
+        if (file == null)
             return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"table.pdf\"").body(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"table.pdf\"")
+                .body(file);
     }
 }

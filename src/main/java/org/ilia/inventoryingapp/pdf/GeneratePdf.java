@@ -61,9 +61,18 @@ public class GeneratePdf {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf, PageSize.A4.rotate());
         document.setMargins(20, 20, 20, 20);
-        font = PdfFontFactory.createFont("classpath:font/Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
-        bold = PdfFontFactory.createFont("classpath:font/Roboto-Bold.ttf", PdfEncodings.IDENTITY_H);
+        font = PdfFontFactory.createFont(getFontFilePath("Roboto-Regular.ttf"), PdfEncodings.IDENTITY_H);
+        bold = PdfFontFactory.createFont(getFontFilePath("Roboto-Bold.ttf"), PdfEncodings.IDENTITY_H);
         return new Object[]{pathToFile, document};
+    }
+
+    private String getFontFilePath(String fontName) {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            return "src/main/resources/font/" + fontName;
+        } else {
+            return "classpath:font/" + fontName;
+        }
     }
 
     private List<BigDecimal> initializeList(int capacity) {
