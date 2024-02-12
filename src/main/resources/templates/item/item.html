@@ -17,7 +17,7 @@
     <div id="content">
         <div class="container-fluid">
             <br/>
-            <br/>
+            <h4>Edit item</h4>
             <form th:method="put" th:action="@{'/items/' + ${itemDto.id}}" th:object="${itemDto}">
                 <table class="table table-borderless">
                     <thead>

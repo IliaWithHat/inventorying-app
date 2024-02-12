@@ -16,78 +16,76 @@
 
     <div id="content">
         <div class="container-fluid">
-            <div>
-                <br/>
-                <br/>
-                <form th:action="@{'/admin/users/' + ${user.id}}" th:method="put">
-                    <table class="table table-borderless">
-                        <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>First name</th>
-                            <th>Last name</th>
-                            <th>Phone</th>
-                            <th>New password</th>
-                        </tr>
-                        </thead>
+            <br/>
+            <h4>Edit user</h4>
+            <form th:action="@{'/admin/users/' + ${user.id}}" th:method="put">
+                <table class="table table-borderless">
+                    <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Phone</th>
+                        <th>New password</th>
+                    </tr>
+                    </thead>
 
-                        <tbody>
-                        <tr th:object="${user}">
-                            <td>
-                                <label for="email">
-                                    <input type="text" id="email" name="email" placeholder="Email"
-                                           th:value="*{email}" autofocus>
-                                </label>
-                            </td>
-                            <td>
-                                <label for="firstName">
-                                    <input type="text" id="firstName" name="firstName" placeholder="First name"
-                                           th:value="*{firstName}">
-                                </label>
-                            </td>
-                            <td>
-                                <label for="lastName">
-                                    <input type="text" id="lastName" name="lastName" placeholder="Last name"
-                                           th:value="*{lastName}">
-                                </label>
-                            </td>
-                            <td>
-                                <label for="phone">
-                                    <input type="text" id="phone" name="phone" placeholder="Phone"
-                                           th:value="*{phone}">
-                                </label>
-                            </td>
-                            <td>
-                                <label for="password">
-                                    <input type="password" id="password" name="password" placeholder="New password">
-                                </label>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div th:if="${errors}">
-                        <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
-                    </div>
-                    <b id="message" th:if="${savedUser}" th:text="${savedUser}"></b>
-                    <br/>
-                    <button type="submit" class="btn btn-primary add-button">Save</button>
-                </form>
-                <br/>
-                <form th:action="@{'/admin/users/' + ${user.id}}">
-                    <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
-                </form>
-                <div th:if="${admin == null}">
-                    <br/>
-                    <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
-                        <button type="submit" class="btn btn-danger add-button">Delete</button>
-                    </form>
+                    <tbody>
+                    <tr th:object="${user}">
+                        <td>
+                            <label for="email">
+                                <input type="text" id="email" name="email" placeholder="Email"
+                                       th:value="*{email}" autofocus>
+                            </label>
+                        </td>
+                        <td>
+                            <label for="firstName">
+                                <input type="text" id="firstName" name="firstName" placeholder="First name"
+                                       th:value="*{firstName}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="lastName">
+                                <input type="text" id="lastName" name="lastName" placeholder="Last name"
+                                       th:value="*{lastName}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="phone">
+                                <input type="text" id="phone" name="phone" placeholder="Phone"
+                                       th:value="*{phone}">
+                            </label>
+                        </td>
+                        <td>
+                            <label for="password">
+                                <input type="password" id="password" name="password" placeholder="New password">
+                            </label>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${errors}">
+                    <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
                 </div>
+                <b id="message" th:if="${savedUser}" th:text="${savedUser}"></b>
+                <br/>
+                <button type="submit" class="btn btn-primary add-button">Save</button>
+            </form>
+            <br/>
+            <form th:action="@{'/admin/users/' + ${user.id}}">
+                <button type="submit" class="btn btn-secondary add-button">Reset changes</button>
+            </form>
+            <div th:if="${admin == null}">
+                <br/>
+                <form th:method="delete" th:action="@{'/admin/users/' + ${user.id}}">
+                    <button type="submit" class="btn btn-danger add-button">Delete</button>
+                </form>
             </div>
             <div th:if="${admin == null}">
                 <br/>
-                <br/>
+                <h4>Edit filter for user</h4>
                 <form th:action="@{'/admin/filter/' + ${user.id}}" method="post">
-                    <table class="table-filter table-borderless" th:object="${itemFilter}">
+                    <table class=" table table-filter table-borderless" th:object="${itemFilter}">
                         <thead>
                         <tr>
                             <th>Stored in</th>
