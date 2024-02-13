@@ -266,6 +266,7 @@ public class GeneratePdf {
 
         List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicate, user);
         if (!extraInventory.isEmpty()) {
+            //TODO add pagination
             totalElements = addExtraInventoryToTheTable(document, extraInventory, totalQuantityAndSum, totalElements);
         }
 

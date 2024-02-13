@@ -33,6 +33,9 @@ public class SecurityConfiguration {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .defaultSuccessUrl("/login/redirect", true));
+        http.rememberMe(rm -> rm
+                .alwaysRemember(true)
+                .key("JPDh]euE0N$+/](.[-Jq4*7*_DdbBd#N"));
         return http.build();
     }
 
