@@ -383,6 +383,10 @@ public class GeneratePdf {
 
         totalQuantityAndSum.set(2, totalQuantityAndSum.get(2).add(extraQuantityAndSum.get(0)));
         totalQuantityAndSum.set(3, totalQuantityAndSum.get(3).add(extraQuantityAndSum.get(1)));
+
+        totalQuantityAndSum.set(4, totalQuantityAndSum.get(4).add(extraQuantityAndSum.get(0)));
+        totalQuantityAndSum.set(5, totalQuantityAndSum.get(5).add(extraQuantityAndSum.get(1)));
+
         totalElements += extraInventory.size();
 
         createStandardFooter(table, extraQuantityAndSum, extraInventory.size());

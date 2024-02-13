@@ -17,10 +17,13 @@
         <div class="container-fluid">
             <br/>
             <br/>
-            <br/>
             <form th:action="@{/inventory(returnTo=blind)}" method="post" th:object="${inventoryDto}">
                 <table class="table table-borderless" style="display: flex;">
                     <tbody>
+                    <tr>
+                        <th>Inventory number</th>
+                        <th>Current quantity</th>
+                    </tr>
                     <tr>
                         <td>
                             <label for="inventoryNumber">
