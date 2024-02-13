@@ -240,7 +240,7 @@ public class GeneratePdf {
         do {
             Table table = createInventoryTableAndHeader();
 
-            Pageable pageable = PageRequest.of(pageNumber, 18, Sort.by("serialNumber"));
+            Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("serialNumber"));
             Page<Tuple> itemsAndInventory = inventoryRepository.findItemsAndInventory(predicate, pageable, user);
             if (pageNumber == 0) {
                 totalPages = itemsAndInventory.getTotalPages();
@@ -254,8 +254,8 @@ public class GeneratePdf {
                 totalQuantityAndSum.set(i, totalQuantityAndSum.get(i).add(quantityAndSum.get(i)));
             }
 
-            if (pageNumber == totalPages && itemsAndInventory.getNumberOfElements() < 18) {
-                addEmptyRows(table, 14, 18, itemsAndInventory.getNumberOfElements());
+            if (pageNumber == totalPages && itemsAndInventory.getNumberOfElements() < 20) {
+                addEmptyRows(table, 14, 20, itemsAndInventory.getNumberOfElements());
             }
 
             createInventoryFooter(table, quantityAndSum, pageNumber, itemsAndInventory.getNumberOfElements());

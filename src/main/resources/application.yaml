@@ -13,12 +13,8 @@ spring:
       jakarta:
         persistence:
           sharedCache:
-            #only entities with @Cacheable annotation will use L2 cache.
             mode: ENABLE_SELECTIVE
       hibernate:
-#        show_sql: true
-#        format_sql: true
-#        generate_statistics: true
         cache:
           use_second_level_cache: true
           use_query_cache: true
