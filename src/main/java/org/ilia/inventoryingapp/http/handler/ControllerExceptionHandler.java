@@ -13,11 +13,10 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public String returnPage(Exception exception, Model model) {
+        log.error("Exception in exception handler", exception);
         if (exception instanceof ResponseStatusException responseStatusException) {
-            log.warn("Exception in exception handler", exception);
             model.addAttribute("error", responseStatusException.getStatusCode().value());
         } else {
-            log.error("Exception in exception handler", exception);
             model.addAttribute("error", "What are you doing?");
         }
         return "error/error";
