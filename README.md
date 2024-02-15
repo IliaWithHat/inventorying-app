@@ -25,6 +25,8 @@ cd inventorying-app
 docker-compose up -d
 ```
 
+The site will be available on: http://localhost:8888/items
+
 **Without Docker**
 
 - Download sources.
@@ -32,6 +34,8 @@ docker-compose up -d
 - Edit in [application.yaml](src/main/resources/application.yaml) datasource. Write the current url, username and
   password.
 - In root directory run `./gradlew bootRun`.
+
+The site will be available on: http://localhost:8080/items
 
 ## Tutorial for a user with the ADMIN role
 
