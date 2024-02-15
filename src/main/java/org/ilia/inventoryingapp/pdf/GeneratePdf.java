@@ -49,10 +49,10 @@ public class GeneratePdf {
     private final ItemRepository itemRepository;
     private final InventoryRepository inventoryRepository;
     private final PredicateBuilder predicateBuilder;
-    private final int fontSize = 8;
-    private final float borderWidth = 1.2F;
-    private PdfFont font;
-    private PdfFont bold;
+    private static final int FONT_SIZE = 8;
+    private static final float BORDER_WIDTH = 1.2F;
+    private PdfFont regularFont;
+    private PdfFont boldFont;
 
     @SneakyThrows
     private Object[] prepareDocument() {
@@ -61,8 +61,8 @@ public class GeneratePdf {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf, PageSize.A4.rotate());
         document.setMargins(20, 20, 20, 20);
-        font = PdfFontFactory.createFont(getFontFilePath("Roboto-Regular.ttf"), PdfEncodings.IDENTITY_H);
-        bold = PdfFontFactory.createFont(getFontFilePath("Roboto-Bold.ttf"), PdfEncodings.IDENTITY_H);
+        regularFont = PdfFontFactory.createFont(getFontFilePath("Roboto-Regular.ttf"), PdfEncodings.IDENTITY_H);
+        boldFont = PdfFontFactory.createFont(getFontFilePath("Roboto-Bold.ttf"), PdfEncodings.IDENTITY_H);
         return new Object[]{pathToFile, document};
     }
 
@@ -131,7 +131,7 @@ public class GeneratePdf {
 
         String text = String.format("The export was made on %1$tF %1$tR by %2$s %3$s.",
                 LocalDateTime.now(), user.getFirstName(), user.getLastName());
-        document.add(new Paragraph(text).setFont(font).setFontSize(fontSize + 2));
+        document.add(new Paragraph(text).setFont(regularFont).setFontSize(FONT_SIZE + 2));
 
         document.close();
 
@@ -145,8 +145,8 @@ public class GeneratePdf {
 
         List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit", "Quantity", "Sum", "Owned by employee")
                 .forEach(s -> table
-                        .addHeaderCell(createCell(s, 1, bold, true)
-                                .setBorder(new SolidBorder(borderWidth))
+                        .addHeaderCell(createCell(s, 1, boldFont, true)
+                                .setBorder(new SolidBorder(BORDER_WIDTH))
                                 .setTextAlignment(TextAlignment.CENTER)));
         return table;
     }
@@ -202,25 +202,25 @@ public class GeneratePdf {
     }
 
     private void createStandardFooter(Table table, List<BigDecimal> numbers, boolean isFinal, int pageNumber, int numberOfElements, long totalElements) {
-        table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
         for (int i = 0; i < 2; i++) {
-            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, bold, true)
+            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, boldFont, true)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setBorder(new SolidBorder(borderWidth)));
+                    .setBorder(new SolidBorder(BORDER_WIDTH)));
         }
 
-        table.addCell(createCell("", 1, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("", 1, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
 
-        table.addCell(createCell(isFinal ? "Total items" : "Total items on page " + pageNumber, 6, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
-        table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 2, bold, true)
+        table.addCell(createCell(isFinal ? "Total items" : "Total items on page " + pageNumber, 6, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
+        table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 2, boldFont, true)
                 .setTextAlignment(TextAlignment.CENTER)
-                .setBorder(new SolidBorder(borderWidth)));
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
 
-        table.addCell(createCell("", 1, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell("", 1, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
     }
 
     @SneakyThrows
@@ -277,7 +277,7 @@ public class GeneratePdf {
 
         String text = String.format("The inventory was carried out by %s %s using the \"%s\" method on %4$tF %4$tR.",
                 user.getFirstName(), user.getLastName(), inventoryMethod, LocalDateTime.now());
-        document.add(new Paragraph(text).setFont(font).setFontSize(fontSize + 2));
+        document.add(new Paragraph(text).setFont(regularFont).setFontSize(FONT_SIZE + 2));
 
         document.close();
 
@@ -291,21 +291,21 @@ public class GeneratePdf {
 
         List.of("Serial number", "Item name", "Inventory number", "Stored in", "Unit", "Price per unit")
                 .forEach(s -> table.
-                        addHeaderCell(createCell(s, 2, 1, bold, true, null)
-                                .setBorder(new SolidBorder(borderWidth))
+                        addHeaderCell(createCell(s, 2, 1, boldFont, true, null)
+                                .setBorder(new SolidBorder(BORDER_WIDTH))
                                 .setTextAlignment(TextAlignment.CENTER)));
 
         List.of("According to inventory", "Actual availability", "Surplus", "Shortage")
                 .forEach(s -> table.
-                        addHeaderCell(createCell(s, 2, bold, true)
-                                .setBorder(new SolidBorder(borderWidth))
+                        addHeaderCell(createCell(s, 2, boldFont, true)
+                                .setBorder(new SolidBorder(BORDER_WIDTH))
                                 .setTextAlignment(TextAlignment.CENTER)));
 
         List<String> qAndS = List.of("Quantity", "Sum");
         for (int i = 0; i < 8; i++) {
-            table.addHeaderCell(createCell(qAndS.get(i % 2 == 0 ? 0 : 1), 1, bold, true)
+            table.addHeaderCell(createCell(qAndS.get(i % 2 == 0 ? 0 : 1), 1, boldFont, true)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setBorder(new SolidBorder(borderWidth)));
+                    .setBorder(new SolidBorder(BORDER_WIDTH)));
         }
         return table;
     }
@@ -373,7 +373,7 @@ public class GeneratePdf {
 
     private long addExtraInventoryToTheTable(Document document, List<Tuple> extraInventory, List<BigDecimal> totalQuantityAndSum, long totalElements) {
         document.add(new Paragraph("Items that shouldn't be here")
-                .setFont(bold)
+                .setFont(boldFont)
                 .setFontSize(20)
                 .setTextAlignment(TextAlignment.CENTER));
 
@@ -407,19 +407,19 @@ public class GeneratePdf {
     }
 
     private void createInventoryFooter(Table table, List<BigDecimal> numbers, boolean isFinal, int pageNumber, int numberOfElements, long totalElements) {
-        table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
+        table.addCell(createCell(isFinal ? "Total" : "Total for page " + pageNumber, 6, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
         for (int i = 0; i < 8; i++) {
-            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, bold, true)
+            table.addCell(createCell(numbers.set(i, new BigDecimal(i % 2 == 0 ? "0.000" : "0.00")).toString(), 1, boldFont, true)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setBorder(new SolidBorder(borderWidth)));
+                    .setBorder(new SolidBorder(BORDER_WIDTH)));
         }
 
-        table.addCell(createCell(isFinal ? "Total items" : "Total items on page " + pageNumber, 6, bold, true)
-                .setBorder(new SolidBorder(borderWidth)));
-        table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 8, bold, true)
+        table.addCell(createCell(isFinal ? "Total items" : "Total items on page " + pageNumber, 6, boldFont, true)
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
+        table.addCell(createCell(String.valueOf(isFinal ? totalElements : numberOfElements), 8, boldFont, true)
                 .setTextAlignment(TextAlignment.CENTER)
-                .setBorder(new SolidBorder(borderWidth)));
+                .setBorder(new SolidBorder(BORDER_WIDTH)));
     }
 
     private void addEmptyRows(Table table, int numOfColum, int itemsOnPage, int numberOfElements) {
@@ -436,11 +436,11 @@ public class GeneratePdf {
     }
 
     private Cell createCell(String text) {
-        return createCell(text, 1, 1, font, false, null);
+        return createCell(text, 1, 1, regularFont, false, null);
     }
 
     private Cell createCell(String text, Boolean isLeft) {
-        return createCell(text, 1, 1, font, false, isLeft);
+        return createCell(text, 1, 1, regularFont, false, isLeft);
     }
 
     private Cell createCell(String text, int colspan, PdfFont font, boolean isHeaderOrFooter) {
@@ -449,7 +449,7 @@ public class GeneratePdf {
 
     private Cell createCell(String text, int rowspan, int colspan, PdfFont font, boolean isHeaderOrFooter, Boolean isLeft) {
         Cell cell = new Cell(rowspan, colspan)
-                .add(new Paragraph(text).setFont(font).setFontSize(fontSize).setMultipliedLeading(1.1F))
+                .add(new Paragraph(text).setFont(font).setFontSize(FONT_SIZE).setMultipliedLeading(1.1F))
                 .setMinHeight(isHeaderOrFooter ? 10 : 20);
         //TODO setMinHeight() must die. Create method which calculate row height by text.
 
@@ -457,8 +457,8 @@ public class GeneratePdf {
             return cell;
 
         if (isLeft)
-            return cell.setBorderLeft(new SolidBorder(borderWidth));
+            return cell.setBorderLeft(new SolidBorder(BORDER_WIDTH));
         else
-            return cell.setBorderRight(new SolidBorder(borderWidth));
+            return cell.setBorderRight(new SolidBorder(BORDER_WIDTH));
     }
 }

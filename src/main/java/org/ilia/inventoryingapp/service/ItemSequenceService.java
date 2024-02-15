@@ -17,10 +17,7 @@ public class ItemSequenceService {
     private final ItemSequenceRepository itemSequenceRepository;
 
     public void createSequence(User user) {
-        ItemSequence itemSequence = ItemSequence.builder()
-                .lastValue(0L)
-                .user(user)
-                .build();
+        ItemSequence itemSequence = new ItemSequence(null, 0L, user);
         itemSequenceRepository.save(itemSequence);
     }
 

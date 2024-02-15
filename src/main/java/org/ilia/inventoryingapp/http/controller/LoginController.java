@@ -19,8 +19,6 @@ public class LoginController {
 
     @GetMapping("/redirect")
     public String redirectAfterLogin(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails.getAuthorities().contains(ADMIN))
-            return "redirect:/items";
-        return "redirect:/items/filter";
+        return userDetails.getAuthorities().contains(ADMIN) ? "redirect:/items" : "redirect:/items/filter";
     }
 }

@@ -12,8 +12,7 @@ public class PageResponse<T> {
     Metadata metadata;
 
     public static <T> PageResponse<T> of(Page<T> page) {
-        int firstPage;
-        int lastPage;
+        int firstPage, lastPage;
         int currentPage = page.getNumber();
         int totalPages = page.getTotalPages() - 1;  //zero based
         if (totalPages < 9) {
