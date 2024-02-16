@@ -22,13 +22,13 @@ public class ItemSequenceService {
 
     public Long nextval(UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        ItemSequence itemSequence = itemSequenceRepository.findItemSequenceByUserId(user.getId());
+        ItemSequence itemSequence = itemSequenceRepository.findItemSequenceByUser(user);
         itemSequence.setLastValue(itemSequence.getLastValue() + 1);
         return itemSequenceRepository.save(itemSequence).getLastValue();
     }
 
     public Long currval(UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        return itemSequenceRepository.findItemSequenceByUserId(user.getId()).getLastValue();
+        return itemSequenceRepository.findItemSequenceByUser(user).getLastValue();
     }
 }

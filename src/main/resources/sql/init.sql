@@ -10,6 +10,10 @@ CREATE TABLE users
     admin_id   INTEGER REFERENCES users ON DELETE CASCADE
 );
 
+CREATE INDEX users_admin_id_index ON users (admin_id);
+CREATE UNIQUE INDEX users_email_index ON users (email);
+CREATE UNIQUE INDEX users_id_admin_id_index ON users (id, admin_id);
+
 CREATE TABLE item_filter
 (
     id                   SERIAL PRIMARY KEY,
@@ -18,12 +22,16 @@ CREATE TABLE item_filter
     user_id              INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
 );
 
+CREATE INDEX item_filter_user_id_index ON item_filter (user_id);
+
 CREATE TABLE item_sequence
 (
     id         SERIAL PRIMARY KEY,
     last_value BIGINT  NOT NULL,
     user_id    INTEGER NOT NULL REFERENCES users ON DELETE CASCADE
 );
+
+CREATE UNIQUE INDEX item_sequence_user_id_index ON item_sequence (user_id);
 
 CREATE TABLE inventory
 (
@@ -47,6 +55,11 @@ CREATE TABLE item
     created_at           TIMESTAMP      NOT NULL,
     user_id              INTEGER        NOT NULL REFERENCES users ON DELETE CASCADE
 );
+
+CREATE INDEX item_user_id_index ON item (user_id);
+CREATE UNIQUE INDEX item_id_user_id ON item (id, user_id);
+CREATE UNIQUE INDEX item_inventory_number_user_id ON item (inventory_number, user_id);
+
 
 
 INSERT INTO users(email, password, first_name, last_name, phone, role, admin_id)
