@@ -52,7 +52,7 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("user", userDto);
 
-        ItemFilterDto itemFilterDto = itemFilterService.findByUserId(id, userDetails);
+        ItemFilterDto itemFilterDto = itemFilterService.findItemFilterByUserId(id);
         model.addAttribute("itemFilter", itemFilterDto);
         model.addAttribute("optionsForIsOwnedByEmployee", OptionsForIsOwnedByEmployee.values());
 

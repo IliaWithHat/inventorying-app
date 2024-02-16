@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.ItemFilter;
 import org.ilia.inventoryingapp.database.repository.ItemFilterRepository;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
+import org.ilia.inventoryingapp.exception.UserNotFoundException;
 import org.ilia.inventoryingapp.mapper.ItemFilterMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,16 +27,17 @@ public class ItemFilterService {
     private final ItemFilterMapper itemFilterMapper;
     private final UserService userService;
 
-    public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) {
+    public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) throws UserNotFoundException {
         userService.findById(id, userDetails)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
+                .orElseThrow(() -> new UserNotFoundException(id, userDetails));
 
+        List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
         if (!ItemFilterList.isEmpty()) {
             delete(id, userDetails);
         }
 
         Arrays.stream(itemFilterDto.getStoredIn().split(";"))
+                .filter(StringUtils::hasText)
                 .map(s -> ItemFilterDto.builder()
                         .storedIn(s)
                         .isOwnedByEmployee(itemFilterDto.getIsOwnedByEmployee())
@@ -47,7 +48,7 @@ public class ItemFilterService {
                 .forEach(itemFilterRepository::saveAndFlush);
     }
 
-    public List<ItemFilterDto> findByUserId(Integer id) {
+    public List<ItemFilterDto> findItemFilterListByUserId(Integer id) {
         List<ItemFilter> itemFilterList = itemFilterRepository.findItemFilterByUserId(id);
         if (itemFilterList.isEmpty()) {
             return Collections.singletonList(emptyItemFilterDto());
@@ -57,13 +58,8 @@ public class ItemFilterService {
                 .toList();
     }
 
-    public ItemFilterDto findByUserId(Integer id, UserDetails userDetails) {
-        if (userDetails != null) {
-            userService.findById(id, userDetails).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        }
-
+    public ItemFilterDto findItemFilterByUserId(Integer id) {
         List<ItemFilter> itemFilterList = itemFilterRepository.findItemFilterByUserId(id);
-
         if (itemFilterList.isEmpty()) {
             return emptyItemFilterDto();
         }
@@ -82,9 +78,10 @@ public class ItemFilterService {
         return ItemFilterDto.builder().storedIn("").isOwnedByEmployee(IGNORE).build();
     }
 
-    public boolean delete(Integer id, UserDetails userDetails) {
+    public boolean delete(Integer id, UserDetails userDetails) throws UserNotFoundException {
         userService.findById(id, userDetails)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(id, userDetails));
+
         if (!itemFilterRepository.findItemFilterByUserId(id).isEmpty()) {
             itemFilterRepository.deleteByUserId(id);
             itemFilterRepository.flush();

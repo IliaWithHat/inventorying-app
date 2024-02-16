@@ -27,7 +27,7 @@ public class PredicateBuilder {
         if (user.getAdmin() == null) {
             predicate = buildPredicateForAdmin(itemFilterForAdmin, user);
         } else {
-            predicate = buildPredicateForUser(itemFilterService.findByUserId(user.getId()), user);
+            predicate = buildPredicateForUser(itemFilterService.findItemFilterListByUserId(user.getId()), user);
         }
         return predicate;
     }
