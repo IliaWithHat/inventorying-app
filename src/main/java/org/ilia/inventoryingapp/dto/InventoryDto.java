@@ -3,8 +3,8 @@ package org.ilia.inventoryingapp.dto;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
-import org.ilia.inventoryingapp.validation.annotation.InventoryNumberForInventoryExist;
-import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForInventory;
+import org.ilia.inventoryingapp.validation.annotation.InventoryNumberExist;
+import org.ilia.inventoryingapp.validation.annotation.UniqueInventory;
 
 import java.math.BigDecimal;
 
@@ -16,8 +16,8 @@ public class InventoryDto {
 
     @NotBlank(message = "Enter inventory number")
     @Size(max = 24, message = "The maximum length of the inventory number is 24 characters")
-    @InventoryNumberForInventoryExist
-    @UniqueInventoryNumberForInventory
+    @InventoryNumberExist
+    @UniqueInventory
     String inventoryNumber;
 
     @NotNull(message = "Enter quantity")

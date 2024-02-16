@@ -8,13 +8,13 @@ import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.ItemRepository;
 import org.ilia.inventoryingapp.dto.ItemDto;
-import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
+import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UniqueInventoryNumberForEachUserImpl implements ConstraintValidator<UniqueInventoryNumberForEachUser, ItemDto> {
+public class UniqueInventoryNumberForUserImpl implements ConstraintValidator<UniqueInventoryNumberForUser, ItemDto> {
 
     private final ItemRepository itemRepository;
 

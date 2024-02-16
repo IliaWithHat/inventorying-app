@@ -4,14 +4,14 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.database.entity.Unit;
-import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForEachUser;
+import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForUser;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Value
 @Builder
-@UniqueInventoryNumberForEachUser
+@UniqueInventoryNumberForUser
 public class ItemDto {
 
     Long id;

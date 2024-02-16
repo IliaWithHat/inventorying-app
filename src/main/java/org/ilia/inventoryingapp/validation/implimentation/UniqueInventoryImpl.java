@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
-import org.ilia.inventoryingapp.validation.annotation.UniqueInventoryNumberForInventory;
+import org.ilia.inventoryingapp.validation.annotation.UniqueInventory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
-public class UniqueInventoryNumberForInventoryImpl implements ConstraintValidator<UniqueInventoryNumberForInventory, String> {
+public class UniqueInventoryImpl implements ConstraintValidator<UniqueInventory, String> {
 
     private final InventoryRepository inventoryRepository;
 

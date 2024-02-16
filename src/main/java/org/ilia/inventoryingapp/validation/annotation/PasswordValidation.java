@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface PasswordValidation {
 
-    String message() default "Enter password";
+    String message() default "The password  must not contain spaces";
 
     Class<?>[] groups() default {};
 
