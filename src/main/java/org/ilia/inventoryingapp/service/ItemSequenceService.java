@@ -17,8 +17,7 @@ public class ItemSequenceService {
     private final ItemSequenceRepository itemSequenceRepository;
 
     public void createSequence(User user) {
-        ItemSequence itemSequence = new ItemSequence(null, 0L, user);
-        itemSequenceRepository.save(itemSequence);
+        itemSequenceRepository.save(new ItemSequence(null, 0L, user));
     }
 
     public Long nextval(UserDetails userDetails) {

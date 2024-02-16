@@ -28,8 +28,8 @@ public class ItemFilterService {
     private final UserService userService;
 
     public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) throws UserNotFoundException {
-        userService.findById(id, userDetails)
-                .orElseThrow(() -> new UserNotFoundException(id, userDetails));
+        if (userService.findById(id, userDetails).isEmpty() || !itemFilterDto.getUserId().equals(id))
+            throw new UserNotFoundException(id, userDetails);
 
         List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
         if (!ItemFilterList.isEmpty()) {
@@ -79,8 +79,8 @@ public class ItemFilterService {
     }
 
     public boolean delete(Integer id, UserDetails userDetails) throws UserNotFoundException {
-        userService.findById(id, userDetails)
-                .orElseThrow(() -> new UserNotFoundException(id, userDetails));
+        if (userService.findById(id, userDetails).isEmpty())
+            throw new UserNotFoundException(id, userDetails);
 
         if (!itemFilterRepository.findItemFilterByUserId(id).isEmpty()) {
             itemFilterRepository.deleteByUserId(id);

@@ -1,12 +1,11 @@
 package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
+@ToString(exclude = "user")
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,6 +18,6 @@ public class ItemSequence {
 
     Long lastValue;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     User user;
 }

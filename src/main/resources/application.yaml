@@ -9,17 +9,3 @@ spring:
     password: postgres
   jpa:
     open-in-view: true
-    properties:
-      jakarta:
-        persistence:
-          sharedCache:
-            mode: ENABLE_SELECTIVE
-      hibernate:
-        cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
-        javax:
-          cache:
-            missing_cache_strategy: create
