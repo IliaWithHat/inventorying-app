@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Data
-@ToString(exclude = "admin")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +29,6 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User admin;
 }
