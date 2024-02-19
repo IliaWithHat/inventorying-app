@@ -264,10 +264,13 @@ public class GeneratePdf {
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         } while (pageNumber < totalPages);
 
-        List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicate, user);
-        if (!extraInventory.isEmpty()) {
-            //TODO add pagination
-            totalElements = addExtraInventoryToTheTable(document, extraInventory, totalQuantityAndSum, totalElements);
+        if (inventoryMethod.equals("blind")) {
+            Predicate[] predicates = predicateBuilder.buildPredicate(user, itemFilterForAdmin, true);
+            List<Tuple> extraInventory = inventoryRepository.findExtraInventory(predicates, user);
+            if (!extraInventory.isEmpty()) {
+                //TODO add pagination
+                totalElements = addExtraInventoryToTheTable(document, extraInventory, totalQuantityAndSum, totalElements);
+            }
         }
 
         Table table = createInventoryTableAndHeader();

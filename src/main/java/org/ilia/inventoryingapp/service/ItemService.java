@@ -43,7 +43,7 @@ public class ItemService {
         User user = ((UserDetailsImpl) userDetails).getUser();
 
         Predicate predicate = QPredicates.builder()
-                .add(user.getId(), item.user.id::eq)
+                .add(user, item.user::eq)
                 .buildAnd();
         Pageable pageable = PageRequest.of(0, 5, Sort.by("serialNumber").descending());
 

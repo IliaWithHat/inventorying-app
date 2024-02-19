@@ -57,8 +57,8 @@ CREATE TABLE item
 );
 
 CREATE INDEX item_user_id_index ON item (user_id);
-CREATE UNIQUE INDEX item_id_user_id ON item (id, user_id);
-CREATE UNIQUE INDEX item_inventory_number_user_id ON item (inventory_number, user_id);
+CREATE UNIQUE INDEX item_id_user_id_index ON item (id, user_id);
+CREATE UNIQUE INDEX item_inventory_number_user_id_index ON item (inventory_number, user_id);
 
 
 

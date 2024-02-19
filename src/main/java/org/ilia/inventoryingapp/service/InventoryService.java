@@ -1,10 +1,12 @@
 package org.ilia.inventoryingapp.service;
 
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.database.entity.Inventory;
 import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
+import org.ilia.inventoryingapp.database.querydsl.PredicateBuilder;
 import org.ilia.inventoryingapp.database.repository.InventoryRepository;
 import org.ilia.inventoryingapp.dto.InventoryDto;
 import org.ilia.inventoryingapp.dto.ItemDto;
@@ -15,6 +17,9 @@ import org.ilia.inventoryingapp.pdf.GeneratePdf;
 import org.ilia.inventoryingapp.viewUtils.SaveField;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +33,14 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final InventoryMapper inventoryMapper;
     private final ItemMapper itemMapper;
+    private final PredicateBuilder predicateBuilder;
     private final GeneratePdf generatePdf;
 
     public Page<ItemDto> findAll(UserDetails userDetails, ItemFilterForAdmin itemFilterForAdmin, Integer page) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        return inventoryRepository.findItemsThatWereNotInventoried(itemFilterForAdmin, user, page)
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
+        Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterForAdmin);
+        return inventoryRepository.findItemsThatWereNotInventoried(predicate, pageable, user)
                 .map(itemMapper::toItemDto);
     }
 

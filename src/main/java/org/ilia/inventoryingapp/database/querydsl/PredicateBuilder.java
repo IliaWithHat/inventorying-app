@@ -23,16 +23,21 @@ public class PredicateBuilder {
     private final ItemFilterService itemFilterService;
 
     public Predicate buildPredicate(User user, ItemFilterForAdmin itemFilterForAdmin) {
-        Predicate predicate;
-        if (user.getAdmin() == null) {
-            predicate = buildPredicateForAdmin(itemFilterForAdmin, user);
-        } else {
-            predicate = buildPredicateForUser(itemFilterService.findItemFilterListByUserId(user.getId()), user);
-        }
-        return predicate;
+        return buildPredicate(user, itemFilterForAdmin, false)[0];
     }
 
-    private Predicate buildPredicateForUser(List<ItemFilterDto> itemFilterDto, User user) {
+    public Predicate[] buildPredicate(User user, ItemFilterForAdmin itemFilterForAdmin, boolean splitPredicate) {
+        Predicate[] predicates;
+        if (user.getAdmin() == null) {
+            predicates = buildPredicateForAdmin(itemFilterForAdmin, user, splitPredicate);
+        } else {
+            predicates = buildPredicateForUser(itemFilterService.findItemFilterListByUserId(user.getId()), user, splitPredicate);
+        }
+        //If filter empty, predicates[1] == null
+        return predicates;
+    }
+
+    private Predicate[] buildPredicateForUser(List<ItemFilterDto> itemFilterDto, User user, boolean splitPredicate) {
         Boolean isOwnedByEmployee;
         switch (itemFilterDto.getFirst().getIsOwnedByEmployee()) {
             case YES -> isOwnedByEmployee = true;
@@ -40,18 +45,22 @@ public class PredicateBuilder {
             default -> isOwnedByEmployee = null;
         }
 
-        QPredicates builder = QPredicates.builder();
-        itemFilterDto.forEach(i -> builder.add(i.getStoredIn(), item.storedIn::eq));
-        Predicate predicate = builder.buildOr();
+        QPredicates qPredicatesOr = QPredicates.builder();
+        itemFilterDto.forEach(i -> qPredicatesOr.add(i.getStoredIn(), item.storedIn::eq));
+        Predicate storedInPredicate = qPredicatesOr.buildOr();
 
-        return QPredicates.builder()
-                .add(user.getAdmin().getId(), item.user.id::eq)
-                .add(predicate)
-                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
-                .buildAnd();
+        QPredicates qPredicatesAnd = QPredicates.builder()
+                .add(storedInPredicate)
+                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq);
+
+        if (splitPredicate) {
+            return new Predicate[]{item.user.eq(user.getAdmin()), qPredicatesAnd.buildAnd()};
+        } else {
+            return new Predicate[]{qPredicatesAnd.add(item.user.eq(user.getAdmin())).buildAnd()};
+        }
     }
 
-    private Predicate buildPredicateForAdmin(ItemFilterForAdmin itemFilterForAdmin, User user) {
+    private Predicate[] buildPredicateForAdmin(ItemFilterForAdmin itemFilterForAdmin, User user, boolean splitPredicate) {
         LocalDateTime showItemCreated = null;
         if (itemFilterForAdmin.getShowItemCreated() != null && !itemFilterForAdmin.getShowItemCreated().equals(IGNORE)) {
             switch (itemFilterForAdmin.getShowItemCreated()) {
@@ -77,31 +86,33 @@ public class PredicateBuilder {
             }
         }
 
-        QPredicates qPredicates = QPredicates.builder();
-
-        splitStringAndAddToQPredicates(itemFilterForAdmin.getName(), qPredicates, item.name::containsIgnoreCase);
-        splitStringAndAddToQPredicates(itemFilterForAdmin.getInventoryNumber(), qPredicates, item.inventoryNumber::eq);
-        splitStringAndAddToQPredicates(itemFilterForAdmin.getStoredIn(), qPredicates, item.storedIn::containsIgnoreCase);
-
-        return qPredicates
-                .add(user.getId(), item.user.id::eq)
+        QPredicates qPredicatesAnd = QPredicates.builder()
                 .add(itemFilterForAdmin.getTimeIntervalStart() == null ? null : itemFilterForAdmin.getTimeIntervalStart().atStartOfDay(), item.createdAt::goe)
                 .add(itemFilterForAdmin.getTimeIntervalEnd() == null ? null : itemFilterForAdmin.getTimeIntervalEnd().atTime(23, 59, 59), item.createdAt::loe)
                 .add(showItemCreated, item.createdAt::goe)
-                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq)
-                .buildAnd();
+                .add(isOwnedByEmployee, item.isOwnedByEmployee::eq);
+
+        splitStringAndAddToQPredicates(itemFilterForAdmin.getName(), qPredicatesAnd, item.name::containsIgnoreCase);
+        splitStringAndAddToQPredicates(itemFilterForAdmin.getInventoryNumber(), qPredicatesAnd, item.inventoryNumber::eq);
+        splitStringAndAddToQPredicates(itemFilterForAdmin.getStoredIn(), qPredicatesAnd, item.storedIn::containsIgnoreCase);
+
+        if (splitPredicate) {
+            return new Predicate[]{item.user.eq(user), qPredicatesAnd.buildAnd()};
+        } else {
+            return new Predicate[]{qPredicatesAnd.add(item.user.eq(user)).buildAnd()};
+        }
     }
 
-    private void splitStringAndAddToQPredicates(String string, QPredicates qPredicates, Function<String, Predicate> function) {
+    private void splitStringAndAddToQPredicates(String string, QPredicates qPredicatesAnd, Function<String, Predicate> function) {
         QPredicates predicatesOr = QPredicates.builder();
 
         if (string != null && !string.isBlank() && string.contains(";")) {
             for (String oneString : string.split(";")) {
                 predicatesOr.add(oneString, function);
             }
-            qPredicates.add(predicatesOr.buildOr());
+            qPredicatesAnd.add(predicatesOr.buildOr());
         } else {
-            qPredicates.add(string, function);
+            qPredicatesAnd.add(string, function);
         }
     }
 }
