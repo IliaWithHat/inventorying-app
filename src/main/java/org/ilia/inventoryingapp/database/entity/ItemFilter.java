@@ -2,7 +2,6 @@ package org.ilia.inventoryingapp.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 
 @Data
 @ToString(exclude = "user")

@@ -55,7 +55,6 @@ public class ItemService {
         User user = ((UserDetailsImpl) userDetails).getUser();
 
         Predicate predicate = predicateBuilder.buildPredicate(user, itemFilterForAdmin);
-
         Pageable pageable = PageRequest.of(page, 20, Sort.by("serialNumber"));
         return itemRepository.findAll(predicate, pageable)
                 .map(itemMapper::toItemDto);
@@ -73,8 +72,8 @@ public class ItemService {
 
         item.setSerialNumber(itemSequenceService.nextval(userDetails));
 
-        Item savedItem = itemRepository.save(item);
-        return itemMapper.toItemDto(savedItem);
+        itemRepository.save(item);
+        return itemMapper.toItemDto(item);
     }
 
     @Transactional

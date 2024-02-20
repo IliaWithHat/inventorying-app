@@ -1,6 +1,7 @@
-package org.ilia.inventoryingapp.filter;
+package org.ilia.inventoryingapp.database.entity;
 
 public enum OptionsForIsOwnedByEmployee {
+
     IGNORE("Ignore"),
     YES("Yes"),
     NO("No");

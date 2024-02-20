@@ -1,7 +1,6 @@
 package org.ilia.inventoryingapp.mapper;
 
 import org.ilia.inventoryingapp.database.entity.Item;
-import org.ilia.inventoryingapp.database.entity.User;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,7 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Mapper(componentModel = "spring")
-public interface ItemMapper {
+public interface ItemMapper extends ToIntegerToUserMapper {
 
     @Mapping(target = "sum", expression = "java(calculateSum(item))")
     @Mapping(target = "userId", expression = "java(toInteger(item.getUser()))")
@@ -38,13 +37,5 @@ public interface ItemMapper {
 
     default boolean toBoolean(String s) {
         return "ON".equalsIgnoreCase(s);
-    }
-
-    default Integer toInteger(User user) {
-        return user == null ? null : user.getId();
-    }
-
-    default User toUser(Integer id) {
-        return id == null ? null : User.builder().id(id).build();
     }
 }

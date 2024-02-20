@@ -23,7 +23,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/", "/login", "/registration").permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/login/redirect", "items/filter", "items/export", "inventory/**").hasAnyAuthority(ADMIN.getAuthority(), USER.getAuthority())
-                .requestMatchers("/items/**", "/admin/**").hasAuthority(ADMIN.getAuthority())
+                .requestMatchers("/items/**", "/admin/users/**").hasAuthority(ADMIN.getAuthority())
                 .anyRequest().denyAll());
         http.logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))

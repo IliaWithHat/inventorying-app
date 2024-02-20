@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee;
 
 import java.time.LocalDate;
 

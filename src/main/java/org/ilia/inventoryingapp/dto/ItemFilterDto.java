@@ -3,7 +3,7 @@ package org.ilia.inventoryingapp.dto;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Value;
-import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
+import org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee;
 
 @Value
 @Builder

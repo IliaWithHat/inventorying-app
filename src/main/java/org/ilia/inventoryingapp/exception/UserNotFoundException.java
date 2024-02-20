@@ -1,17 +1,17 @@
 package org.ilia.inventoryingapp.exception;
 
 import lombok.Getter;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 
 @Getter
 public class UserNotFoundException extends Exception {
 
     private final Integer id;
 
-    private final UserDetails userDetails;
+    private final UserDetailsImpl userDetails;
 
-    public UserNotFoundException(Integer id, UserDetails userDetails) {
-        super("User with id " + id + " not found for user " + userDetails.getUsername());
+    public UserNotFoundException(Integer id, UserDetailsImpl userDetails) {
+        super(String.format("User with id %d not found for user with email %s ", id, userDetails.getUser().getEmail()));
         this.id = id;
         this.userDetails = userDetails;
     }

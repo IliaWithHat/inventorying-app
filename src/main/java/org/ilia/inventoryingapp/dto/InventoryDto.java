@@ -22,7 +22,7 @@ public class InventoryDto {
 
     @NotNull(message = "Enter quantity")
     @PositiveOrZero(message = "Minimum item quantity is 0")
-    @Max(value = 9_999_999, message = "Quantity must be less than 9_999_999")
+    @Max(value = 9_999_999, message = "Quantity must be less than 9,999,999")
     BigDecimal currentQuantity;
 
     Integer userId;

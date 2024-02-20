@@ -1,10 +1,10 @@
 package org.ilia.inventoryingapp.http.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.database.entity.Unit;
 import org.ilia.inventoryingapp.dto.ItemDto;
 import org.ilia.inventoryingapp.filter.ItemFilterForAdmin;
-import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.filter.TimeDurationEnum;
 import org.ilia.inventoryingapp.service.ItemSequenceService;
 import org.ilia.inventoryingapp.service.ItemService;
@@ -36,10 +36,10 @@ public class ItemController {
     private final ItemSequenceService itemSequenceService;
 
     @GetMapping
-    public String getFirstFiveItems(@AuthenticationPrincipal UserDetails userDetails,
-                                    ItemDto itemDto,
-                                    SaveField saveField,
-                                    Model model) {
+    public String createItemPage(@AuthenticationPrincipal UserDetails userDetails,
+                                 ItemDto itemDto,
+                                 SaveField saveField,
+                                 Model model) {
         Page<ItemDto> itemDtoPage = itemService.findLastFiveItems(userDetails);
         model.addAttribute("items", PageResponse.of(itemDtoPage));
         model.addAttribute("itemDto", itemDto);

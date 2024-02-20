@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.dto.UserDto;
-import org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.service.ItemFilterService;
 import org.ilia.inventoryingapp.service.UserService;
 import org.ilia.inventoryingapp.validation.groups.CreateUser;
@@ -65,8 +65,11 @@ public class UserController {
     @PostMapping
     public String create(@AuthenticationPrincipal UserDetails userDetails,
                          @Validated({Default.class, CreateUser.class}) UserDto userDto,
-                         BindingResult bindingResult) {
-        if (!bindingResult.hasErrors()) {
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+        } else {
             userService.create(userDetails, userDto);
         }
         return "redirect:/admin/users";

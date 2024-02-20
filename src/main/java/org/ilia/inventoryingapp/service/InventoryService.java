@@ -46,12 +46,11 @@ public class InventoryService {
 
     public InventoryDto create(InventoryDto inventoryDto) {
         Inventory inventory = inventoryMapper.toInventory(inventoryDto);
-
-        Inventory savedInventory = inventoryRepository.save(inventory);
-        return inventoryMapper.toInventoryDto(savedInventory);
+        inventoryRepository.save(inventory);
+        return inventoryMapper.toInventoryDto(inventory);
     }
 
-    public void deleteInventory(UserDetails userDetails) {
+    public void deleteAllInventory(UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
         inventoryRepository.deleteInventoryByUser(user);
     }

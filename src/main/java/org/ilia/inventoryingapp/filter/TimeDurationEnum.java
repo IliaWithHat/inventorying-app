@@ -1,6 +1,7 @@
 package org.ilia.inventoryingapp.filter;
 
 public enum TimeDurationEnum {
+
     IGNORE("Ignore"),
     ONE_DAY("1 day"),
     THREE_DAYS("3 days"),

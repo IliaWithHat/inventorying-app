@@ -38,7 +38,7 @@ public class InventoryController {
                                  SaveField saveField,
                                  Model model) {
         if (!"blind".equals(returnTo))
-            inventoryService.deleteInventory(userDetails);
+            inventoryService.deleteAllInventory(userDetails);
         model.addAttribute("inventoryDto", inventoryDto);
         model.addAttribute("saveField", saveField);
         return "inventory/blind";
@@ -51,7 +51,7 @@ public class InventoryController {
                                    ItemFilterForAdmin itemFilterForAdmin,
                                    Model model) {
         if (!"sighted".equals(returnTo))
-            inventoryService.deleteInventory(userDetails);
+            inventoryService.deleteAllInventory(userDetails);
         Page<ItemDto> items = inventoryService.findAll(userDetails, itemFilterForAdmin, page);
         model.addAttribute("items", PageResponse.of(items));
         return "inventory/sighted";
@@ -70,9 +70,8 @@ public class InventoryController {
         } else {
             inventoryService.create(inventoryDto);
 
-            if (!saveField.equals(new SaveField())) {
-                InventoryDto inventoryDtoWithSavedFields = inventoryService.saveStateOfFields(inventoryDto, saveField);
-                redirectAttributes.addFlashAttribute(inventoryDtoWithSavedFields);
+            if ("blind".equals(returnTo) && !saveField.equals(new SaveField())) {
+                redirectAttributes.addFlashAttribute(inventoryService.saveStateOfFields(inventoryDto, saveField));
             }
         }
         redirectAttributes.addFlashAttribute("saveField", saveField);
@@ -90,20 +89,20 @@ public class InventoryController {
     public String cancelInventory(@AuthenticationPrincipal UserDetails userDetails,
                                   SessionStatus sessionStatus) {
         sessionStatus.setComplete();
-        inventoryService.deleteInventory(userDetails);
+        inventoryService.deleteAllInventory(userDetails);
         return "redirect:/items/filter";
     }
 
     @GetMapping("/export")
     @ResponseBody
     public ResponseEntity<Resource> exportResults(@AuthenticationPrincipal UserDetails userDetails,
+                                                  ItemFilterForAdmin itemFilterForAdmin,
                                                   SessionStatus sessionStatus,
-                                                  String inventoryMethod,
-                                                  ItemFilterForAdmin itemFilterForAdmin) {
+                                                  String inventoryMethod) {
         Resource file = inventoryService.getPdf(itemFilterForAdmin, userDetails, inventoryMethod);
 
         sessionStatus.setComplete();
-        inventoryService.deleteInventory(userDetails);
+        inventoryService.deleteAllInventory(userDetails);
 
         if (file == null)
             return ResponseEntity.notFound().build();

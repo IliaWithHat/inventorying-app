@@ -92,6 +92,10 @@
                 </tr>
                 </tbody>
             </table>
+            <br/>
+            <div th:if="${errors}">
+                <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
+            </div>
         </div>
     </div>
 </div>

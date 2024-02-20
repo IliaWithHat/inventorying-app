@@ -2,6 +2,7 @@ package org.ilia.inventoryingapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.ItemFilter;
+import org.ilia.inventoryingapp.database.entity.UserDetailsImpl;
 import org.ilia.inventoryingapp.database.repository.ItemFilterRepository;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.exception.UserNotFoundException;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.ilia.inventoryingapp.filter.OptionsForIsOwnedByEmployee.IGNORE;
+import static org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee.IGNORE;
 
 @Service
 @Transactional
@@ -29,7 +30,7 @@ public class ItemFilterService {
 
     public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) throws UserNotFoundException {
         if (userService.findById(id, userDetails).isEmpty() || !itemFilterDto.getUserId().equals(id))
-            throw new UserNotFoundException(id, userDetails);
+            throw new UserNotFoundException(id, (UserDetailsImpl) userDetails);
 
         List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
         if (!ItemFilterList.isEmpty()) {
@@ -80,7 +81,7 @@ public class ItemFilterService {
 
     public boolean delete(Integer id, UserDetails userDetails) throws UserNotFoundException {
         if (userService.findById(id, userDetails).isEmpty())
-            throw new UserNotFoundException(id, userDetails);
+            throw new UserNotFoundException(id, (UserDetailsImpl) userDetails);
 
         if (!itemFilterRepository.findItemFilterByUserId(id).isEmpty()) {
             itemFilterRepository.deleteByUserId(id);

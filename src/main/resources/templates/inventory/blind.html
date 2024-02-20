@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <br/>
             <br/>
-            <form th:action="@{/inventory(returnTo=blind)}" method="post" th:object="${inventoryDto}">
+            <form th:action="@{/inventory}" method="post" th:object="${inventoryDto}">
                 <table class="table table-borderless" style="display: flex;">
                     <tbody>
                     <tr>
@@ -61,6 +61,7 @@
                 <div th:if="${errors}">
                     <p class="error" th:each="error : ${errors}" th:text="${error.getDefaultMessage()}"/>
                 </div>
+                <input type="hidden" name="returnTo" value="blind">
                 <button type="submit" class="btn btn-primary add-button">Send data</button>
             </form>
             <br/>

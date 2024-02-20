@@ -34,12 +34,12 @@ public class ItemDto {
 
     @NotNull(message = "Enter quantity")
     @Positive(message = "Enter positive item quantity")
-    @Max(value = 9_999_999, message = "Quantity must be less than 9_999_999")
+    @Max(value = 9_999_999, message = "Quantity must be less than 9,999,999")
     BigDecimal quantity;
 
     @NotNull(message = "Enter price")
     @PositiveOrZero(message = "Minimum item price is 0")
-    @Max(value = 99_999_999L, message = "Price must be less than 99_999_999")
+    @Max(value = 99_999_999L, message = "Price must be less than 99,999,999")
     BigDecimal pricePerUnit;
 
     BigDecimal sum;

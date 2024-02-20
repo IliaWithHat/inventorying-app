@@ -10,6 +10,6 @@ public class InventoryingAppApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(InventoryingAppApplication.class, args);
-        log.info("Done");
+        log.info("Application ready to work.");
     }
 }

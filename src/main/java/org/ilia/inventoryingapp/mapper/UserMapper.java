@@ -6,7 +6,6 @@ import org.ilia.inventoryingapp.dto.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
 
@@ -30,8 +29,7 @@ public interface UserMapper {
     default String encodePassword(UserDto userDto, User user) {
         String password = userDto.getPassword();
         if (StringUtils.hasText(password)) {
-            PasswordEncoder passwordEncoder = new SecurityConfiguration().passwordEncoder();
-            return passwordEncoder.encode(password);
+            return new SecurityConfiguration().passwordEncoder().encode(password);
         }
         return user.getPassword();
     }

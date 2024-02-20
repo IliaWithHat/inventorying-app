@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/admin/filter")
+@RequestMapping("/admin/users/filter")
 public class ItemFilterController {
 
     private final ItemFilterService itemFilterService;

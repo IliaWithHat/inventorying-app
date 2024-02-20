@@ -44,8 +44,11 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDto create(UserDetails userDetails, UserDto userDto) {
         User user = userMapper.toUser(userDto);
+        userRepository.save(user);
 
-        if (userDetails != null) {
+        if (userDetails == null) {
+            itemSequenceService.createSequence(user);
+        } else {
             User admin = ((UserDetailsImpl) userDetails).getUser();
             long usersCount = userRepository.countByAdmin(admin);
             if (usersCount < 10) {
@@ -55,13 +58,7 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        User savedUser = userRepository.save(user);
-
-        if (userDetails == null) {
-            itemSequenceService.createSequence(savedUser);
-        }
-
-        return userMapper.toUserDto(savedUser);
+        return userMapper.toUserDto(user);
     }
 
     @Transactional
@@ -76,8 +73,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<UserDto> delete(Integer id, UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
-        boolean isAdmin = id.equals(admin.getId());
-        Optional<User> user = isAdmin ? Optional.of(admin) : userRepository.findUserByIdAndAdmin(id, admin);
+        Optional<User> user = id.equals(admin.getId()) ? Optional.of(admin) : userRepository.findUserByIdAndAdmin(id, admin);
         if (user.isPresent()) {
             userRepository.deleteById(id);
             userRepository.flush();

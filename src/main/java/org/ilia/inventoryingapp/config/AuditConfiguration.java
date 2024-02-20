@@ -19,7 +19,7 @@ public class AuditConfiguration implements AuditorAware<User> {
 
     @Override
     public Optional<User> getCurrentAuditor() {
-        return Optional.ofNullable(SecurityContextHolder.getContext())
+        return Optional.of(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
                 .map(UserDetailsImpl.class::cast)

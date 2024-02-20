@@ -1,6 +1,7 @@
 package org.ilia.inventoryingapp.database.entity;
 
 public enum Unit {
+
     PC("Pc"),
     G("G"),
     KG("Kg"),
