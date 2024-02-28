@@ -2,9 +2,8 @@ package org.ilia.inventoryingapp.database.entity;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
+import java.util.List;
 
 @Getter
 @ToString
@@ -12,8 +11,8 @@ public class UserDetailsImpl extends org.springframework.security.core.userdetai
 
     private final User user;
 
-    public UserDetailsImpl(String username, String password, Collection<? extends GrantedAuthority> authorities, User user) {
-        super(username, password, authorities);
+    public UserDetailsImpl(String username, String password, Role role, User user) {
+        super(username, password, List.of(role));
         this.user = user;
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,7 +87,7 @@ public class UserService implements UserDetailsService {
                 .map(user -> new UserDetailsImpl(
                         user.getEmail(),
                         user.getPassword(),
-                        Collections.singleton(user.getRole()),
+                        user.getRole(),
                         user
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user:" + email));
