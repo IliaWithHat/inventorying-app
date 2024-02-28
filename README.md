@@ -128,9 +128,31 @@ Here you can edit your info.
 
 ## Tutorial for a user with the USER role
 
-You can log in using the login and password that the ADMIN gave you, export to pdf 
+You can log in using the login and password that the ADMIN gave you, export to pdf
 and inventory.
 
 ![Image](assets/images/user%20view.png)
+
+## Total lines of code
+
+```
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Java                            71            690             18           2625
+HTML                            15             37              0           1401
+CSS                              4             88              9            414
+JavaScript                       2             45              1            154
+Bourne Shell                     1             28            116            105
+Markdown                         1             51              0            100
+SQL                              1             13              0             80
+DOS Batch                        1             21              2             69
+YAML                             2              2              0             51
+Gradle                           2             11              3             43
+XML                              1              2              0             36
+Properties                       2              0              1              8
+Dockerfile                       1              0              0              4
+-------------------------------------------------------------------------------
+SUM:                           104            988            150           5090
+```
 
 ### If you find bugs or have any ideas, please leave a message at rozhkoilia5533@gmail.com.
