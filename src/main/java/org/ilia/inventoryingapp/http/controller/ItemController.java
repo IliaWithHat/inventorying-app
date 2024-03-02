@@ -117,7 +117,7 @@ public class ItemController {
     @ResponseBody
     public String delete(@AuthenticationPrincipal UserDetails userDetails,
                          @PathVariable Long id) {
-        if (!itemService.delete(id, userDetails))
+        if (itemService.delete(id, userDetails).isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return "<script>window.close();</script>";
     }

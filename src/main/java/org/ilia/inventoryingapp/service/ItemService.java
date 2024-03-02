@@ -86,14 +86,14 @@ public class ItemService {
     }
 
     @Transactional
-    public boolean delete(Long id, UserDetails userDetails) {
+    public Optional<ItemDto> delete(Long id, UserDetails userDetails) {
         User user = ((UserDetailsImpl) userDetails).getUser();
-        if (itemRepository.findItemByIdAndUser(id, user).isPresent()) {
-            itemRepository.deleteById(id);
-            itemRepository.flush();
-            return true;
-        }
-        return false;
+        return itemRepository.findItemByIdAndUser(id, user)
+                .map(item -> {
+                    itemRepository.delete(item);
+                    itemRepository.flush();
+                    return itemMapper.toItemDto(item);
+                });
     }
 
     public Resource getPdf(ItemFilterForAdmin itemFilterForAdmin, UserDetails userDetails) {

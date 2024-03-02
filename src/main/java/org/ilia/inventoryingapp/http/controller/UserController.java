@@ -105,8 +105,9 @@ public class UserController {
         if (user.get().getAdminId() == null) {
             new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, securityContext.getAuthentication());
             return "<script>window.location.replace('/login');</script>";
+        } else {
+            return "<script>window.close();</script>";
         }
-        return "<script>window.close();</script>";
     }
 }
 
