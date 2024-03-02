@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,10 +35,16 @@ public class SecurityConfiguration {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .defaultSuccessUrl("/login/redirect", true));
-        http.rememberMe(rm -> rm
-                .alwaysRemember(true)
-                .key("JPDh]euE0N$+/](.[-Jq4*7*_DdbBd#N"));
+        http.sessionManagement(sm -> sm
+                .maximumSessions(1)
+                .expiredUrl("/login")
+                .sessionRegistry(sessionRegistry()));
         return http.build();
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
     @Bean

@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+    List<User> findUsersByAdmin(User admin);
+
     List<User> findUsersByAdmin(User admin, Sort sort);
 
     long countByAdmin(User admin);

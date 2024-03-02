@@ -26,6 +26,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ItemSequenceService itemSequenceService;
+    private final SessionService sessionService;
 
     public List<UserDto> findAll(UserDetails userDetails) {
         User admin = ((UserDetailsImpl) userDetails).getUser();
@@ -74,6 +75,10 @@ public class UserService implements UserDetailsService {
         User admin = ((UserDetailsImpl) userDetails).getUser();
         return (id.equals(admin.getId()) ? Optional.of(admin) : userRepository.findUserByIdAndAdmin(id, admin))
                 .map(user -> {
+                    sessionService.expireSession(user);
+                    if (id.equals(admin.getId()))
+                        sessionService.expireSession(userRepository.findUsersByAdmin(admin));
+
                     userRepository.delete(user);
                     userRepository.flush();
                     return userMapper.toUserDto(user);
