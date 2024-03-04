@@ -88,12 +88,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findUserByEmail(email)
-                .map(user -> new UserDetailsImpl(
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.getRole(),
-                        user
-                ))
+                .map(UserDetailsImpl::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user:" + email));
     }
 }

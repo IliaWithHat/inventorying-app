@@ -11,8 +11,8 @@ public class UserDetailsImpl extends org.springframework.security.core.userdetai
 
     private final User user;
 
-    public UserDetailsImpl(String username, String password, Role role, User user) {
-        super(username, password, List.of(role));
+    public UserDetailsImpl(User user) {
+        super(user.getEmail(), user.getPassword(), List.of(user.getRole()));
         this.user = user;
     }
 }
