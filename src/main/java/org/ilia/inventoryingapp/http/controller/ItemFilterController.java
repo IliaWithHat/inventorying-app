@@ -1,7 +1,6 @@
 package org.ilia.inventoryingapp.http.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.exception.UserNotFoundException;
 import org.ilia.inventoryingapp.service.ItemFilterService;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/admin/users/filter")
 public class ItemFilterController {
@@ -38,7 +36,6 @@ public class ItemFilterController {
             try {
                 itemFilterService.saveOrUpdate(id, userDetails, itemFilterDto);
             } catch (UserNotFoundException e) {
-                log.warn("User id: {} don't belong current user: {}", e.getId(), e.getUserDetails());
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             redirectAttributes.addFlashAttribute("savedItemFilter", "Filter set successfully!!!");
@@ -52,7 +49,6 @@ public class ItemFilterController {
         try {
             itemFilterService.delete(id, userDetails);
         } catch (UserNotFoundException e) {
-            log.warn("User id: {} don't belong current user: {}", e.getId(), e.getUserDetails());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return "redirect:/admin/users/{id}";

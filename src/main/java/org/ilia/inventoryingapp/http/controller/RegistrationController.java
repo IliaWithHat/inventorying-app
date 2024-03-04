@@ -2,6 +2,7 @@ package org.ilia.inventoryingapp.http.controller;
 
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.ilia.inventoryingapp.dto.UserDto;
 import org.ilia.inventoryingapp.service.UserService;
 import org.ilia.inventoryingapp.validation.groups.CreateUser;
@@ -28,6 +29,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
+    @SneakyThrows
     public String createUser(@ModelAttribute("user") @Validated({Default.class, CreateUser.class}) UserDto user,
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes) {

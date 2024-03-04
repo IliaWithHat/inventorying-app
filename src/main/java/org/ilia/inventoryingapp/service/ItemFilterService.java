@@ -30,7 +30,7 @@ public class ItemFilterService {
 
     public void saveOrUpdate(Integer id, UserDetails userDetails, ItemFilterDto itemFilterDto) throws UserNotFoundException {
         if (userService.findById(id, userDetails).isEmpty() || !itemFilterDto.getUserId().equals(id))
-            throw new UserNotFoundException(id, (UserDetailsImpl) userDetails);
+            throw new UserNotFoundException(id, ((UserDetailsImpl) userDetails).getUser());
 
         List<ItemFilter> ItemFilterList = itemFilterRepository.findItemFilterByUserId(id);
         if (!ItemFilterList.isEmpty()) {
@@ -39,8 +39,8 @@ public class ItemFilterService {
 
         Arrays.stream(itemFilterDto.getStoredIn().split(";"))
                 .filter(StringUtils::hasText)
-                .map(s -> ItemFilterDto.builder()
-                        .storedIn(s)
+                .map(storedIn -> ItemFilterDto.builder()
+                        .storedIn(storedIn)
                         .isOwnedByEmployee(itemFilterDto.getIsOwnedByEmployee())
                         .userId(itemFilterDto.getUserId())
                         .build())
@@ -81,7 +81,7 @@ public class ItemFilterService {
 
     public boolean delete(Integer id, UserDetails userDetails) throws UserNotFoundException {
         if (userService.findById(id, userDetails).isEmpty())
-            throw new UserNotFoundException(id, (UserDetailsImpl) userDetails);
+            throw new UserNotFoundException(id, ((UserDetailsImpl) userDetails).getUser());
 
         if (!itemFilterRepository.findItemFilterByUserId(id).isEmpty()) {
             itemFilterRepository.deleteByUserId(id);

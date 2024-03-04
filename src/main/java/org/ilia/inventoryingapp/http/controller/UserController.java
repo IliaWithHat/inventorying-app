@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.ilia.inventoryingapp.database.entity.OptionsForIsOwnedByEmployee;
 import org.ilia.inventoryingapp.dto.ItemFilterDto;
 import org.ilia.inventoryingapp.dto.UserDto;
+import org.ilia.inventoryingapp.exception.UserCreationLimitReachedException;
 import org.ilia.inventoryingapp.service.ItemFilterService;
 import org.ilia.inventoryingapp.service.UserService;
 import org.ilia.inventoryingapp.validation.groups.CreateUser;
@@ -65,7 +66,11 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
         } else {
-            userService.create(userDetails, userDto);
+            try {
+                userService.create(userDetails, userDto);
+            } catch (UserCreationLimitReachedException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
         }
         return "redirect:/admin/users";
     }
