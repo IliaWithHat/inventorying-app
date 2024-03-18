@@ -88,6 +88,6 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findUserByEmail(email)
                 .map(UserDetailsImpl::new)
-                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user:" + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + email));
     }
 }

@@ -1,7 +1,7 @@
 <div th:fragment="side-bar" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <div id="sidebar">
         <header>
-            <a href="/">Inventorying App</a>
+            <a href="/login/redirect">Inventorying App</a>
         </header>
         <ul class="nav">
             <li sec:authorize="hasAuthority('ADMIN')">
