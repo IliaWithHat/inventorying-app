@@ -23,12 +23,9 @@ public class SessionService {
         List<String> userEmails = users.stream()
                 .map(User::getEmail)
                 .toList();
-        for (Object principal : sessionRegistry.getAllPrincipals()) {
-            UserDetails userDetails = (UserDetails) principal;
-            if (userEmails.contains(userDetails.getUsername())) {
-                sessionRegistry.getAllSessions(principal, false)
-                        .forEach(SessionInformation::expireNow);
-            }
-        }
+        sessionRegistry.getAllPrincipals().stream()
+                .filter(principal -> userEmails.contains(((UserDetails) principal).getUsername()))
+                .flatMap(principal -> sessionRegistry.getAllSessions(principal, false).stream())
+                .forEach(SessionInformation::expireNow);
     }
 }
