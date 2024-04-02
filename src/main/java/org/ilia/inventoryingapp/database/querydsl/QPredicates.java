@@ -19,7 +19,7 @@ public class QPredicates {
     }
 
     public <T> QPredicates add(T object, Function<T, Predicate> function) {
-        if (object != null && !(object instanceof String && ((String) object).isBlank())) {
+        if (object != null && !(object instanceof String str && str.isBlank())) {
             predicates.add(function.apply(object));
         }
         return this;
