@@ -1,6 +1,7 @@
 package org.ilia.inventoryingapp.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.ilia.inventoryingapp.database.entity.Unit;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Value
 @Builder
+@AllArgsConstructor
 @UniqueInventoryNumberForUser
 public class ItemDto {
 
