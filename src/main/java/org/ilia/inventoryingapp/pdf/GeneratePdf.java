@@ -32,6 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -55,7 +56,7 @@ public class GeneratePdf {
     private PdfFont boldFont;
 
     @SneakyThrows
-    private Object[] prepareDocument() {
+    private Pair<Path, Document> prepareDocument() {
         Path pathToFile = Files.createTempFile(null, ".pdf");
         PdfWriter writer = new PdfWriter(pathToFile.toFile());
         PdfDocument pdf = new PdfDocument(writer);
@@ -63,7 +64,7 @@ public class GeneratePdf {
         document.setMargins(20, 20, 20, 20);
         regularFont = PdfFontFactory.createFont(getFontFilePath("Roboto-Regular.ttf"), PdfEncodings.IDENTITY_H);
         boldFont = PdfFontFactory.createFont(getFontFilePath("Roboto-Bold.ttf"), PdfEncodings.IDENTITY_H);
-        return new Object[]{pathToFile, document};
+        return Pair.of(pathToFile, document);
     }
 
     private String getFontFilePath(String fontName) {
@@ -85,9 +86,9 @@ public class GeneratePdf {
 
     @SneakyThrows
     public Resource generateStandardPdf(ItemFilterForAdmin itemFilterForAdmin, User user) {
-        Object[] pathAndDocument = prepareDocument();
-        Path pathToFile = (Path) pathAndDocument[0];
-        Document document = (Document) pathAndDocument[1];
+        Pair<Path, Document> pathAndDocument = prepareDocument();
+        Path pathToFile = pathAndDocument.getFirst();
+        Document document = pathAndDocument.getSecond();
 
         int totalPages = 0;
         int pageNumber = 0;
@@ -225,9 +226,9 @@ public class GeneratePdf {
 
     @SneakyThrows
     public Resource generateInventoryPdf(ItemFilterForAdmin itemFilterForAdmin, User user, String inventoryMethod) {
-        Object[] pathAndDocument = prepareDocument();
-        Path pathToFile = (Path) pathAndDocument[0];
-        Document document = (Document) pathAndDocument[1];
+        Pair<Path, Document> pathAndDocument = prepareDocument();
+        Path pathToFile = pathAndDocument.getFirst();
+        Document document = pathAndDocument.getSecond();
 
         int totalPages = 0;
         int pageNumber = 0;
