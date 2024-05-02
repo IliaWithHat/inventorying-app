@@ -52,9 +52,6 @@ public class UserController {
         model.addAttribute("itemFilter", itemFilterDto);
         model.addAttribute("optionsForIsOwnedByEmployee", OptionsForIsOwnedByEmployee.values());
 
-        if (userDto.getAdminId() == null)
-            model.addAttribute("admin", new Object());
-
         return "user/user";
     }
 
