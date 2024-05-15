@@ -12,7 +12,8 @@ services:
       POSTGRES_DB: inventorying_repository
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - ./src/main/resources/sql:/docker-entrypoint-initdb.d
+      - ./src/main/resources/sql/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./src/main/resources/sql/data.sql:/docker-entrypoint-initdb.d/2-data.sql
       - inventorying-repository-data:/var/lib/postgresql/data
     deploy:
       resources:
