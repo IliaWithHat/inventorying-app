@@ -31,7 +31,7 @@ The site will be available on: http://localhost:8888/items
 
 - Download sources.
 - Create in Postgres database and initialize it with a [script](src/main/resources/sql/init.sql).
-- Edit in [application.yaml](src/main/resources/application.yml) datasource. Write the current url, username and
+- Edit in [application.yml](src/main/resources/application.yml) datasource. Write the current url, username and
   password.
 - In root directory run `./gradlew bootRun`.
 
@@ -132,7 +132,5 @@ You can log in using the login and password that the ADMIN gave you, export to p
 and inventory.
 
 ![Image](assets/images/user%20view.png)
-
-## Total lines of code
 
 ### If you find bugs or have any ideas, please leave a message at rozhkoilia5533@gmail.com.
