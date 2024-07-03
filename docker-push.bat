@@ -17,4 +17,8 @@ echo Pushing image to Docker Hub
 docker push %DOCKERHUB_USERNAME%/inventorying-app:latest
 
 echo.
+echo Removing local image
+docker rmi inventorying-app-image
+
+echo.
 echo Image pushed to Docker Hub successfully.
