@@ -9,3 +9,5 @@ spring:
     password: postgres
   jpa:
     open-in-view: true
+  liquibase:
+    change-log: classpath:/liquibase/db-changelog.yml

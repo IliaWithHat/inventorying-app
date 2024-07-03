@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset IliaWithHat:1
 CREATE TABLE users
 (
     id         SERIAL PRIMARY KEY,
@@ -14,6 +17,7 @@ CREATE INDEX users_admin_id_index ON users (admin_id);
 CREATE UNIQUE INDEX users_email_index ON users (email);
 CREATE UNIQUE INDEX users_id_admin_id_index ON users (id, admin_id);
 
+--changeset IliaWithHat:2
 CREATE TABLE item_filter
 (
     id                   SERIAL PRIMARY KEY,
@@ -24,6 +28,7 @@ CREATE TABLE item_filter
 
 CREATE INDEX item_filter_user_id_index ON item_filter (user_id);
 
+--changeset IliaWithHat:3
 CREATE TABLE item_sequence
 (
     id         SERIAL PRIMARY KEY,
@@ -33,6 +38,7 @@ CREATE TABLE item_sequence
 
 CREATE UNIQUE INDEX item_sequence_user_id_index ON item_sequence (user_id);
 
+--changeset IliaWithHat:4
 CREATE TABLE inventory
 (
     id               BIGSERIAL PRIMARY KEY,
@@ -41,6 +47,7 @@ CREATE TABLE inventory
     user_id          INTEGER        NOT NULL REFERENCES users ON DELETE CASCADE
 );
 
+--changeset IliaWithHat:5
 CREATE TABLE item
 (
     id                   BIGSERIAL PRIMARY KEY,
