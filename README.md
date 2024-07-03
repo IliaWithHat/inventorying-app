@@ -21,7 +21,7 @@ Spring-based web application for inventory.
 ```bash
 git clone https://github.com/IliaWithHat/inventorying-app.git
 cd inventorying-app
-./run.bat
+docker-compose up -d
 ```
 
 The site will be available on: http://localhost:8888/items

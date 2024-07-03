@@ -12,8 +12,7 @@ services:
     volumes:
       - inventorying-repository-data:/var/lib/postgresql/data
   app:
-    build: .
-    image: inventorying-app-image
+    image: iliawithhat/inventorying-app
     container_name: inventorying-app
     depends_on:
       - postgres
