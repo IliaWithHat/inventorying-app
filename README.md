@@ -21,8 +21,7 @@ Spring-based web application for inventory.
 ```bash
 git clone https://github.com/IliaWithHat/inventorying-app.git
 cd inventorying-app
-./gradlew bootJar
-docker-compose up -d
+./run.bat
 ```
 
 The site will be available on: http://localhost:8888/items
@@ -30,7 +29,7 @@ The site will be available on: http://localhost:8888/items
 **Without Docker**
 
 - Download sources.
-- Create in Postgres database and initialize it with a [script](src/main/resources/sql/init.sql).
+- Create in Postgres database.
 - Edit in [application.yml](src/main/resources/application.yml) datasource. Write the current url, username and
   password.
 - In root directory run `./gradlew bootRun`.
