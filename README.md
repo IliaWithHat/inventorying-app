@@ -1,6 +1,8 @@
 # Inventorying App
 
-Spring-based web application for inventory.
+Spring-based web application for inventory, where you can add items, view, filter, and then carry out two types of
+inventory: “sighted” and “blind” and then export the result to PDF. Also you can create accounts for your employees,
+with limited functionality.
 
 ## Requirements
 
